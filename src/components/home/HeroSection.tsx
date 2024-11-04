@@ -6,9 +6,9 @@ import { Github } from 'lucide-react'
   
   // Update your personalInfo const to include the photo
   const personalInfo = {
-    name: "Angel Morelo",
-    title: "Web Developer",
-    bio: "I'm a web ui  developer with a degree in computer science and with 6 years of experience working with JavaScript and frameworks such as React.js, Next.js, Vue.js and Nuxt.js to building  animations and interactive accesibles  web applications , together with Html , CSS, SVG  to layout and design these applications,",
+    name: "Hi,I'm Angel Arrieta",
+    title: "Web Developer & UI Specialist",
+    bio: "I’m a web developer with a Computer Science degree and 6+ years of experience crafting interactive and accessible applications. Skilled in JavaScript frameworks like React, Next.js, Vue, and Nuxt, I bring intuitive designs to life with HTML, CSS, and SVG. Let’s create something remarkable!",
     photo: "/your-photo.jpg" // Add your photo path
   };
 export const Hero = () => {
@@ -136,8 +136,8 @@ export const Hero = () => {
     <div className="w-60 h-60 rounded-full p-2 bg-gradient-to-b from-[#5cbef8]/20 to-transparent">
       <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-[#5cbef8]/20">
         <img
-          src="https://res.cloudinary.com/dnmjmjdsj/image/upload/v1681879830/cld-sample.jpg" // Replace with your photo path
-          alt="Profile"
+          src="https://res.cloudinary.com/dnmjmjdsj/image/upload/v1730585859/image/Screenshot_2024-11-02_at_5.14.48_PM_ynwltl.png" // Replace with your photo path
+          alt="Angel Arrieta"
           className="w-full h-full object-cover rounded-full"
         />
       </div>
@@ -171,6 +171,17 @@ export const Hero = () => {
             variants={itemVariants}
             className="text-xl text-gray-400 mb-6 font-mono"
           >
+             <motion.h2 
+            variants={itemVariants}
+            className="text-xl text-white font-mono"
+          >
+          Let's Build Something Exceptional Together
+          </motion.h2>
+          </motion.h2>
+          <motion.h2 
+            variants={itemVariants}
+            className="text-xl text-gray-400 mb-6 font-mono"
+          >
             {personalInfo.title}
           </motion.h2>
 
@@ -178,7 +189,7 @@ export const Hero = () => {
             variants={itemVariants}
             className="text-gray-300 leading-relaxed max-w-2xl mb-6"
           >
-            {personalInfo.bio}
+         I'm a web developer with a Computer Science degree and 6+ years of experience crafting interactive and accessible applications. Skilled in JavaScript frameworks like React, Next.js, Vue, and Nuxt, I bring intuitive designs to life with HTML, CSS, and SVG. I'm passionate about language exchange and am the creator of <a href='https://www.events-medellin.com' target='_blank' className='text-[#5cbef8]'>eventsmedellin</a> community. Let's create something remarkable!
           </motion.p>
 
           <motion.div 

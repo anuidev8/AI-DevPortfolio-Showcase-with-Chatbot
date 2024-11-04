@@ -7,9 +7,8 @@ import { useState } from 'react';
 
 const navItems = [
     { href: '/', label: 'Home', icon: <Home size={20} /> },
-    { href: '/about', label: 'About', icon: <User size={20} /> },
-    { href: '/posts', label: 'Posts', icon: <FileText size={20} /> },
-    { href: '/chat', label: 'Assistant', icon: <Bot size={20} /> },
+/*     { href: '/posts', label: 'Posts', icon: <FileText size={20} /> },
+    { href: '/chat', label: 'Assistant', icon: <Bot size={20} /> }, */
   ];
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -119,13 +118,13 @@ export const Footer = () => {
     <motion.footer 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="bg-[#0a192f] border-t border-gray-700 py-8"
+      className="bg-[#0a192f] border-t border-gray-700 py-8 relative z-50"
     >
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About Column */}
           <div>
-            <h3 className="text-xl font-mono mb-4">
+            <h3 className="text-xl font-mono mb-4 text-white">
               <span className="text-blue-500">&gt;_</span> About
             </h3>
             <p className="text-gray-400">
@@ -136,7 +135,7 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-mono mb-4">
+            <h3 className="text-xl font-mono mb-4 text-white">
               <span className="text-blue-500">&gt;_</span> Quick Links
             </h3>
             <ul className="space-y-2">
@@ -158,7 +157,7 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-xl font-mono mb-4">
+            <h3 className="text-xl font-mono mb-4 text-white">
               <span className="text-blue-500">&gt;_</span> Connect
             </h3>
             <motion.a
@@ -172,7 +171,7 @@ export const Footer = () => {
               <span>WhatsApp</span>
             </motion.a>
             <p className="text-gray-400 mt-4 font-mono">
-              © {new Date().getFullYear()} YourName<br />
+              © {new Date().getFullYear()} Angel Arrieta<br />
               All rights reserved
             </p>
           </div>

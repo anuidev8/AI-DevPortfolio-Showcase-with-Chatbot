@@ -1,76 +1,62 @@
 // pages/about.tsx
 'use client'
 import { motion } from 'framer-motion';
-import { Terminal, Code2, Cpu, Github, ExternalLink } from 'lucide-react';
+import {  Cpu } from 'lucide-react';
 import { Hero } from './HeroSection';
 import { ProjectsSection } from './ProjectsSection';
 import { CodeSnippetsSection } from './SnnipedGitHub';
 
 export const About = () => {
-  // Personal info section data
-  const personalInfo = {
-    name: "Your Name",
-    title: "Senior Software Engineer",
-    location: "City, Country",
-    email: "your.email@example.com",
-    bio: "Passionate software engineer with 5+ years of experience building scalable web applications. Focused on creating elegant solutions to complex problems."
-  };
+ 
 
-  // Projects data
-  const projects = [
-    {
-      title: "E-commerce Platform",
-      description: "Full-stack shopping platform with real-time inventory management and payment processing.",
-      tech: ["React", "Node.js", "MongoDB", "Stripe"],
-      github: "https://github.com/yourusername/project",
-      live: "https://project.com"
-    },
-    {
-      title: "Portfolio Assistant",
-      description: "AI-powered chatbot for portfolio interaction using GPT-3 and voice recognition.",
-      tech: ["Next.js", "OpenAI", "TailwindCSS", "TypeScript"],
-      github: "https://github.com/yourusername/project",
-      live: "https://project.com"
-    },
-    // Add more projects as needed
-  ];
-
-  // GitHub snippets data
-  const githubSnippets = [
-    {
-      title: "Custom React Hook",
-      description: "A reusable hook for handling API requests",
-      code: `const useAPI = (url) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    fetch(url)
-      .then(res => res.json())
-      .then(setData)
-      .finally(() => setLoading(false));
-  }, [url]);
-
-  return { data, loading };
-};`
-    },
-    // Add more snippets
-  ];
 
   // Skills data
   const skills = [
     {
       category: "Frontend",
-      items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Redux"]
+      items: [
+        "React.js",
+        "Next.js",
+        "TypeScript",
+        "Redux.js",
+        "React Hooks",
+        "Tailwind CSS",
+        "Material-UI",
+        "React Leaflet",
+        "Lottie Animator",
+        "GreenSock Animation Platform (GSAP)",
+        "vue.js"
+      ]
     },
     {
+      category: "AI Tools",
+      items: [ "Microsoft Copilot chat", "botpress","Open AI api", "HeyGen platform", "elevenlabs platform"]
+    },
+    {
+      category: "Tools & Other Technologies",
+      items: ["Microsoft Entra ID",  "Microsoft Copilot Studio", "leafletjs"]
+    },
+  /*   {
       category: "Backend",
-      items: ["Node.js", "Python", "Express", "PostgreSQL", "MongoDB"]
+      items: ["Node.js +2",  "Express+2", "MongoDB+2"]
+    }, */
+    {
+      category: "Testing & Quality Assurance",
+      items: ["Vitest", "jest"]
     },
     {
+      category: "Web Technologies",
+      items: ["WebRTC",]
+    },
+    {
+      category: "CMS",
+      items: ["wordpress",  "wix",]
+    },
+  
+    /* {
       category: "DevOps",
       items: ["AWS", "Docker", "Kubernetes", "CI/CD", "Git"]
-    }
+    } */
   ];
 
   return (
@@ -105,7 +91,7 @@ export const About = () => {
             Skills_&_Technologies
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {skills.map((category, index) => (
               <motion.div
                 key={index}
