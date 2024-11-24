@@ -19,7 +19,7 @@ export const Header = () => {
     <motion.header 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-[#0a192f] border-b border-gray-700"
+      className="top-0 left-0 right-0 z-50 bg-[#0a192f] border-b border-gray-700"
     >
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
