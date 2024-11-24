@@ -45,7 +45,7 @@ export const ChatInterface = () => {
         if (responseMode === 'text') {
           setMessages([...newMessages, { content: data.answer, type: 'assistant' }]);
         } else {
-          // In audio mode, we'll convert the response to speech
+      
           try {
             const audioResponse = await fetch(
               'https://api.elevenlabs.io/v1/text-to-speech/XZLYuvSROjlj7EO2DLvW',
