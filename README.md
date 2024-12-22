@@ -4,6 +4,11 @@ An interactive portfolio assistant featuring text and voice interactions, combin
 
 is continue building....
 
+## Live Demo 🌐
+
+- **Production**: [https://anuidev.vercel.app/](https://anuidev.vercel.app/)
+- **Development**: [http://localhost:3000](http://localhost:3000)
+
 ## 🚀 Features
 
 ### Core Features
