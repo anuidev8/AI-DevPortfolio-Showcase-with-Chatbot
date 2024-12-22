@@ -1,36 +1,139 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio AI Assistant 🤖
 
-## Getting Started
+An interactive portfolio assistant featuring text and voice interactions, combining a retro-styled UI with advanced AI capabilities. Built with Next.js, TypeScript, and modern animation libraries.
 
-First, run the development server:
+is continue building....
 
+## 🚀 Features
+
+### Core Features
+- Text & Voice chat modes with seamless switching
+- AI-powered voice responses via ElevenLabs
+- Real-time chat functionality
+- Modern animations with Framer Motion
+- Responsive design (mobile & desktop)
+- Retro-styled UI with modern touches
+
+### Technical Features
+- Text-to-Speech using ElevenLabs API
+- Real-time audio visualization
+- TypeScript for type safety
+- Efficient state management
+- Smooth transitions and animations
+
+## 🛠️ Tech Stack
+
+- **Frontend:**
+  - Next.js 13 (App Router)
+  - TypeScript
+  - Tailwind CSS
+  - Framer Motion
+  - Lucide Icons
+
+- **APIs:**
+  - ElevenLabs API
+
+  📁 Project Structure
+portfolio-assistant/
+├── components/
+│   ├── assistant/
+│   │   ├── ChatInterface.tsx    # Main chat component
+│   │   └── AudioResponse.tsx    # Voice interface component
+│   └── floatingAssistant/
+│       └── FloatingAssistant.tsx
+├── pages/
+│   └── _app.tsx
+└── styles/
+    └── globals.css
+
+💻 Usage
+Text Mode
+
+Click the floating assistant button
+Select text mode
+Type your question in the input field
+Press Enter or click Send
+View message history in chat format
+
+Voice Mode
+
+Click the floating assistant button
+Select voice mode
+Click the microphone icon
+Speak your question
+Receive audio responses with visual feedback
+
+## 📦 Installation & Setup
+
+1. **Clone the repository**
 ```bash
+git clone hhttps://github.com/anuidev8/AI-DevPortfolio-Showcase-with-Chatbot
+cd portfolio-assistant 
+
+```
+2. **Install Dependencies**
+ ```bash
+npm install
+# or using yarn
+yarn install
+
+```
+
+3. **Environment Configuration Create a .env.local file in the root directory:**
+ ```bash
+NEXT_PUBLIC_ELEVENLABS_API_KEY=your_elevenlabs_key_here
+
+```
+
+4. **Available Scripts Development server:**
+ ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Verifying Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The development server will start at http://localhost:3000
+You should see the portfolio assistant interface
+Test the chat functionality
+Verify voice interactions if using ElevenLabs API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Troubleshooting Installation
 
-## Learn More
+If you encounter issues:
+Node Modules Issues
 
-To learn more about Next.js, take a look at the following resources:
+ ```bash
+rm -rf node_modules
+rm package-lock.json
+npm install
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Environment Variables
 
-## Deploy on Vercel
+Double-check .env.local is in the root directory
+Verify API key format
+Restart development server after changes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+📝 Additional Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Uses ElevenLabs for high-quality voice synthesis
+State is managed locally with useState
+All animations implemented using Framer Motion
+TypeScript ensures type safety throughout
+Mobile-first responsive design
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+📞 Contact
+Name - @anuidev8
+Project Link: https://github.com/anuidev8/AI-DevPortfolio-Showcase-with-Chatbot
+Prerequisites
+Before you begin, ensure you have:
+
+Node.js (v16 or higher)
+npm or yarn
+An ElevenLabs API key
