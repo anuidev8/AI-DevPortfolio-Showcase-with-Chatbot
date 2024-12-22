@@ -33,7 +33,10 @@ is continue building....
 - **APIs:**
   - ElevenLabs API
 
-  📁 Project Structure
+
+```bash
+📁 Project Structure
+
 portfolio-assistant/
 ├── components/
 │   ├── assistant/
@@ -46,6 +49,7 @@ portfolio-assistant/
 └── styles/
     └── globals.css
 
+```
 💻 Usage
 Text Mode
 
