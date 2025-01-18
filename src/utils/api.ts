@@ -8,10 +8,7 @@ export async function fetchNotionProjects() {
         'Content-Type': 'application/json',
         'Notion-Version': '2022-06-28',
       },
-      next: { 
-        revalidate: 3600, // Revalidate every hour
-        tags: ['projects'] // For targeted revalidation
-      }
+    
     });
   
     const data = await response.json();

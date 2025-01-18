@@ -14,6 +14,7 @@ interface ProjectsSectionProps {
   // Categories for filtering
   const categories = ['All', 'Frontend', 'Backend', 'Full Stack', 'Mobile'];
 export const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
+   console.log(projects);
    
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
