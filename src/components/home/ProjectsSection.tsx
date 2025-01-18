@@ -1,57 +1,38 @@
 'use client'
 
-import { useState, useMemo } from 'react';
+import { useState} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Github, ExternalLink, Search, Filter } from 'lucide-react';
+import { Terminal, Github, ExternalLink, Search,  } from 'lucide-react';
+import { NotionProject } from '@/types/project.types';
+
+
 
 // Types for projects
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  tech: string[];
-  github: string;
-  live: string;
-  category: string; // e.g., 'Frontend', 'Full Stack', 'Mobile'
-  featured: boolean;
+interface ProjectsSectionProps {
+  projects: NotionProject[];
 }
-
-export const ProjectsSection = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filter, setFilter] = useState<string>('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const projectsPerPage = 6;
-
-  // Sample projects data
-  const allProjects: Project[] = [
-    {
-      id: 1,
-      title: "Events medellin Platform",
-      description: "eventsmedellin | language exchange Unlock Languages, Culture & Rewards in Medellín.Learn languages while exploring Medellín",
-      tech: ["React", "Wordpress"],
-      github: "https://www.events-medellin.com/",
-      live: "https://www.events-medellin.com",
-      category: "Full Stack",
-      featured: true
-    },
-    // Add more projects...
-  ];
-
   // Categories for filtering
   const categories = ['All', 'Frontend', 'Backend', 'Full Stack', 'Mobile'];
+export const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
+   
+  const [filter, setFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 6; // Number of projects per page
 
-  // Filter and search projects
-  const filteredProjects = useMemo(() => {
-    return allProjects.filter(project => {
-      const matchesFilter = filter === 'all' || project.category.toLowerCase() === filter.toLowerCase();
-      const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          project.tech.some(tech => tech.toLowerCase().includes(searchTerm.toLowerCase()));
-      return matchesFilter && matchesSearch;
-    });
-  }, [filter, searchTerm, allProjects]);
+  // Filter projects
+  const filteredProjects = projects.filter(project => {
+    const matchesFilter = filter === 'all' || project.category.name.toLowerCase() === filter.toLowerCase();
+    const matchesSearch = 
+      project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.techs.some(tech => 
+        tech.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    return matchesFilter && matchesSearch;
+  });
 
-  // Pagination
+  // Pagination logic
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
   const currentProjects = filteredProjects.slice(
     (currentPage - 1) * projectsPerPage,
@@ -132,12 +113,12 @@ export const ProjectsSection = () => {
               </h5>
               <p className="text-gray-300 mb-4 text-sm">{project.description}</p>
               <div className="flex flex-wrap gap-2 mb-4">
-                {project.tech.map((tech, i) => (
+                {project.techs.map((tech, i) => (
                   <span
                     key={i}
                     className="px-2 py-1 bg-gray-800/50 rounded text-xs font-mono text-gray-300"
                   >
-                    {tech}
+                    {tech.name}
                   </span>
                 ))}
               </div>
@@ -196,4 +177,6 @@ export const ProjectsSection = () => {
     </motion.section>
   );
 };
+
+
 
