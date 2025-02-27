@@ -15,7 +15,7 @@ export async function fetchNotionProjects() {
     
     return data.results.map((item: any) => ({
         id: item.id,
-        title: item.properties.tile.title[0]?.text.content || '',
+        title: item.properties.title.title[0]?.text.content || '',
         description: item.properties.description.rich_text[0]?.text.content || '',
         techs: item.properties.techs.multi_select,
         live: item.properties.live.rich_text[0]?.text.content || '',

@@ -9,16 +9,20 @@ import { fetchNotionProjects } from "@/utils/api";
 import { RetroLoader } from "@/components/ui/Loader";
 import { TechsSection } from "@/components/home/Techs";
 import { ServicesSection } from "@/components/home/ServiceSection";
+import { AI } from "./actions";
+import { PortfolioChatInterface } from "@/components/EnhancedChatInterface";
 
 export default async function  Home() {
-
   const projects = await fetchNotionProjects();
 
   if(!projects){
     return <RetroLoader />
   }
+
   return (
     <>
+ 
+ <AI>
     < AppLayout >
      <div className="min-h-screen bg-gradient-to-br from-[#0a192f] via-[#112240] to-[#0a192f]">
       {/* Grid Background */}
@@ -38,11 +42,16 @@ s
         <ServicesSection />
          <TechsSection />
 
+        
+  
    
+
       </div>
     </div>
     <Footer />
+  
     </AppLayout>
+    </AI>
     </>
   );
 }
