@@ -17,4 +17,5 @@ export interface NotionProject {
       color: string;
     };
     created_time: string;
+    video?: string; // Optional video URL
   }
