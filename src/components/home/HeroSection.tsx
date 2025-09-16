@@ -8,7 +8,7 @@ import { Github } from 'lucide-react'
   const personalInfo = {
     name: "Hi,I'm Angel Arrieta",
     title: "Web Developer & UI Specialist",
-    bio: "I’m a web developer with a Computer Science degree and 6+ years of experience crafting interactive and accessible applications. Skilled in JavaScript frameworks like React, Next.js, Vue, and Nuxt, I bring intuitive designs to life with HTML, CSS, and SVG. Let’s create something remarkable!",
+    bio: "Web developer with 7+ years of experience building dynamic, user-friendly, and high-performance web and mobile applications. Specialized in React, Next.js, Node.js, and automation workflows. Skilled in creating engaging UI/UX with animations, integrating analytics and marketing tools, and delivering maintainable, scalable solutions. Passionate about AI integration, real-time apps, and open-source contributions.",
     photo: "/your-photo.jpg" // Add your photo path
   };
 export const Hero = () => {
@@ -116,7 +116,7 @@ export const Hero = () => {
               }
             }}
           >
-            5+
+            7+
           </motion.span>
           <motion.div className="text-xs text-gray-400 font-mono mt-1">
             Years of<br/>Experience
@@ -189,7 +189,7 @@ export const Hero = () => {
             variants={itemVariants}
             className="text-gray-300 leading-relaxed max-w-2xl mb-6"
           >
-         I'm a web developer with a Computer Science degree and 6+ years of experience crafting interactive and accessible applications. Skilled in JavaScript frameworks like React, Next.js, Vue, and Nuxt, I bring intuitive designs to life with HTML, CSS, and SVG. I'm passionate about language exchange and am the creator of <a href='https://www.events-medellin.com' target='_blank' className='text-[#5cbef8]'>eventsmedellin</a> community. Let's create something remarkable!
+        Web developer with 7+ years of experience building dynamic, user-friendly, and high-performance web and mobile applications. Specialized in React, Next.js, Node.js, and automation workflows. Skilled in creating engaging UI/UX with animations, integrating analytics and marketing tools, and delivering maintainable, scalable solutions. Passionate about AI integration, real-time apps, and open-source contributions.
           </motion.p>
 
           <motion.div 
