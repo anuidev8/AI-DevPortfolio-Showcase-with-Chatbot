@@ -35,7 +35,7 @@ Lo importante es el protocolo, como react-native-webrtc, que permite transmitir 
       color: '#8b5cf6'
     },
     created_time: '2024-01-13T00:00:00.000Z',
-    video: '#'
+    video: 'https://res.cloudinary.com/dnmjmjdsj/video/upload/v1758061704/videos%20anuidev/Copia_de_video_example_Hecho_con_Clipchamp_wefai9.mp4'
   },
   {
       id: '12',
