@@ -2,21 +2,11 @@ import { Footer } from "@/components/Header";
 import { Hero } from "@/components/home/HeroSection";
 import { ProjectsSection } from "@/components/home/ProjectsSection";
 
-
 import { AppLayout } from "@/layout/AppLayout";
-import { fetchNotionProjects } from "@/utils/api";
-
-import { RetroLoader } from "@/components/ui/Loader";
 import { TechsSection } from "@/components/home/Techs";
 import { ServicesSection } from "@/components/home/ServiceSection";
 
-export default async function  Home() {
-
-  const projects = await fetchNotionProjects();
-
-  if(!projects){
-    return <RetroLoader />
-  }
+export default function  Home() {
   return (
     <>
     < AppLayout >
@@ -34,7 +24,7 @@ s
         {/* Hero Section */}
         <Hero />
         {/* Projects Section */}
-        <ProjectsSection  projects={projects}  />
+        <ProjectsSection />
         <ServicesSection />
          <TechsSection />
 
