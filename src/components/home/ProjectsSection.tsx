@@ -2,18 +2,17 @@
 
 import { useState} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Github, ExternalLink, Search,  } from 'lucide-react';
+import { Terminal, Github, ExternalLink, Search, Play, Pause } from 'lucide-react';
 import { NotionProject } from '@/types/project.types';
-
-
+import { mockProjects } from '@/mocks/projects__mock';
 
 // Types for projects
 interface ProjectsSectionProps {
-  projects: NotionProject[];
+  projects?: NotionProject[];
 }
   // Categories for filtering
   const categories = ['All', 'Frontend', 'Backend', 'Full Stack', 'Mobile'];
-export const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
+export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProps) => {
    console.log(projects);
    
   const [filter, setFilter] = useState<string>('all');
@@ -108,6 +107,30 @@ export const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
               {project.featured && (
                 <div className="text-xs text-[#5cbef8] font-mono mb-2">Featured Project</div>
               )}
+              
+              {/* Video Display */}
+              {project.video && (
+                <div className="mb-4 relative group">
+                  <video
+                    className="w-full h-48 object-cover rounded-lg border border-gray-700/50"
+                    controls
+                    poster=""
+                    preload="metadata"
+                  >
+                    <source src={project.video} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  <div className="absolute inset-0 bg-black/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className="bg-[#5cbef8]/20 backdrop-blur-sm rounded-full p-3"
+                    >
+                      <Play className="w-6 h-6 text-[#5cbef8]" />
+                    </motion.div>
+                  </div>
+                </div>
+              )}
+              
               <h5 className="text-xl font-bold mb-2 font-mono">
                 <span className="text-[#5cbef8]">&gt; </span>
                <span className='text-white'> {project.title}</span>
