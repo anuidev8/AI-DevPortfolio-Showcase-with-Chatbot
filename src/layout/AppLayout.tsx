@@ -6,21 +6,25 @@ import { useState, useEffect } from 'react';
 import { SidebarCloseIcon, ArrowLeft } from 'lucide-react';
 import { ChatInterface } from '@/components/assistant/ChatInterface';
 
-// Media Query Hook
+// Media Query Hook with SSR safety
 const useMediaQuery = (query: string) => {
   const [matches, setMatches] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia(query);
-    if (media.matches !== matches) {
-      setMatches(media.matches);
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      const media = window.matchMedia(query);
+      if (media.matches !== matches) {
+        setMatches(media.matches);
+      }
+      const listener = () => setMatches(media.matches);
+      media.addEventListener('change', listener);
+      return () => media.removeEventListener('change', listener);
     }
-    const listener = () => setMatches(media.matches);
-    media.addEventListener('change', listener);
-    return () => media.removeEventListener('change', listener);
   }, [matches, query]);
 
-  return matches;
+  return mounted ? matches : false;
 };
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
