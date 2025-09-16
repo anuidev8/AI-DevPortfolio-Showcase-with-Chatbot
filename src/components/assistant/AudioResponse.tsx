@@ -1,6 +1,20 @@
+'use client'
 import { motion } from 'framer-motion';
-import { Player } from '@lottiefiles/react-lottie-player';
-export const AudioResponse = ({ isPlaying, isProcessing }: { isPlaying: boolean; isProcessing: boolean }) => (
+import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamically import the Lottie player to avoid SSR issues
+const Player = dynamic(() => import('@lottiefiles/react-lottie-player').then(mod => mod.Player), {
+  ssr: false,
+  loading: () => (
+    <div className="w-32 h-32 rounded-full bg-gray-800/50 flex items-center justify-center">
+      <div className="text-gray-400 font-mono">Loading...</div>
+    </div>
+  )
+});
+
+export const AudioResponse = ({ isPlaying, isProcessing }: { isPlaying: boolean; isProcessing: boolean }) => {
+  return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -115,3 +129,4 @@ export const AudioResponse = ({ isPlaying, isProcessing }: { isPlaying: boolean;
       </div>
     </motion.div>
   );
+};
