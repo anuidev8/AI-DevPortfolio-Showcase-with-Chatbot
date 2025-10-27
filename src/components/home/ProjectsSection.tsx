@@ -1,6 +1,6 @@
 'use client'
 
-import { useState} from 'react';
+import { useState, useRef} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Github, ExternalLink, Search, Play, Pause } from 'lucide-react';
 import { NotionProject } from '@/types/project.types';
@@ -19,6 +19,22 @@ export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProp
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 6; // Number of projects per page
+  const [playingVideos, setPlayingVideos] = useState<Record<string, boolean>>({});
+  const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+
+  // Toggle video play/pause
+  const toggleVideo = (projectId: string) => {
+    const video = videoRefs.current[projectId];
+    if (video) {
+      if (video.paused) {
+        video.play();
+        setPlayingVideos(prev => ({ ...prev, [projectId]: true }));
+      } else {
+        video.pause();
+        setPlayingVideos(prev => ({ ...prev, [projectId]: false }));
+      }
+    }
+  };
 
   // Filter projects
   const filteredProjects = projects.filter(project => {
@@ -112,20 +128,34 @@ export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProp
               {project.video && (
                 <div className="mb-4 relative group">
                   <video
+                    ref={(el) => {
+                      if (el) videoRefs.current[project.id] = el;
+                    }}
                     className="w-full h-48 object-cover rounded-lg border border-gray-700/50"
-                    controls
+                    controls={false}
                     poster=""
                     preload="metadata"
+                    onPlay={() => setPlayingVideos(prev => ({ ...prev, [project.id]: true }))}
+                    onPause={() => setPlayingVideos(prev => ({ ...prev, [project.id]: false }))}
+                    onEnded={() => setPlayingVideos(prev => ({ ...prev, [project.id]: false }))}
                   >
                     <source src={project.video} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
-                  <div className="absolute inset-0 bg-black/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <div 
+                    className="absolute inset-0 bg-black/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center cursor-pointer"
+                    onClick={() => toggleVideo(project.id)}
+                  >
                     <motion.div
                       whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                       className="bg-[#5cbef8]/20 backdrop-blur-sm rounded-full p-3"
                     >
-                      <Play className="w-6 h-6 text-[#5cbef8]" />
+                      {playingVideos[project.id] ? (
+                        <Pause className="w-6 h-6 text-[#5cbef8]" />
+                      ) : (
+                        <Play className="w-6 h-6 text-[#5cbef8]" />
+                      )}
                     </motion.div>
                   </div>
                 </div>
