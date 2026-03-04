@@ -3,6 +3,151 @@ import { NotionProject } from '@/types/project.types';
 // Mock projects data
 export const mockProjects: NotionProject[] = [
   {
+    id: '15',
+    title: 'Fitness AI Dashboard – Voice-Powered Health & Progress Intelligence',
+    description: `Fitness AI Dashboard is an intelligent fitness tracking and coaching platform that combines analytics, real-time voice interaction, and AI-powered personalization.
+  
+  The platform allows users to track workout sessions, monitor goal progress (strength, cardio, flexibility), analyze nutrition status, and interact with a voice-based AI fitness assistant for personalized plans.
+  
+  Instead of static tracking apps, this system integrates real-time analytics + AI conversation to adapt plans dynamically based on user performance and goals.
+  
+  🏗️ Architecture Overview
+  
+  Frontend (Next.js / React)
+  - Interactive dashboard UI
+  - Real-time stats visualization
+  - Circular progress tracking
+  - Nutrition & workout analytics panels
+  - Voice interaction button + waveform feedback
+  
+  Backend (Node.js / Python)
+  - User fitness data processing
+  - Goal tracking engine
+  - Nutrition scoring logic
+  - AI plan generation
+  - Performance trend analytics
+  
+  AI Layer
+  - Conversational fitness assistant
+  - Personalized workout recommendations
+  - Adaptive goal optimization
+  - Progress prediction modeling
+  
+  🔄 User Flow
+  User Opens Dashboard
+     ↓
+  Views Workout & Nutrition Stats
+     ↓
+  Speaks to AI Assistant
+     ↓
+  AI Analyzes Fitness Data
+     ↓
+  Generates Updated Plan & Insights
+     ↓
+  Dashboard Updates in Real-Time
+  
+  🚀 Key Features
+  - AI Fitness Coach (Voice-Enabled)
+  - Real-Time Workout Tracking
+  - Goal Progress Monitoring (Strength / Cardio / Flexibility)
+  - Nutrition Status Intelligence
+  - Trend & Performance Analytics
+  - Predictive Fitness Insights
+  - Modern AI-Centric UI Experience
+  
+  This platform transforms traditional fitness tracking into an intelligent, conversational coaching experience powered by real-time data and AI-driven decision making.`,
+    techs: [
+      { id: '1', name: 'Next.js', color: '#000000' },
+      { id: '2', name: 'React.js', color: '#61dafb' },
+      { id: '3', name: 'Node.js', color: '#339933' },
+      { id: '4', name: 'OpenAI API', color: '#10b981' },
+      { id: '5', name: 'Voice Interface', color: '#f59e0b' },
+      { id: '6', name: 'Data Visualization', color: '#06b6d4' },
+      { id: '7', name: 'AI Coaching', color: '#8b5cf6' },
+      { id: '8', name: 'Real-Time Analytics', color: '#ef4444' },
+      { id: '9', name: 'Dashboard UI', color: '#22c55e' }
+    ],
+    live: '#',
+    github: '#',
+    featured: true,
+    category: {
+      id: '4',
+      name: 'AI Agent',
+      color: '#10b981'
+    },
+    created_time: '2026-03-04T00:00:00.000Z',
+    video: 'https://res.cloudinary.com/dnmjmjdsj/video/upload/v1772649648/videos%20anuidev/V%C3%ADdeo_sin_t%C3%ADtulo_Hecho_con_Clipchamp-2_djxir7.mp4'
+  },
+  {
+    id: '14',
+    title: 'Marketing AI – Real-Time Voice Talent Matching Platform',
+    description: `Marketing AI is a real-time voice-powered platform designed to connect businesses with the right digital marketing specialists instantly.
+  
+  Instead of filling long forms or manually searching through marketplaces, business owners simply speak to the AI assistant. The system listens, analyzes intent, extracts marketing needs (Google Ads, Meta Ads, TikTok, LinkedIn, Email, etc.), evaluates budget, and matches the best-fit "traffickers" in real time.
+  
+  🏗️ Architecture Overview
+  
+  Frontend (Next.js / React)
+  - Real-time voice interface
+  - Live waveform visualization
+  - Dynamic freelancer cards
+  - Budget estimation panel
+  - Streaming UI updates
+  
+  Backend (Node.js / Python)
+  - Speech-to-Text processing
+  - Intent & skill extraction (NLP)
+  - Matching & ranking algorithm
+  - Budget estimation engine
+  - Real-time database queries
+  
+  AI Layer
+  - LLM for requirement understanding
+  - Scoring system for talent matching
+  - Cost & duration prediction logic
+  
+  🔄 Matching Flow
+  User Voice Input
+     ↓ Speech-to-Text
+  Intent & Skill Extraction
+     ↓ Budget Analysis
+  Matching Algorithm
+     ↓ Ranked Talent List
+  Real-Time UI Update
+  
+  🚀 Key Features
+  - Voice-Based Hiring Assistant
+  - Real-Time Freelancer Matching
+  - Intelligent Budget Forecasting
+  - Skill-Based Ranking System
+  - Success Rate & Response Time Metrics
+  - Modern AI-driven Interface
+  
+  This platform transforms hiring into a conversational experience, reducing talent discovery time from days to minutes while improving match quality through AI scoring and predictive analytics.`,
+    techs: [
+      { id: '1', name: 'Next.js', color: '#000000' },
+      { id: '2', name: 'React.js', color: '#61dafb' },
+      { id: '3', name: 'Node.js', color: '#339933' },
+      { id: '4', name: 'OpenAI API', color: '#10b981' },
+      { id: '5', name: 'Google Voice API', color: '#4285F4' },
+      { id: '6', name: 'vercel sdk ai', color: '#f59e0b' },
+      { id: '7', name: 'WebRTC', color: '#06b6d4' },
+      { id: '8', name: 'Real-Time Streaming', color: '#8b5cf6' },
+      { id: '9', name: 'AI Matching Algorithm', color: '#ef4444' },
+      { id: '10', name: 'NLP', color: '#22c55e' }
+    ],
+    live: '#',
+    github: 'https://github.com/anuidev8/conversational-event-flow.git',
+    featured: true,
+    category: {
+      id: '4',
+      name: 'AI Agent',
+      color: '#10b981'
+    },
+    created_time: '2024-01-14T00:00:00.000Z',
+    video: 'https://res.cloudinary.com/dnmjmjdsj/video/upload/v1772649393/videos%20anuidev/video-2_il1cdn.mp4'
+  },
+  {
     id: '13',
     title: 'Real-Time Voice AI Mobile App - OpenAI Realtime + React Native',
     description: `Hace poco publiqué un demo implementando la API de Google para transmitir voz en tiempo real con IA. Explorando más a fondo, entendí el verdadero poder que puede tener una interfaz que combine voz + video + IA de forma interactiva en el día a día.
@@ -34,7 +179,8 @@ Lo importante es el protocolo, como react-native-webrtc, que permite transmitir 
       name: 'Mobile AI',
       color: '#8b5cf6'
     },
-    created_time: '2024-01-13T00:00:00.000Z',
+
+    created_time: '2026-03-04T00:00:00.000Z',
     video: 'https://res.cloudinary.com/dnmjmjdsj/video/upload/v1758061704/videos%20anuidev/Copia_de_video_example_Hecho_con_Clipchamp_wefai9.mp4'
   },
   {
