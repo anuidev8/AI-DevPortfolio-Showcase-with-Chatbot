@@ -5,57 +5,8 @@ export const mockProjects: NotionProject[] = [
   {
     id: '15',
     title: 'Fitness AI Dashboard – Voice-Powered Health & Progress Intelligence',
-    description: `Fitness AI Dashboard is an intelligent fitness tracking and coaching platform that combines analytics, real-time voice interaction, and AI-powered personalization.
-  
-  The platform allows users to track workout sessions, monitor goal progress (strength, cardio, flexibility), analyze nutrition status, and interact with a voice-based AI fitness assistant for personalized plans.
-  
-  Instead of static tracking apps, this system integrates real-time analytics + AI conversation to adapt plans dynamically based on user performance and goals.
-  
-  🏗️ Architecture Overview
-  
-  Frontend (Next.js / React)
-  - Interactive dashboard UI
-  - Real-time stats visualization
-  - Circular progress tracking
-  - Nutrition & workout analytics panels
-  - Voice interaction button + waveform feedback
-  
-  Backend (Node.js / Python)
-  - User fitness data processing
-  - Goal tracking engine
-  - Nutrition scoring logic
-  - AI plan generation
-  - Performance trend analytics
-  
-  AI Layer
-  - Conversational fitness assistant
-  - Personalized workout recommendations
-  - Adaptive goal optimization
-  - Progress prediction modeling
-  
-  🔄 User Flow
-  User Opens Dashboard
-     ↓
-  Views Workout & Nutrition Stats
-     ↓
-  Speaks to AI Assistant
-     ↓
-  AI Analyzes Fitness Data
-     ↓
-  Generates Updated Plan & Insights
-     ↓
-  Dashboard Updates in Real-Time
-  
-  🚀 Key Features
-  - AI Fitness Coach (Voice-Enabled)
-  - Real-Time Workout Tracking
-  - Goal Progress Monitoring (Strength / Cardio / Flexibility)
-  - Nutrition Status Intelligence
-  - Trend & Performance Analytics
-  - Predictive Fitness Insights
-  - Modern AI-Centric UI Experience
-  
-  This platform transforms traditional fitness tracking into an intelligent, conversational coaching experience powered by real-time data and AI-driven decision making.`,
+    description:
+      'AI-powered fitness dashboard that tracks workouts, goals, and nutrition, using a voice assistant and real-time analytics to create and update personalized training plans.',
     techs: [
       { id: '1', name: 'Next.js', color: '#000000' },
       { id: '2', name: 'React.js', color: '#61dafb' },
@@ -81,49 +32,8 @@ export const mockProjects: NotionProject[] = [
   {
     id: '14',
     title: 'Marketing AI – Real-Time Voice Talent Matching Platform',
-    description: `Marketing AI is a real-time voice-powered platform designed to connect businesses with the right digital marketing specialists instantly.
-  
-  Instead of filling long forms or manually searching through marketplaces, business owners simply speak to the AI assistant. The system listens, analyzes intent, extracts marketing needs (Google Ads, Meta Ads, TikTok, LinkedIn, Email, etc.), evaluates budget, and matches the best-fit "traffickers" in real time.
-  
-  🏗️ Architecture Overview
-  
-  Frontend (Next.js / React)
-  - Real-time voice interface
-  - Live waveform visualization
-  - Dynamic freelancer cards
-  - Budget estimation panel
-  - Streaming UI updates
-  
-  Backend (Node.js / Python)
-  - Speech-to-Text processing
-  - Intent & skill extraction (NLP)
-  - Matching & ranking algorithm
-  - Budget estimation engine
-  - Real-time database queries
-  
-  AI Layer
-  - LLM for requirement understanding
-  - Scoring system for talent matching
-  - Cost & duration prediction logic
-  
-  🔄 Matching Flow
-  User Voice Input
-     ↓ Speech-to-Text
-  Intent & Skill Extraction
-     ↓ Budget Analysis
-  Matching Algorithm
-     ↓ Ranked Talent List
-  Real-Time UI Update
-  
-  🚀 Key Features
-  - Voice-Based Hiring Assistant
-  - Real-Time Freelancer Matching
-  - Intelligent Budget Forecasting
-  - Skill-Based Ranking System
-  - Success Rate & Response Time Metrics
-  - Modern AI-driven Interface
-  
-  This platform transforms hiring into a conversational experience, reducing talent discovery time from days to minutes while improving match quality through AI scoring and predictive analytics.`,
+    description:
+      'Voice-driven hiring assistant where business owners speak their needs and the AI analyzes intent, budget, and channels to instantly match and rank the best digital marketing freelancers.',
     techs: [
       { id: '1', name: 'Next.js', color: '#000000' },
       { id: '2', name: 'React.js', color: '#61dafb' },
