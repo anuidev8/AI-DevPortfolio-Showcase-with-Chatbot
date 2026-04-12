@@ -1,39 +1,52 @@
-import { Footer } from "@/components/Header";
-import { Hero } from "@/components/home/HeroSection";
-import { ProjectsSection } from "@/components/home/ProjectsSection";
-
 import { AppLayout } from "@/layout/AppLayout";
-import { TechsSection } from "@/components/home/Techs";
-import { ServicesSection } from "@/components/home/ServiceSection";
+import { HeroSection } from "@/components/landing/HeroSection";
+import { WhoIsItForSection } from "@/components/landing/WhoIsItForSection";
+import { WhatWeCanBuildSection } from "@/components/landing/WhatWeCanBuildSection";
+import { PlansSection } from "@/components/landing/PlansSection";
+import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
+import { ProofSection } from "@/components/landing/ProofSection";
+import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { ResourcesSection } from "@/components/landing/ResourcesSection";
+import { AboutSection } from "@/components/landing/AboutSection";
+import { FinalCTASection } from "@/components/landing/FinalCTASection";
+import { FooterSection } from "@/components/landing/FooterSection";
 
-export default function  Home() {
+export default function Home() {
   return (
-    <>
-    < AppLayout >
-     <div className="min-h-screen bg-gradient-to-br from-[#0a192f] via-[#112240] to-[#0a192f]">
-      {/* Grid Background */}
-      {/* Updated Grid Background with blue effect and glow */}
-      <div className="fixed inset-0">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-transparent to-transparent mix-blend-multiply" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#0a192f_70%)] opacity-60" />
-        <div className="absolute inset-0 grid-glow" />
-      </div>
-s
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-16 space-y-24">
-        {/* Hero Section */}
-        <Hero />
-        {/* Projects Section */}
-        <ProjectsSection />
-        <ServicesSection />
-         <TechsSection />
+    <AppLayout>
+      <main className="w-full min-h-screen bg-wb-bg text-wb-text selection:bg-wb-teal/30 selection:text-wb-text">
+        <HeroSection />
+        <WhoIsItForSection />
+        
+        <div id="services">
+          <WhatWeCanBuildSection />
+        </div>
+        
+        <div id="plans">
+          <PlansSection />
+        </div>
+        
+        <div id="process">
+          <HowItWorksSection />
+        </div>
+        
+        <div id="results">
+          <ProofSection />
+          <TestimonialsSection />
+        </div>
 
-   
-      </div>
-    </div>
-    <Footer />
+        <ResourcesSection />
+        
+        <div id="about">
+          <AboutSection />
+        </div>
+        
+        <div id="contact">
+          <FinalCTASection />
+        </div>
+        
+        <FooterSection />
+      </main>
     </AppLayout>
-    </>
   );
 }
-

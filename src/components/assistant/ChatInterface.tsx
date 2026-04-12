@@ -2,50 +2,68 @@
 // components/ChatInterface.tsx
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  MessageSquare, Send, Volume2 } from 'lucide-react';
+import {  MessageSquare, Send, Volume2, AlertCircle } from 'lucide-react';
 import { AudioResponse } from '@/components/assistant/AudioResponse';
+import { chatWithAI } from '@/utils/api';
+
 // Only adding these type definitions
-type MessageType = 'user' | 'assistant';
+type MessageType = 'user' | 'assistant' | 'error';
 
 interface Message {
   content: string;
   type: MessageType;
 }
+
 export const ChatInterface = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState('');
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const [responseMode, setResponseMode] = useState<'audio' | 'text'>('text');
   
     const handleSendMessage = async () => {
       if (!inputText.trim()) return;
-  
-      // Type-safe message creation
-    const userMessage: Message = {
-      content: inputText,
-      type: 'user'
-    };
 
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
-    setInputText('');
-    setIsProcessing(true);
-  
+      // Type-safe message creation
+      const userMessage: Message = {
+        content: inputText,
+        type: 'user'
+      };
+
+      const newMessages = [...messages, userMessage];
+      setMessages(newMessages);
+      setInputText('');
+      setIsLoading(true);
+
       try {
-        // Get text response from backend
-        const response = await fetch('https://portfolio-chatbot-mauve.vercel.app/ask', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: inputText }),
-        });
-  
-        const data = await response.json();
-  
+        // Get text response from API utility
+        const result = await chatWithAI(inputText);
+
+        // Check for API error
+        if (result.error) {
+          setMessages([
+            ...newMessages,
+            { content: 'Something went wrong. Please try again.', type: 'error' }
+          ]);
+          setIsLoading(false);
+          return;
+        }
+
+        const answer = result.data?.answer;
+        if (!answer) {
+          setMessages([
+            ...newMessages,
+            { content: 'Something went wrong. Please try again.', type: 'error' }
+          ]);
+          setIsLoading(false);
+          return;
+        }
+
         if (responseMode === 'text') {
-          setMessages([...newMessages, { content: data.answer, type: 'assistant' }]);
+          setMessages([...newMessages, { content: answer, type: 'assistant' }]);
+          setIsLoading(false);
         } else {
-      
+          // Audio mode
           try {
             const audioResponse = await fetch(
               'https://api.elevenlabs.io/v1/text-to-speech/XZLYuvSROjlj7EO2DLvW',
@@ -56,7 +74,7 @@ export const ChatInterface = () => {
                   'xi-api-key': process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY!,
                 },
                 body: JSON.stringify({
-                  text: data.answer,
+                  text: answer,
                   voice_settings: {
                     stability: 0.7,
                     similarity_boost: 0.7,
@@ -64,31 +82,43 @@ export const ChatInterface = () => {
                 }),
               }
             );
-  
+
+            if (!audioResponse.ok) {
+              // Fallback to text if audio fails
+              setMessages([...newMessages, { content: answer, type: 'assistant' }]);
+              setIsLoading(false);
+              return;
+            }
+
             const audioBlob = await audioResponse.blob();
             const audioUrl = URL.createObjectURL(audioBlob);
             const audio = new Audio(audioUrl);
-  
-            setIsProcessing(false);
+
+            setMessages([...newMessages, { content: answer, type: 'assistant' }]);
+            setIsLoading(false);
             setIsPlaying(true);
-  
+
             audio.onended = () => {
               setIsPlaying(false);
               URL.revokeObjectURL(audioUrl);
             };
-  
+
             await audio.play();
           } catch (error) {
             console.error('Audio conversion error:', error);
+            // Fallback to text
+            setMessages([...newMessages, { content: answer, type: 'assistant' }]);
+            setIsLoading(false);
             setIsPlaying(false);
           }
         }
       } catch (error) {
         console.error('Error:', error);
-      } finally {
-        if (responseMode === 'text') {
-          setIsProcessing(false);
-        }
+        setMessages([
+          ...newMessages,
+          { content: 'Something went wrong. Please try again.', type: 'error' }
+        ]);
+        setIsLoading(false);
       }
     };
   
@@ -135,9 +165,9 @@ export const ChatInterface = () => {
                   {/* Centered Avatar and Waves */}
      
                   <div className="flex-1 flex items-center justify-center">
-                    <AudioResponse 
-                      isPlaying={isPlaying} 
-                      isProcessing={isProcessing}
+                    <AudioResponse
+                      isPlaying={isPlaying}
+                      isProcessing={isLoading}
                     />
                   </div>
                   
@@ -172,16 +202,53 @@ export const ChatInterface = () => {
                         }`}
                       >
                         <div
-                          className={`max-w-[80%] rounded-lg p-4 ${
+                          className={`max-w-[80%] rounded-lg p-4 flex items-start gap-2 ${
                             message.type === 'user'
                               ? 'bg-[#5cbef8]/20'
+                              : message.type === 'error'
+                              ? 'bg-red-900/20 border border-red-500/30'
                               : 'bg-gray-800/50'
                           }`}
                         >
-                          <p className="text-white">{message.content}</p>
+                          {message.type === 'error' && (
+                            <AlertCircle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
+                          )}
+                          <p className={message.type === 'error' ? 'text-red-200' : 'text-white'}>
+                            {message.content}
+                          </p>
                         </div>
                       </motion.div>
                     ))}
+                    {isLoading && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex justify-start"
+                      >
+                        <div className="bg-gray-800/50 rounded-lg p-4">
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-1">
+                              <motion.div
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ repeat: Infinity, duration: 0.6 }}
+                                className="w-2 h-2 bg-gray-400 rounded-full"
+                              />
+                              <motion.div
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ repeat: Infinity, duration: 0.6, delay: 0.1 }}
+                                className="w-2 h-2 bg-gray-400 rounded-full"
+                              />
+                              <motion.div
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }}
+                                className="w-2 h-2 bg-gray-400 rounded-full"
+                              />
+                            </div>
+                            <span className="text-gray-400 text-sm">Thinking...</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
                   </AnimatePresence>
                 </div>
               )}
@@ -193,18 +260,23 @@ export const ChatInterface = () => {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
                 placeholder="Type your message..."
-                className="flex-1 bg-gray-800/50 rounded-lg px-4 py-2
+                disabled={isLoading}
+                className={`flex-1 bg-gray-800/50 rounded-lg px-4 py-2
                          border border-gray-700/50 focus:border-[#5cbef8]/50
-                         focus:outline-none transition-colors"
+                         focus:outline-none transition-colors
+                         ${isLoading ? 'opacity-50 cursor-not-allowed bg-gray-800/20' : ''}`}
               />
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={!isLoading ? { scale: 1.05 } : {}}
+                whileTap={!isLoading ? { scale: 0.95 } : {}}
                 onClick={handleSendMessage}
-                className="p-2 bg-[#5cbef8]/20 rounded-full text-[#5cbef8]
-                         hover:bg-[#5cbef8]/30 transition-colors"
+                disabled={isLoading}
+                className={`p-2 rounded-full transition-colors
+                         ${isLoading
+                           ? 'bg-gray-700/20 text-gray-500 cursor-not-allowed opacity-50'
+                           : 'bg-[#5cbef8]/20 text-[#5cbef8] hover:bg-[#5cbef8]/30'}`}
               >
                 <Send size={24} />
               </motion.button>

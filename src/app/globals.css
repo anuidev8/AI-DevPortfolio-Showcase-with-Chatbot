@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,6 +7,20 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  --wb-bg: #050A14;
+  --wb-bg-alt: #080E1C;
+  --wb-surface: #0D1829;
+  --wb-blue: #1C58BC;
+  --wb-blue-deep: #032791;
+  --wb-blue-soft: #3A6EC7;
+  --wb-teal: #4A9B8E;
+  --wb-teal-soft: #7EB8B1;
+  --wb-mauve: #9C6487;
+  --wb-cream: #C4B9AA;
+  --wb-sand: #DDD5C8;
+  --wb-text: #EEF2F7;
+  --wb-text-muted: #8FA8C4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,11 +30,31 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0.01ms;
+  }
+  *, *::before, *::after {
+    transition-duration: var(--motion-duration) !important;
+    animation-duration: var(--motion-duration) !important;
+  }
+  [data-framer-motion] {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+[data-reduced-motion='true'] *, [data-reduced-motion='true'] *::before, [data-reduced-motion='true'] *::after {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
 
 // styles/globals.css
 // Add these custom styles

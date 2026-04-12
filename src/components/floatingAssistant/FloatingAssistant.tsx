@@ -12,10 +12,12 @@ export const FloatingAssistant = ({ onOpen }: FloatingAssistantProps) => (
 <motion.button
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: 20 }}
+    transition={{ duration: 0.25, ease: "easeOut" }}
     whileHover={{ scale: 1.1 }}
     whileTap={{ scale: 0.9 }}
     onClick={onOpen}
-    className="fixed bottom-8 right-8 bg-[#5cbef8]/20 p-4 rounded-full border border-[#5cbef8]/30
+    className="fixed bottom-[calc(max(2rem,env(safe-area-inset-bottom)))] right-[calc(max(2rem,env(safe-area-inset-right)))] bg-[#5cbef8]/20 p-4 rounded-full border border-[#5cbef8]/30
                hover:bg-[#5cbef8]/30 transition-colors group z-50"
   >
     <Bot className="w-8 h-8 text-[#5cbef8]" />

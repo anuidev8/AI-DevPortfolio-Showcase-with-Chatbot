@@ -76,13 +76,12 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Assistant Sidebar/Fullscreen */}
         {isAssistantOpen && (
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{
-              type: "spring",
-              stiffness: 100,
-              damping: 20
+              duration: 0.25,
+              ease: "easeOut"
             }}
             className={`fixed top-0 right-0 h-screen bg-[#0a192f] border-l border-gray-700/50 z-50 
                        ${isMobile ? 'w-full' : 'w-[400px]'}`}

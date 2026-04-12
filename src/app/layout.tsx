@@ -14,9 +14,13 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Angel Arrieta",
-  description: "I’m a skilled web UI developer with a Computer Science degree and over 6 years of experience delivering interactive, accessible, and visually compelling web applications. With expertise in JavaScript frameworks like React.js, Next.js, Vue.js, and Nuxt.js, I create seamless animations and engaging user experiences. My strong foundation in HTML, CSS, and SVG ensures every application is designed for both beauty and functionality. Let’s work together to build something remarkable!",
-  keywords:['JavaScript Developer Medellín', "Full Stack Web Developer", "React developer", "Next.js Developer", "Vue.js Developer", "SVG Animation" , "HTML5/CSS3 Development", "Medellín Tech Community", "WebRTC", "Microsoft Entra ID", "Lottie Animation"]
+  title: "AI Automation for Business Owners | Build Custom AI Tools With Angel Arrieta",
+  description: "Turn your processes into AI-powered tools. 1:1 mentoring to build custom AI solutions with Claude, Perplexity, Gemini and more. Free 20-minute strategy call.",
+  keywords: ['AI Consulting', 'Automation', 'Custom AI Tools', 'Claude', 'OpenAI', 'Gemini', 'Business AI'],
+  openGraph: {
+    title: "AI Automation for Business Owners | Build Custom AI Tools With Angel Arrieta",
+    description: "Turn your processes into AI-powered tools. 1:1 mentoring to build custom AI solutions with Claude, Perplexity, Gemini and more. Free 20-minute strategy call."
+  }
 };
 
 export default function RootLayout({
