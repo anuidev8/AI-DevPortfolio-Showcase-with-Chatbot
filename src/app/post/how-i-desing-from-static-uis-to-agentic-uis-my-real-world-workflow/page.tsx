@@ -585,13 +585,13 @@ export default function AgenticUIPresentation() {
              ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="w-full max-w-7xl mx-auto mobile-animate">
-              <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight mb-4">
+              <h2 className="slide-title text-3xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tighter leading-tight mb-4">
                 <span className="block overflow-hidden py-1">
-                  <span className="slide-title-line block">Mi workflow para diseñar</span>
-                </span>
-                <span className="block overflow-hidden py-1">
-                  <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                    UIs agénticas (Antigravity).
+                  <span className="slide-title-line block">
+                    Mi workflow para diseñar{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
+                      UIs agénticas (Antigravity )
+                    </span>
                   </span>
                 </span>
               </h2>
