@@ -20,8 +20,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-// styles/globals.css
-// Add these custom styles
+/* styles/globals.css */
+/* Add these custom styles */
 @keyframes scanline {
   0% {
     transform: translateY(-100%);
@@ -129,11 +129,22 @@ body {
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
 }
 
-/* globals.css additions */
-@layer utilities {
-  .sidebar-scroll {
-    @apply scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent;
-  }
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(55, 65, 81, 0.5) transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(55, 65, 81, 0.5);
+  border-radius: 2px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Optional: Add a nice transition effect for the content */

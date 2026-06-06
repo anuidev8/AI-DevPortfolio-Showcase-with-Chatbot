@@ -19,7 +19,7 @@ export default function  Home() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#0a192f_70%)] opacity-60" />
         <div className="absolute inset-0 grid-glow" />
       </div>
-s
+
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-16 space-y-24">
         {/* Hero Section */}
         <Hero />
