@@ -26,9 +26,6 @@ export default function AgenticUIPresentation() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Slide 5 active tab state
-  const [slide5Tab, setSlide5Tab] = useState<'spec' | 'a2ui'>('spec');
-
   // Responsive check
   useEffect(() => {
     const handleResize = () => {
@@ -249,7 +246,7 @@ export default function AgenticUIPresentation() {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
     const totalScroll = wrapper.scrollWidth - window.innerWidth;
-    const scrollTarget = (index / 7) * totalScroll;
+    const scrollTarget = (index / 6) * totalScroll;
     
     window.scrollTo({
       top: scrollTarget,
@@ -298,7 +295,7 @@ export default function AgenticUIPresentation() {
           className={`
             ${isMobile 
               ? 'flex flex-col space-y-24 px-6 py-28' 
-              : 'flex w-[800vw] h-screen items-center'
+              : 'flex w-[700vw] h-screen items-center'
             }
           `}
         >
@@ -585,16 +582,6 @@ export default function AgenticUIPresentation() {
              ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="w-full max-w-7xl mx-auto mobile-animate">
-              <h2 className="slide-title text-3xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tighter leading-tight mb-4">
-                <span className="block overflow-hidden py-1">
-                  <span className="slide-title-line block">
-                    Mi workflow para diseñar{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                      UIs agénticas (Antigravity )
-                    </span>
-                  </span>
-                </span>
-              </h2>
               {/* Full Workflow Image */}
               <div className="slide-visual w-full flex justify-center items-center">
                 <div className="relative rounded-[32px] overflow-hidden border border-white/[0.06] w-full max-w-5xl bg-[#161617]/20 group hover:border-[#5cbef8]/30 transition-all duration-300 shadow-[0_10px_40px_rgba(92,190,248,0.03)] backdrop-blur-md">
@@ -609,222 +596,41 @@ export default function AgenticUIPresentation() {
           </section>
 
           {/* ==========================================
-              SLIDE 5: ESPECIFICACIÓN: SLEEP FLOW
+              SLIDE 5: COPILOTKIT + GOOGLE ADK ARCHITECTURE
              ========================================== */}
-          <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full max-w-7xl mx-auto mobile-animate">
-              
-              {/* Content (Left) */}
-              <div className="lg:col-span-4 flex flex-col justify-center">
-                <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight mb-6">
-                  <span className="block overflow-hidden py-1">
-                    <span className="slide-title-line block">
-                      La <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">Especificación</span>.
-                    </span>
+          <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-6 md:px-16 xl:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
+            <div className="w-full max-w-7xl mx-auto mobile-animate flex flex-col justify-center h-full">
+              {/* Slide Title */}
+              <div className="text-center mb-6 xl:mb-10">
+                <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-2 block">
+                  Capa de Integración y Flujo de Datos
+                </span>
+                <h2 className="text-2xl md:text-4xl xl:text-5xl font-semibold text-white tracking-tighter leading-tight">
+                  Energy OS —{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a855f7] via-[#5cbef8] to-[#14b8a6]">
+                    CopilotKit + Google ADK Architecture
                   </span>
                 </h2>
-                <p className="text-lg text-[#86868b] leading-relaxed mb-6 font-light">
-                  Definición explícita del flujo y el estándar de comunicación dinámico entre el Agente y la interfaz del usuario.
+                <p className="text-[#86868b] text-sm md:text-base mt-2 max-w-2xl mx-auto font-light">
+                  Sincronización continua en tiempo real y bidireccional entre la capa de componentes adaptativos en React y la orquestación inteligente de agentes.
                 </p>
-                <div className="space-y-4">
-                  <div className="p-5 rounded-2xl bg-[#161617]/30 border border-white/[0.04] text-xs text-[#86868b] space-y-2 font-light leading-relaxed">
-                    <strong className="text-white font-semibold block mb-1">¿Por qué usar estos dos esquemas?</strong>
-                    <p>&bull; <span className="text-white font-medium">sleep-flow.spec.json:</span> Modela los objetivos, variables de contexto y restricciones de diseño de UI para gobernar y limitar el comportamiento del Agente antes del renderizado.</p>
-                    <p>&bull; <span className="text-white font-medium">a2ui-component.json:</span> El contrato JSON estructurado (A2UI) que especifica la estructura y datos de los componentes que el Agente genera en tiempo de ejecución.</p>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-[#161617]/30 border border-white/[0.04] text-xs text-[#86868b] space-y-2 font-light leading-relaxed">
-                    <strong className="text-white font-semibold block mb-1">Mapeo de la Interfaz:</strong>
-                    <p>&bull; <span className="text-white font-medium">Generative UI:</span> Panel sugerencias de respiración adaptativas en la pantalla principal.</p>
-                    <p>&bull; <span className="text-white font-medium">Static UI:</span> Reproductor de audio base, menús de perfil y configuración general.</p>
-                  </div>
-                </div>
               </div>
 
-              {/* Spec Terminal (Right) */}
-              <div className="slide-visual lg:col-span-8">
-                <div className="w-full rounded-[24px] bg-[#161617]/50 border border-white/[0.06] backdrop-blur-xl shadow-2xl overflow-hidden font-mono text-xs">
-                  {/* Terminal Header */}
-                  <div className="px-6 py-4 bg-black/40 border-b border-white/[0.06] flex justify-between items-center">
-                    <div className="flex items-center space-x-4 overflow-x-auto">
-                      <div className="flex items-center space-x-1.5 mr-2">
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-                      </div>
-                      <button 
-                        onClick={() => setSlide5Tab('spec')}
-                        className={`text-[11px] font-mono px-3 py-1.5 rounded-lg transition-all duration-200 ${
-                          slide5Tab === 'spec' 
-                            ? 'bg-white/[0.07] text-[#5cbef8] border border-white/[0.08]' 
-                            : 'text-[#86868b] hover:text-[#f5f5f7]'
-                        }`}
-                      >
-                        sleep-flow.spec.json
-                      </button>
-                      <button 
-                        onClick={() => setSlide5Tab('a2ui')}
-                        className={`text-[11px] font-mono px-3 py-1.5 rounded-lg transition-all duration-200 ${
-                          slide5Tab === 'a2ui' 
-                            ? 'bg-white/[0.07] text-[#5cbef8] border border-white/[0.08]' 
-                            : 'text-[#86868b] hover:text-[#f5f5f7]'
-                        }`}
-                      >
-                        a2ui-component.json
-                      </button>
-                    </div>
-                    <span className="text-[10px] text-[#5cbef8] font-medium tracking-wider hidden sm:inline">CONTRACT SCHEMA</span>
-                  </div>
-
-                  {/* Terminal Body */}
-                  <div className="p-8 space-y-4 max-h-[420px] overflow-y-auto sidebar-scroll text-left leading-relaxed">
-                    {slide5Tab === 'spec' ? (
-                      <>
-                        <div>
-                          <span className="text-white/40">"objective"</span>: <span className="text-[#a2a2a6]">"Ayudar al usuario a iniciar una sesión de respiración con menos de 3 interacciones rápidas."</span>,
-                        </div>
-                        <div>
-                          <span className="text-white/40">"user_context"</span>: <span className="text-[#F5F5F7]">&#123;</span>
-                          <div className="pl-6">
-                            <span className="text-white/40">"profile"</span>: <span className="text-[#a2a2a6]">"Adulto con altos niveles de estrés reportados"</span>,
-                            <br />
-                            <span className="text-white/40">"time_window"</span>: <span className="text-[#a2a2a6]">"22:30 PM - 01:00 AM"</span>,
-                            <br />
-                            <span className="text-white/40">"device"</span>: <span className="text-[#a2a2a6]">"Mobile / iOS style screen"</span>
-                          </div>
-                          <span className="text-[#F5F5F7]">&#125;</span>,
-                        </div>
-                        <div>
-                          <span className="text-white/40">"ui_constraints"</span>: <span className="text-[#F5F5F7]">&#123;</span>
-                          <div className="pl-6">
-                            <span className="text-white/40">"max_screens"</span>: <span className="text-[#5cbef8]">2</span>,
-                            <br />
-                            <span className="text-white/40">"default_action"</span>: <span className="text-[#a2a2a6]">"Sesión de respiración preseleccionada con botón de inicio directo"</span>,
-                            <br />
-                            <span className="text-white/40">"max_taps"</span>: <span className="text-[#5cbef8]">2</span>
-                          </div>
-                          <span className="text-[#F5F5F7]">&#125;</span>,
-                        </div>
-                        <div>
-                          <span className="text-white/40">"agent_context_variables"</span>: <span className="text-[#F5F5F7]">[</span>
-                          <span className="text-[#a2a2a6]">"local_time"</span>, <span className="text-[#a2a2a6]">"last_sessions_history"</span>, <span className="text-[#a2a2a6]">"current_heartrate_stress"</span>
-                          <span className="text-[#F5F5F7]">]</span>,
-                        </div>
-                        <div>
-                          <span className="text-white/40">"success_metric"</span>: <span className="text-[#a2a2a6]">"Sesión iniciada satisfactoriamente en menos de 10 segundos de interacción."</span>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div>
-                          <span className="text-white/40">"component"</span>: <span className="text-[#a2a2a6]">"BreathingSession"</span>,
-                        </div>
-                        <div>
-                          <span className="text-white/40">"type"</span>: <span className="text-[#a2a2a6]">"agentic_ui"</span>,
-                        </div>
-                        <div>
-                          <span className="text-white/40">"data"</span>: <span className="text-[#F5F5F7]">&#123;</span>
-                          <div className="pl-6">
-                            <span className="text-white/40">"title"</span>: <span className="text-[#a2a2a6]">"Sesión de Respiración Guiada"</span>,
-                            <br />
-                            <span className="text-white/40">"inhale_seconds"</span>: <span className="text-[#5cbef8]">4</span>,
-                            <br />
-                            <span className="text-white/40">"hold_seconds"</span>: <span className="text-[#5cbef8]">4</span>,
-                            <br />
-                            <span className="text-white/40">"exhale_seconds"</span>: <span className="text-[#5cbef8]">4</span>,
-                            <br />
-                            <span className="text-white/40">"audio_stream"</span>: <span className="text-[#a2a2a6]">"https://meditatewithabhi.com/streams/sleep-breath.mp3"</span>
-                          </div>
-                          <span className="text-[#F5F5F7]">&#125;</span>,
-                        </div>
-                        <div>
-                          <span className="text-white/40">"styling"</span>: <span className="text-[#F5F5F7]">&#123;</span>
-                          <div className="pl-6">
-                            <span className="text-white/40">"theme"</span>: <span className="text-[#a2a2a6]">"glassmorphic-dark"</span>,
-                            <br />
-                            <span className="text-white/40">"neon_color"</span>: <span className="text-[#a2a2a6]">"#5cbef8"</span>
-                          </div>
-                          <span className="text-[#F5F5F7]">&#125;</span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </section>
-
-          {/* ==========================================
-              SLIDE 6: STACK TÉCNICO Y ARQUITECTURA
-             ========================================== */}
-          <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full max-w-7xl mx-auto mobile-animate">
-              
-              {/* Content (Left) */}
-              <div className="lg:col-span-5 flex flex-col justify-center">
-                <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight mb-8">
-                  <span className="block overflow-hidden py-1">
-                    <span className="slide-title-line block">Estructura de</span>
-                  </span>
-                  <span className="block overflow-hidden py-1">
-                    <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                      Arquitectura.
-                    </span>
-                  </span>
-                </h2>
-                
-                <div className="space-y-6">
-                  {/* Layer 3 */}
-                  <div className="slide-bullet flex items-start space-x-3">
-                    <div className="font-mono text-xs text-white/30 mt-1">01</div>
-                    <div>
-                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Capa de Cliente (React & CopilotKit)</h4>
-                      <p className="text-sm text-[#86868b] leading-relaxed">
-                        Componentes modulares de interfaz integrados que permiten renderizar dinámicamente bloques generativos estructurados por el agente.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Layer 2 */}
-                  <div className="slide-bullet flex items-start space-x-3">
-                    <div className="font-mono text-xs text-[#5cbef8] mt-1">02</div>
-                    <div>
-                      <h4 className="text-[#5cbef8] font-semibold text-base mb-0.5 tracking-tight">Capa Intermedia (AG-UI Middleware)</h4>
-                      <p className="text-sm text-[#86868b] leading-relaxed">
-                        Controla el mapeo de estados, traduce los flujos JSON abstractos y sincroniza la renderización en tiempo real del cliente.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Layer 1 */}
-                  <div className="slide-bullet flex items-start space-x-3">
-                    <div className="font-mono text-xs text-white/30 mt-1">03</div>
-                    <div>
-                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Capa de Backend (Google ADK Agents)</h4>
-                      <p className="text-sm text-[#86868b] leading-relaxed">
-                        Modelos de lenguaje especializados en inferencia semántica y conexión a bases de datos que evalúan proactivamente hábitos del usuario.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Visual Isometric Stack (Right) */}
-              <div className="slide-visual lg:col-span-7 flex justify-center items-center">
-                <div className="relative rounded-[32px] overflow-hidden border border-white/[0.06] w-full max-w-2xl bg-[#161617]/20 group hover:border-[#5cbef8]/30 transition-all duration-300 shadow-[0_10px_40px_rgba(92,190,248,0.03)] backdrop-blur-md">
+              {/* Architecture diagram — source of truth for layer labels & flows */}
+              <div className="slide-visual w-full flex justify-center items-center mt-4 xl:mt-6">
+                <div className="relative rounded-[32px] overflow-hidden border border-white/[0.06] w-full max-w-[min(1600px,96vw)] bg-[#161617]/20 group hover:border-[#5cbef8]/30 transition-all duration-300 shadow-[0_10px_40px_rgba(92,190,248,0.03)] backdrop-blur-md">
                   <img 
-                    src="/agentic_ui_architecture.png" 
-                    alt="AG-UI Architecture and Flow Diagram" 
+                    src="/copilot_adk_architecture.png" 
+                    alt="Energy OS — CopilotKit + Google ADK Architecture: Frontend (React), AG-UI Protocol, Backend (Next.js), Google ADK Server" 
                     className="w-full h-auto object-contain group-hover:scale-[1.01] transition-transform duration-500"
                   />
                 </div>
               </div>
-
             </div>
           </section>
 
           {/* ==========================================
-              SLIDE 7: DEMO & APRENDIZAJES (PREMIUM MOCKUP INTERACTIVO)
+              SLIDE 6: DEMO & APRENDIZAJES (PREMIUM MOCKUP INTERACTIVO)
              ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full max-w-7xl mx-auto mobile-animate">
@@ -925,7 +731,7 @@ export default function AgenticUIPresentation() {
           </button>
           
           <div className="flex items-center space-x-1.5">
-            {[0, 1, 2, 3, 4, 5, 6, 7].map((slideIndex) => (
+            {[0, 1, 2, 3, 4, 5, 6].map((slideIndex) => (
               <button
                 key={slideIndex}
                 onClick={() => scrollToSlide(slideIndex)}
@@ -936,15 +742,15 @@ export default function AgenticUIPresentation() {
           </div>
 
           <button 
-            onClick={() => scrollToSlide(Math.min(activeSlide + 1, 7))}
-            disabled={activeSlide === 7}
+            onClick={() => scrollToSlide(Math.min(activeSlide + 1, 6))}
+            disabled={activeSlide === 6}
             className="p-1.5 rounded-full hover:bg-white/[0.06] disabled:opacity-20 disabled:hover:bg-transparent text-white transition-colors"
           >
             <ArrowRight size={16} />
           </button>
           
           <span className="font-mono text-xs text-[#86868b] border-l border-white/[0.08] pl-3">
-            {activeSlide + 1} / 8
+            {activeSlide + 1} / 7
           </span>
         </div>
       )}
