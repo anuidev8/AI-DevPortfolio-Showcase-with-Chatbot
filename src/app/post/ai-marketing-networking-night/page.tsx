@@ -662,7 +662,7 @@ export default function AIMarketingNetworkingNight() {
                 </p>
                 <div className="cover-reveal mt-9 flex flex-wrap gap-4 opacity-0">
                   <div className="border border-[#00e5ff]/70 bg-black/70 px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-[#00e5ff]">
-                    Hosted by Angel Mateus
+                    Kingdom Creators
                   </div>
                   <div className="border border-white/20 bg-black/70 px-5 py-3 font-mono text-xs font-black uppercase tracking-widest text-zinc-200">
                     Moderator
