@@ -6,9 +6,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   ArrowLeft, ArrowRight,
   Compass, MessageSquare, HelpCircle, Sparkles,
-  HeartPulse, Layers,
+  Layers,
   UserCheck, HandHeart, Waves,
-  ShieldCheck, Zap
+  ShieldCheck, Zap,
+  Brain, Lightbulb, Smartphone, Mic, Workflow,
+  Github, ExternalLink, BookOpen, Bot, Image, Target
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,7 +28,7 @@ export default function ProfessionalExperiencePresentation() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  const TOTAL_SLIDES = 5;
+  const TOTAL_SLIDES = 8;
 
   // Responsive check
   useEffect(() => {
@@ -296,7 +298,7 @@ export default function ProfessionalExperiencePresentation() {
           className={`
             ${isMobile
               ? 'flex flex-col space-y-24 px-6 py-28'
-              : 'flex w-[500vw] h-screen items-center'
+              : 'flex w-[800vw] h-screen items-center'
             }
           `}
         >
@@ -727,6 +729,209 @@ export default function ProfessionalExperiencePresentation() {
 
             </div>
           </section>
+
+          {/* ==========================================
+              SLIDE 5: TOOLS
+             ========================================== */}
+          <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
+            <div className="w-full max-w-7xl mx-auto mobile-animate">
+              <div className="mb-10">
+                <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-4 block">
+                  05 — Stack
+                </span>
+                <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight">
+                  <span className="block overflow-hidden py-1">
+                    <span className="slide-title-line block">The tools</span>
+                  </span>
+                  <span className="block overflow-hidden py-1">
+                    <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
+                      we use.
+                    </span>
+                  </span>
+                </h2>
+                <p className="slide-bullet mt-5 text-lg text-[#86868b] max-w-2xl leading-relaxed font-light">
+                  The stack that lets us prototype, ship, and iterate a wellness product without slowing the team down.
+                </p>
+              </div>
+
+              <div className="slide-visual grid grid-cols-1 md:grid-cols-2 gap-5">
+                {[
+                  {
+                    icon: <Smartphone size={18} />,
+                    title: 'Product',
+                    tools: ['React Native', 'Expo', 'Next.js', 'TypeScript', 'Tailwind CSS', 'GSAP'],
+                  },
+                  {
+                    icon: <Bot size={18} />,
+                    title: 'AI',
+                    tools: ['Cursor', 'OpenAI', 'Gemini', 'Google AI Studio', 'CopilotKit', 'Claude'],
+                  },
+                  {
+                    icon: <Mic size={18} />,
+                    title: 'Voice & realtime',
+                    tools: ['ElevenLabs', 'OpenAI Realtime', 'Google Live API', 'WebRTC', 'WebSocket'],
+                  },
+                  {
+                    icon: <Workflow size={18} />,
+                    title: 'Ship & automate',
+                    tools: ['n8n', 'Vercel', 'Google Play', 'App Store', 'Node.js'],
+                  },
+                ].map((group) => (
+                  <div
+                    key={group.title}
+                    className="slide-bullet p-6 rounded-[28px] bg-[#161617]/40 border border-white/[0.06] hover:border-[#5cbef8]/30 transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2.5 rounded-full bg-[#5cbef8]/10 text-[#5cbef8]">{group.icon}</div>
+                      <h4 className="text-white font-semibold text-base tracking-tight">{group.title}</h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {group.tools.map((tool) => (
+                        <span
+                          key={tool}
+                          className="px-3 py-1.5 rounded-full bg-white/[0.05] border border-white/[0.06] text-xs text-[#d1d1d6] font-medium"
+                        >
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ==========================================
+              SLIDE 6: AI DESIGN FRAMEWORK
+             ========================================== */}
+          <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full max-w-7xl mx-auto mobile-animate">
+              <div className="lg:col-span-5">
+                <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-4 block">
+                  06 — Framework
+                </span>
+                <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight mb-6">
+                  <span className="block overflow-hidden py-1">
+                    <span className="slide-title-line block">How we design</span>
+                  </span>
+                  <span className="block overflow-hidden py-1">
+                    <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
+                      with AI.
+                    </span>
+                  </span>
+                </h2>
+                <p className="slide-bullet text-lg text-[#86868b] leading-relaxed font-light mb-6">
+                  We use the <span className="text-white font-medium">AI Design Framework</span>: a repeatable agentic UI/UX workflow from product brain to prototype.
+                </p>
+                <p className="slide-bullet text-sm text-[#86868b] leading-relaxed mb-8">
+                  Traditional path: brief → Figma → handoff → build. Our path: soul.md → mood boards → one-shot variants → locked prototype.
+                </p>
+                <a
+                  href="https://github.com/anuidev8/ai-design-framework"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="slide-bullet inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] hover:border-white/[0.15] text-sm text-white transition-all"
+                >
+                  <Github size={16} />
+                  anuidev8/ai-design-framework
+                  <ExternalLink size={14} className="text-[#86868b]" />
+                </a>
+              </div>
+
+              <div className="slide-visual lg:col-span-7 space-y-3">
+                {[
+                  { step: '01', artifact: 'soul.md', goal: 'Purpose, audience, constraints, UI principles' },
+                  { step: '02', artifact: 'Visual research', goal: '6–15 curated references' },
+                  { step: '03', artifact: 'Mood boards', goal: '2–3 directions scored against soul' },
+                  { step: '04', artifact: 'Design system', goal: 'Tokens, components, screen layouts' },
+                  { step: '05', artifact: 'One-shot variants', goal: 'Explore many directions, then pick' },
+                  { step: '06', artifact: 'Specs', goal: 'States, flows, and behaviors' },
+                  { step: '07', artifact: 'Prototype', goal: 'Build the locked direction in code' },
+                ].map((item) => (
+                  <div
+                    key={item.step}
+                    className="slide-bullet flex items-center gap-4 p-3.5 rounded-2xl bg-[#161617]/40 border border-white/[0.06] hover:border-[#5cbef8]/30 transition-all"
+                  >
+                    <span className="font-mono text-xs text-[#5cbef8] w-8 shrink-0">{item.step}</span>
+                    <div className="min-w-0">
+                      <h4 className="text-white font-semibold text-sm tracking-tight">{item.artifact}</h4>
+                      <p className="text-xs text-[#86868b] leading-relaxed">{item.goal}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ==========================================
+              SLIDE 7: IDEAS
+             ========================================== */}
+          <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
+            <div className="w-full max-w-7xl mx-auto mobile-animate">
+              <div className="mb-10">
+                <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-4 block">
+                  07 — Ideas
+                </span>
+                <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight">
+                  <span className="block overflow-hidden py-1">
+                    <span className="slide-title-line block">Ideas this</span>
+                  </span>
+                  <span className="block overflow-hidden py-1">
+                    <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
+                      unlocks.
+                    </span>
+                  </span>
+                </h2>
+                <p className="slide-bullet mt-5 text-lg text-[#86868b] max-w-2xl leading-relaxed font-light">
+                  Imagination is the bottleneck now — not software execution. These are the ideas we run with.
+                </p>
+              </div>
+
+              <div className="slide-visual grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {[
+                  {
+                    icon: <BookOpen size={18} />,
+                    title: 'soul.md as source of truth',
+                    body: 'One shared product brain for humans and agents. Purpose, taste, and constraints stay aligned.',
+                  },
+                  {
+                    icon: <Image size={18} />,
+                    title: 'Mood boards before pixels',
+                    body: 'Set taste early with curated references. Direction before screens.',
+                  },
+                  {
+                    icon: <Sparkles size={18} />,
+                    title: 'One-shot many variants',
+                    body: 'Generate directions in parallel, pin favorites in a disposable gallery, then lock one.',
+                  },
+                  {
+                    icon: <Brain size={18} />,
+                    title: 'Agents build, we decide',
+                    body: 'Coding agents implement. We choose story, interaction, and taste.',
+                  },
+                  {
+                    icon: <Target size={18} />,
+                    title: 'Faster wellness experiments',
+                    body: 'Breathing flows, yoga paths, and habit loops can be prototyped in days, not weeks.',
+                  },
+                  {
+                    icon: <Lightbulb size={18} />,
+                    title: 'Keep exploring',
+                    body: 'Voice-first screens, agentic UI, and new product bets — without losing the product soul.',
+                  },
+                ].map((idea) => (
+                  <div
+                    key={idea.title}
+                    className="slide-bullet p-6 rounded-[28px] bg-[#161617]/40 border border-white/[0.06] hover:border-[#5cbef8]/30 transition-all duration-300"
+                  >
+                    <div className="p-2.5 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] w-fit mb-4">{idea.icon}</div>
+                    <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">{idea.title}</h4>
+                    <p className="text-sm text-[#86868b] leading-relaxed font-light">{idea.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
@@ -742,7 +947,7 @@ export default function ProfessionalExperiencePresentation() {
           </button>
 
           <div className="flex items-center space-x-1.5">
-            {[0, 1, 2, 3, 4].map((slideIndex) => (
+            {Array.from({ length: TOTAL_SLIDES }, (_, slideIndex) => (
               <button
                 key={slideIndex}
                 onClick={() => scrollToSlide(slideIndex)}
