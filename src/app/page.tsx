@@ -5,6 +5,8 @@ import { ProjectsSection } from "@/components/home/ProjectsSection";
 import { AppLayout } from "@/layout/AppLayout";
 import { TechsSection } from "@/components/home/Techs";
 import { ServicesSection } from "@/components/home/ServiceSection";
+import { PositioningSection } from "@/components/home/PositioningSection";
+import { MentorshipSection } from "@/components/home/MentorshipSection";
 
 export default function  Home() {
   return (
@@ -21,14 +23,12 @@ export default function  Home() {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-16 space-y-24">
-        {/* Hero Section */}
         <Hero />
-        {/* Projects Section */}
-        <ProjectsSection />
+        <PositioningSection />
         <ServicesSection />
-         <TechsSection />
-
-   
+        <MentorshipSection />
+        <ProjectsSection />
+        <TechsSection />
       </div>
     </div>
     <Footer />
@@ -36,4 +36,3 @@ export default function  Home() {
     </>
   );
 }
-

@@ -1,55 +1,67 @@
 'use client'
 import { motion } from 'framer-motion';
-import { Code2, Layout, PhoneCall, Terminal} from 'lucide-react';
+import { Bot, ChartNoAxesCombined, PhoneCall, Smartphone, Terminal} from 'lucide-react';
 
 const services = [
   {
-    title: "I will build responsive and interactive web layouts",
-    description: "Create modern, user-friendly web layouts that adapt perfectly to all devices. Using the latest technologies to ensure your website is both beautiful and functional.",
-    icon: <Layout className="w-6 h-6 text-[#5cbef8]" />,
+    title: "AI Wellness App MVP",
+    description: "For founders who need a first version of a meditation, breathwork, sleep, coaching, fitness, or health product that feels polished enough to show users and investors.",
+    icon: <Smartphone className="w-6 h-6 text-[#5cbef8]" />,
     features: [
-      "Responsive design for all devices",
-      "Interactive UI elements",
-      "Modern web technologies",
-      "SEO-friendly structure"
+      "Mobile and web product architecture",
+      "Onboarding, subscriptions, audio, and progress flows",
+      "Calm, trustworthy wellness UX",
+      "React, Next.js, React Native, and Node.js"
     ]
   },
   {
-    title: "I will add CSS animations to your website",
-    description: "Enhance your website with smooth, engaging animations that improve user experience and bring your interface to life.",
-    icon: <Code2 className="w-6 h-6 text-[#5cbef8]" />,
+    title: "Voice AI & Realtime Interfaces",
+    description: "For products that need conversational AI, realtime coaching, camera or voice interaction, AI-guided sessions, or a copilot inside the product experience.",
+    icon: <Bot className="w-6 h-6 text-[#5cbef8]" />,
     features: [
-      "Custom CSS animations",
-      "Interactive effects",
-      "Performance optimization",
-      "Cross-browser compatibility"
+      "OpenAI, Google Live, ElevenLabs, and WebRTC workflows",
+      "Streaming chat, voice, and multimodal UI",
+      "Agentic UI patterns and tool calling",
+      "Fast prototypes that can become real product features"
+    ]
+  },
+  {
+    title: "Frontend Product Systems",
+    description: "For teams that need dashboards, internal tools, hiring workflows, analytics screens, landing experiences, or performance improvements in an existing product.",
+    icon: <ChartNoAxesCombined className="w-6 h-6 text-[#5cbef8]" />,
+    features: [
+      "Dashboard and admin experiences",
+      "Design systems and reusable UI components",
+      "Analytics, automation, and marketing integrations",
+      "Maintainable architecture for growing teams"
     ]
   }
 ];
 
 export const ServicesSection = () => {
   const handleWhatsAppClick = () => {
-    window.open('https://wa.me/3137020974?text=Hi, I am interested in your services!', '_blank');
+    window.open('https://wa.me/+573206456179?text=Hi%20Angel,%20I%20want%20to%20talk%20about%20an%20AI%20or%20wellness%20product.', '_blank');
   };
 
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      id="services"
       className="space-y-12"
     >
            <h2 className="text-3xl font-mono text-white mb-8 flex items-center gap-3">
            <Terminal className="text-[#5cbef8]" />
-        Services
+        Signature_Offers
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {services.map((service, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.2 }}
-            className="retro-card border border-gray-700/50 rounded-lg p-8 bg-[#0a192f]/80 backdrop-blur-sm
+          className="retro-card border border-gray-700/50 rounded-lg p-8 bg-[#0a192f]/80 backdrop-blur-sm
                      hover:border-[#5cbef8]/50 transition-all duration-300 relative overflow-hidden group"
           >
             {/* Background Grid Effect */}
@@ -63,23 +75,19 @@ export const ServicesSection = () => {
             </div>
 
             <div className="relative z-10">
-              {/* Icon */}
               <div className="mb-6">
                 {service.icon}
               </div>
 
-              {/* Title */}
-              <h3 className="text-2xl text-white font-bold mb-4 font-mono">
+              <h3 className="text-xl text-white font-bold mb-4 font-mono leading-snug">
                 <span className="text-[#5cbef8]">&gt; </span>
                 {service.title}
               </h3>
 
-              {/* Description */}
               <p className="text-gray-300 mb-6">
                 {service.description}
               </p>
 
-              {/* Features */}
               <ul className="space-y-3">
                 {service.features.map((feature, i) => (
                   <motion.li
@@ -113,8 +121,7 @@ export const ServicesSection = () => {
                    hover:bg-green-600 transition-colors group relative overflow-hidden"
         >
           <PhoneCall className="w-6 h-6" />
-          <span className="relative z-10">Let's discuss your project</span>
-          {/* Button Glow Effect */}
+          <span className="relative z-10">Book a quick project call</span>
           <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity"
                style={{
                  background: 'radial-gradient(circle at center, white 0%, transparent 70%)'

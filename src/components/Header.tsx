@@ -2,14 +2,18 @@
 'use client'
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { MessageCircle, Home, User, FileText, Bot, Menu, X } from 'lucide-react';
+import { MessageCircle, Home, BriefcaseBusiness, Cpu, GraduationCap, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 const navItems = [
     { href: '/', label: 'Home', icon: <Home size={20} /> },
-/*     { href: '/posts', label: 'Posts', icon: <FileText size={20} /> },
-    { href: '/chat', label: 'Assistant', icon: <Bot size={20} /> }, */
+    { href: '/#services', label: 'Offers', icon: <BriefcaseBusiness size={20} /> },
+    { href: '/#membership', label: 'Membership', icon: <GraduationCap size={20} /> },
+    { href: '/#projects', label: 'Work', icon: <Cpu size={20} /> },
   ];
+
+const whatsappUrl = "https://wa.me/+573206456179?text=Hi%20Angel,%20I%20want%20to%20talk%20about%20an%20AI%20or%20wellness%20product.";
+
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -52,7 +56,7 @@ export const Header = () => {
             
             {/* WhatsApp Contact Button */}
             <motion.a
-              href="https://wa.me/+573206456179"
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
@@ -96,7 +100,7 @@ export const Header = () => {
               </Link>
             ))}
             <motion.a
-              href="https://wa.me/YourPhoneNumber"
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               whileTap={{ scale: 0.95 }}
@@ -128,8 +132,7 @@ export const Footer = () => {
               <span className="text-blue-500">&gt;_</span> About
             </h3>
             <p className="text-gray-400">
-              Building digital experiences with modern technologies.
-              Let's create something amazing together.
+              Building AI-powered apps, dashboards, voice interfaces, and automation workflows for wellness founders and growing teams.
             </p>
           </div>
 
@@ -161,7 +164,7 @@ export const Footer = () => {
               <span className="text-blue-500">&gt;_</span> Connect
             </h3>
             <motion.a
-              href="https://wa.me/YourPhoneNumber"
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
@@ -180,4 +183,3 @@ export const Footer = () => {
     </motion.footer>
   );
 };
-

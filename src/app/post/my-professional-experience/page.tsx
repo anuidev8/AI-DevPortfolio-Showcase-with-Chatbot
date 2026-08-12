@@ -267,7 +267,7 @@ export default function ProfessionalExperiencePresentation() {
       <header className="fixed top-0 left-0 right-0 z-50 px-8 py-5 flex justify-between items-center bg-black/70 backdrop-blur-xl border-b border-white/[0.06] transition-all duration-300">
         <Link href="/" className="flex items-center space-x-2 text-[#86868b] hover:text-white transition-colors group">
           <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
-          <span className="text-sm font-medium tracking-tight">Volver al portfolio</span>
+          <span className="text-sm font-medium tracking-tight">Back to portfolio</span>
         </Link>
         <div className="flex items-center space-x-4">
           <span className="text-[11px] font-semibold text-white tracking-widest bg-white/[0.08] px-3 py-1 rounded-full border border-white/[0.06]">
@@ -301,7 +301,7 @@ export default function ProfessionalExperiencePresentation() {
           `}
         >
           {/* ==========================================
-              SLIDE 0: COVER / PORTADA
+              SLIDE 0: COVER
               ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative select-none ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full max-w-7xl mx-auto">
@@ -309,21 +309,21 @@ export default function ProfessionalExperiencePresentation() {
               <div className="max-w-2xl mobile-animate">
                 <h1 className="cover-title text-5xl md:text-[72px] xl:text-[84px] font-semibold tracking-tighter leading-[1.05] mb-8 text-white opacity-0">
                   <span className="block overflow-hidden py-1">
-                    <span className="cover-title-line block">Mi experiencia</span>
+                    <span className="cover-title-line block">My professional</span>
                   </span>
                   <span className="block overflow-hidden py-1">
                     <span className="cover-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                      profesional.
+                      experience.
                     </span>
                   </span>
                 </h1>
                 <p className="cover-desc text-xl md:text-2xl xl:text-3xl font-normal text-[#86868b] mb-6 max-w-3xl leading-relaxed tracking-tight opacity-0">
-                  Consultor tech y embajador en The School of Breath.
+                  Tech consultant and ambassador at The School of Breath.
                 </p>
                 <p className="cover-subdesc text-base md:text-lg xl:text-xl font-normal text-[#86868b]/90 mb-10 max-w-3xl leading-relaxed tracking-tight opacity-0">
-                  Mi experiencia construyendo producto de bienestar en una app con más de
-                  {' '}<span className="text-white font-medium">5K descargas</span> y un canal con más de
-                  {' '}<span className="text-white font-medium">175K usuarios activos</span>.
+                  My experience building a wellness product in an app with over
+                  {' '}<span className="text-white font-medium">5K downloads</span> and a channel with over
+                  {' '}<span className="text-white font-medium">175K active users</span>.
                 </p>
 
 
@@ -409,21 +409,21 @@ export default function ProfessionalExperiencePresentation() {
           </section>
 
           {/* ==========================================
-              SLIDE 1: ENTENDER LA VISIÓN DEL PRODUCTO
+              SLIDE 1: UNDERSTAND THE PRODUCT VISION
              ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="w-full max-w-7xl mx-auto mobile-animate">
               <div className="mb-12">
                 <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-4 block">
-                  01 — Producto
+                  01 — Product
                 </span>
                 <h2 className="slide-title text-5xl md:text-6xl font-semibold text-white tracking-tighter leading-tight">
                   <span className="block overflow-hidden py-1">
-                    <span className="slide-title-line block">Entender la</span>
+                    <span className="slide-title-line block">Understand the</span>
                   </span>
                   <span className="block overflow-hidden py-1">
                     <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                      visión del producto.
+                      product vision.
                     </span>
                   </span>
                 </h2>
@@ -434,24 +434,24 @@ export default function ProfessionalExperiencePresentation() {
                   <div className="slide-bullet flex items-start space-x-4">
                     <div className="p-3 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] flex-shrink-0 mt-1"><Compass size={20} /></div>
                     <div>
-                      <h4 className="text-white font-semibold text-base mb-1">Planear antes de ejecutar</h4>
-                      <p className="text-sm text-[#86868b] leading-relaxed">La claridad nace de la comunicación. Definir el rumbo antes de dar la primera tarea evita retrabajo.</p>
+                      <h4 className="text-white font-semibold text-base mb-1">Plan before you execute</h4>
+                      <p className="text-sm text-[#86868b] leading-relaxed">Clarity comes from communication. Setting the direction before assigning the first task avoids rework.</p>
                     </div>
                   </div>
 
                   <div className="slide-bullet flex items-start space-x-4">
                     <div className="p-3 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] flex-shrink-0 mt-1"><HelpCircle size={20} /></div>
                     <div>
-                      <h4 className="text-white font-semibold text-base mb-1">Preguntar</h4>
-                      <p className="text-sm text-[#86868b] leading-relaxed">Descubrir el propósito real detrás de cada feature.</p>
+                      <h4 className="text-white font-semibold text-base mb-1">Ask</h4>
+                      <p className="text-sm text-[#86868b] leading-relaxed">Uncover the real purpose behind every feature.</p>
                     </div>
                   </div>
 
                   <div className="slide-bullet flex items-start space-x-4">
                     <div className="p-3 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] flex-shrink-0 mt-1"><Sparkles size={20} /></div>
                     <div>
-                      <h4 className="text-white font-semibold text-base mb-1">Prototipar</h4>
-                      <p className="text-sm text-[#86868b] leading-relaxed">Google AI Studio + Gemini para experimentar rápido.</p>
+                      <h4 className="text-white font-semibold text-base mb-1">Prototype</h4>
+                      <p className="text-sm text-[#86868b] leading-relaxed">Google AI Studio + Gemini to experiment fast.</p>
                     </div>
                   </div>
                 </div>
@@ -471,25 +471,25 @@ export default function ProfessionalExperiencePresentation() {
                   <div className="slide-bullet p-5 rounded-[24px] bg-[#161617]/40 border border-white/[0.08] hover:border-[#5cbef8]/30 transition-all">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-8 h-8 rounded-full bg-[#5cbef8]/20 border border-[#5cbef8]/50 flex items-center justify-center text-[#5cbef8] font-bold text-xs">?</div>
-                      <h4 className="text-white font-semibold text-base">Preguntar</h4>
+                      <h4 className="text-white font-semibold text-base">Ask</h4>
                     </div>
-                    <p className="text-xs text-[#86868b] leading-relaxed">Descubrir el propósito real detrás de cada feature.</p>
+                    <p className="text-xs text-[#86868b] leading-relaxed">Uncover the real purpose behind every feature.</p>
                   </div>
 
                   <div className="slide-bullet p-5 rounded-[24px] bg-[#161617]/40 border border-white/[0.08] hover:border-[#5cbef8]/30 transition-all">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-8 h-8 rounded-full bg-[#5cbef8]/20 border border-[#5cbef8]/50 flex items-center justify-center text-[#5cbef8] font-bold text-xs">◉</div>
-                      <h4 className="text-white font-semibold text-base">Prototipar</h4>
+                      <h4 className="text-white font-semibold text-base">Prototype</h4>
                     </div>
-                    <p className="text-xs text-[#86868b] leading-relaxed">Google AI Studio + Gemini para experimentar rápido.</p>
+                    <p className="text-xs text-[#86868b] leading-relaxed">Google AI Studio + Gemini to experiment fast.</p>
                   </div>
 
                   <div className="slide-bullet p-5 rounded-[24px] bg-[#161617]/40 border border-white/[0.08] hover:border-[#5cbef8]/30 transition-all">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-8 h-8 rounded-full bg-[#5cbef8]/20 border border-[#5cbef8]/50 flex items-center justify-center text-[#5cbef8] font-bold text-xs">🚀</div>
-                      <h4 className="text-white font-semibold text-base">Ejecutar</h4>
+                      <h4 className="text-white font-semibold text-base">Execute</h4>
                     </div>
-                    <p className="text-xs text-[#86868b] leading-relaxed">Con claridad, confianza y dirección.</p>
+                    <p className="text-xs text-[#86868b] leading-relaxed">With clarity, confidence, and direction.</p>
                   </div>
                 </div>
               </div>
@@ -497,7 +497,7 @@ export default function ProfessionalExperiencePresentation() {
           </section>
 
           {/* ==========================================
-              SLIDE 2: PERSPECTIVA DEL USUARIO
+              SLIDE 2: USER PERSPECTIVE
              ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full max-w-7xl mx-auto mobile-animate">
@@ -517,32 +517,32 @@ export default function ProfessionalExperiencePresentation() {
               {/* Content (Right) */}
               <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col justify-center">
                 <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-4 block">
-                  02 — Usuario
+                  02 — User
                 </span>
                 <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight mb-8">
                   <span className="block overflow-hidden py-1">
-                    <span className="slide-title-line block">Perspectiva</span>
+                    <span className="slide-title-line block">User</span>
                   </span>
                   <span className="block overflow-hidden py-1">
                     <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                      del usuario.
+                      perspective.
                     </span>
                   </span>
                 </h2>
                 <div className="space-y-4">
                   <div className="slide-bullet p-5 rounded-2xl bg-[#161617]/30 border border-white/[0.04] hover:border-white/[0.08] transition-all">
-                    <h4 className="text-white font-semibold text-base mb-1">El valor está en la simplicidad</h4>
-                    <p className="text-[#86868b] text-sm leading-relaxed font-light">El verdadero valor está en hacerle la vida simple al usuario, no en agregar funciones.</p>
+                    <h4 className="text-white font-semibold text-base mb-1">Value lives in simplicity</h4>
+                    <p className="text-[#86868b] text-sm leading-relaxed font-light">Real value is making the user&apos;s life simpler, not adding more features.</p>
                   </div>
 
                   <div className="slide-bullet p-5 rounded-2xl bg-[#161617]/30 border border-white/[0.04] hover:border-white/[0.08] transition-all">
-                    <h4 className="text-white font-semibold text-base mb-1">Menos decisiones</h4>
-                    <p className="text-[#86868b] text-sm leading-relaxed font-light">En productos de bienestar y yoga, los usuarios no quieren tomar demasiadas decisiones. No hay que sobrecargarlos.</p>
+                    <h4 className="text-white font-semibold text-base mb-1">Fewer decisions</h4>
+                    <p className="text-[#86868b] text-sm leading-relaxed font-light">In wellness and yoga products, users don&apos;t want too many decisions. Don&apos;t overload them.</p>
                   </div>
 
                   <div className="slide-bullet p-5 rounded-2xl bg-[#161617]/30 border border-white/[0.04] hover:border-white/[0.08] transition-all">
-                    <h4 className="text-white font-semibold text-base mb-1">Responder rápido</h4>
-                    <p className="text-[#86868b] text-sm leading-relaxed font-light">Hay que responder rápido y ofrecer alternativas cuando sea necesario.</p>
+                    <h4 className="text-white font-semibold text-base mb-1">Respond fast</h4>
+                    <p className="text-[#86868b] text-sm leading-relaxed font-light">Respond quickly and offer alternatives when needed.</p>
                   </div>
                 </div>
               </div>
@@ -551,7 +551,7 @@ export default function ProfessionalExperiencePresentation() {
           </section>
 
           {/* ==========================================
-              SLIDE 3: PERSPECTIVA DE LIDERAZGO
+              SLIDE 3: LEADERSHIP PERSPECTIVE
              ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full max-w-7xl mx-auto mobile-animate">
@@ -559,20 +559,20 @@ export default function ProfessionalExperiencePresentation() {
               {/* Content (Left) */}
               <div className="lg:col-span-5 flex flex-col justify-center">
                 <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-4 block">
-                  03 — Liderazgo
+                  03 — Leadership
                 </span>
                 <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight mb-6">
                   <span className="block overflow-hidden py-1">
-                    <span className="slide-title-line block">Perspectiva de</span>
+                    <span className="slide-title-line block">Leadership</span>
                   </span>
                   <span className="block overflow-hidden py-1">
                     <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                      liderazgo.
+                      perspective.
                     </span>
                   </span>
                 </h2>
                 <p className="text-lg text-[#86868b] leading-relaxed font-light">
-                  Lidero identificando el potencial de cada persona y cultivando una relación cercana y honesta con el equipo.
+                  I lead by identifying each person&apos;s potential and building a close, honest relationship with the team.
                 </p>
               </div>
 
@@ -580,26 +580,26 @@ export default function ProfessionalExperiencePresentation() {
               <div className="slide-visual lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="p-6 rounded-[28px] bg-[#161617]/40 border border-white/[0.06] backdrop-blur-md group hover:border-[#5cbef8]/30 transition-all duration-300">
                   <div className="p-2.5 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] w-fit mb-4"><UserCheck size={20} /></div>
-                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Dividir con claridad</h4>
-                  <p className="text-sm text-[#86868b] leading-relaxed font-light">Identifico las fortalezas de cada desarrollador para asignar tareas donde brillan.</p>
+                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Delegate with clarity</h4>
+                  <p className="text-sm text-[#86868b] leading-relaxed font-light">I identify each developer&apos;s strengths so I can assign work where they shine.</p>
                 </div>
 
                 <div className="p-6 rounded-[28px] bg-[#161617]/40 border border-white/[0.06] backdrop-blur-md group hover:border-[#5cbef8]/30 transition-all duration-300">
                   <div className="p-2.5 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] w-fit mb-4"><MessageSquare size={20} /></div>
-                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Comunicación honesta</h4>
-                  <p className="text-sm text-[#86868b] leading-relaxed font-light">Mantengo una comunicación constante y transparente en todo momento.</p>
+                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Honest communication</h4>
+                  <p className="text-sm text-[#86868b] leading-relaxed font-light">I keep communication constant and transparent at all times.</p>
                 </div>
 
                 <div className="p-6 rounded-[28px] bg-[#161617]/40 border border-white/[0.06] backdrop-blur-md group hover:border-[#5cbef8]/30 transition-all duration-300">
                   <div className="p-2.5 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] w-fit mb-4"><HandHeart size={20} /></div>
-                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Relación cercana</h4>
-                  <p className="text-sm text-[#86868b] leading-relaxed font-light">Pregunto cómo se siente el equipo y cuido el vínculo humano.</p>
+                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Close relationship</h4>
+                  <p className="text-sm text-[#86868b] leading-relaxed font-light">I ask how the team is feeling and I protect the human connection.</p>
                 </div>
 
                 <div className="p-6 rounded-[28px] bg-[#161617]/40 border border-white/[0.06] backdrop-blur-md group hover:border-[#5cbef8]/30 transition-all duration-300">
                   <div className="p-2.5 rounded-full bg-[#5cbef8]/10 text-[#5cbef8] w-fit mb-4"><Layers size={20} /></div>
-                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Enseñar y soltar</h4>
-                  <p className="text-sm text-[#86868b] leading-relaxed font-light">Enseño, pero también dejo que el equipo construya y aprenda haciendo.</p>
+                  <h4 className="text-base font-semibold text-white mb-1.5 tracking-tight">Teach and let go</h4>
+                  <p className="text-sm text-[#86868b] leading-relaxed font-light">I teach, but I also let the team build and learn by doing.</p>
                 </div>
               </div>
 
@@ -607,7 +607,7 @@ export default function ProfessionalExperiencePresentation() {
           </section>
 
           {/* ==========================================
-              SLIDE 4: MANEJO EMOCIONAL
+              SLIDE 4: EMOTIONAL MANAGEMENT
              ========================================== */}
           <section className={`slide-section shrink-0 w-screen h-screen flex flex-col justify-center px-12 md:px-32 relative ${isMobile ? 'h-auto py-16' : ''}`}>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full max-w-7xl mx-auto mobile-animate">
@@ -615,15 +615,15 @@ export default function ProfessionalExperiencePresentation() {
               {/* Content (Left) */}
               <div className="lg:col-span-6 flex flex-col justify-center">
                 <span className="font-mono text-xs text-[#5cbef8] tracking-widest uppercase mb-4 block">
-                  04 — Energía
+                  04 — Energy
                 </span>
                 <h2 className="slide-title text-4xl md:text-6xl font-semibold text-white tracking-tighter leading-tight mb-8">
                   <span className="block overflow-hidden py-1">
-                    <span className="slide-title-line block">Manejo</span>
+                    <span className="slide-title-line block">Emotional</span>
                   </span>
                   <span className="block overflow-hidden py-1">
                     <span className="slide-title-line block text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">
-                      emocional.
+                      management.
                     </span>
                   </span>
                 </h2>
@@ -634,9 +634,9 @@ export default function ProfessionalExperiencePresentation() {
                       <Zap size={16} />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Transmitir buena energía</h4>
+                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Bring good energy</h4>
                       <p className="text-sm text-[#86868b] leading-relaxed">
-                        La actitud es contagiosa. <span className="text-white font-medium">Siempre buena energía</span>, incluso en los días difíciles.
+                        Attitude is contagious. <span className="text-white font-medium">Always good energy</span>, even on hard days.
                       </p>
                     </div>
                   </div>
@@ -646,9 +646,9 @@ export default function ProfessionalExperiencePresentation() {
                       <Waves size={16} />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Enfoque y calma</h4>
+                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Focus and calm</h4>
                       <p className="text-sm text-[#86868b] leading-relaxed">
-                        Mantener el enfoque, la calma y la profesionalidad <span className="text-white font-medium">incluso bajo presión</span>.
+                        Stay focused, calm, and professional <span className="text-white font-medium">even under pressure</span>.
                       </p>
                     </div>
                   </div>
@@ -658,9 +658,9 @@ export default function ProfessionalExperiencePresentation() {
                       <ShieldCheck size={16} />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Profesionalismo</h4>
+                      <h4 className="text-white font-semibold text-base mb-0.5 tracking-tight">Professionalism</h4>
                       <p className="text-sm text-[#86868b] leading-relaxed">
-                        Ser el punto estable del equipo cuando todo se mueve rápido.
+                        Be the team&apos;s steady point when everything is moving fast.
                       </p>
                     </div>
                   </div>
@@ -668,7 +668,7 @@ export default function ProfessionalExperiencePresentation() {
 
                 {/* Final Quote Speaker note */}
                 <div className="mt-10 p-5 rounded-2xl bg-white/[0.02] border border-white/[0.04] text-center font-normal text-xs text-[#86868b] leading-relaxed italic">
-                  "Liderar producto de bienestar es, ante todo, cuidar a las personas: al equipo que construye y al usuario que respira."
+                  &quot;Leading a wellness product is, first of all, taking care of people: the team that builds and the user who breathes.&quot;
                 </div>
 
                 {/* App Store Links */}
@@ -709,17 +709,17 @@ export default function ProfessionalExperiencePresentation() {
                 <div className="relative w-full max-w-md md:max-w-lg lg:max-w-xl aspect-square rounded-[40px] overflow-hidden bg-[#0a0a0a] border border-white/[0.08] shadow-[0_24px_80px_rgba(0,0,0,0.45)] group">
                   <img
                     src="/energy.png"
-                    alt="Manejo emocional - Energía"
+                    alt="Emotional management - Energy"
                     className="w-full h-full object-cover"
                     draggable={false}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none z-10" />
                   <div className="absolute bottom-0 left-0 right-0 p-8 text-left z-20">
                     <p className="text-2xl md:text-3xl font-semibold text-white tracking-tight leading-snug mb-2">
-                      Calma, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">foco</span> y buena energía.
+                      Calm, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5cbef8] to-[#1283c4]">focus</span>, and good energy.
                     </p>
                     <p className="text-sm text-[#d1d1d6] font-light max-w-xs">
-                      La estabilidad emocional que sostiene al equipo bajo presión.
+                      The emotional stability that holds the team together under pressure.
                     </p>
                   </div>
                 </div>
@@ -747,7 +747,7 @@ export default function ProfessionalExperiencePresentation() {
                 key={slideIndex}
                 onClick={() => scrollToSlide(slideIndex)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${activeSlide === slideIndex ? 'bg-white w-4' : 'bg-white/20 hover:bg-white/40'}`}
-                title={`Ir al slide ${slideIndex + 1}`}
+                title={`Go to slide ${slideIndex + 1}`}
               />
             ))}
           </div>

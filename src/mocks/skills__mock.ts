@@ -6,49 +6,41 @@
         "React.js",
         "Next.js",
         "TypeScript",
-        "Redux.js",
+        "React Native",
+        "Expo",
         "React Hooks",
         "Tailwind CSS",
-        "Material-UI",
-        "React Leaflet",
+        "Radix UI",
         "Lottie Animator",
         "GreenSock Animation Platform (GSAP)",
-        "vue.js",
       ],
     },
     {
-      category: "AI Tools",
+      category: "AI Product Tools",
       items: [
-        "Microsoft Copilot chat",
-        "botpress",
-        "Open AI api",
-        "HeyGen platform",
-        "elevenlabs platform",
+        "OpenAI API",
+        "OpenAI Realtime",
+        "Google Live API",
+        "CopilotKit",
+        "ElevenLabs",
+        "AI voice interfaces",
+        "Agentic UI",
       ],
     },
     {
-      category: "Tools & Other Technologies",
-      items: ["Microsoft Entra ID", "Microsoft Copilot Studio", "leafletjs"],
+      category: "Automation & Data",
+      items: ["n8n", "Node.js", "Express", "Analytics integrations", "Marketing workflows", "Microsoft Copilot Studio"],
     },
-    /*   {
-      category: "Backend",
-      items: ["Node.js +2",  "Express+2", "MongoDB+2"]
-    }, */
     {
       category: "Testing & Quality Assurance",
-      items: ["Vitest", "jest"],
+      items: ["Vitest", "Jest", "TypeScript checks", "Performance optimization"],
     },
     {
-      category: "Web Technologies",
-      items: ["WebRTC"],
+      category: "Realtime & Media",
+      items: ["WebRTC", "WebSocket", "Voice streaming", "Audio UX", "Camera vision"],
     },
     {
-      category: "CMS",
-      items: ["wordpress", "wix"],
+      category: "Launch Platforms",
+      items: ["Vercel", "WordPress", "Wix", "Google Play delivery"],
     },
-
-    /* {
-      category: "DevOps",
-      items: ["AWS", "Docker", "Kubernetes", "CI/CD", "Git"]
-    } */
   ];

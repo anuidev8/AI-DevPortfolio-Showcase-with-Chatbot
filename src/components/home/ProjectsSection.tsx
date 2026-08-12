@@ -10,11 +10,13 @@ import { mockProjects } from '@/mocks/projects__mock';
 interface ProjectsSectionProps {
   projects?: NotionProject[];
 }
-  // Categories for filtering
-  const categories = ['All', 'Frontend', 'Backend', 'Full Stack', 'Mobile'];
+const categories = ['All', 'Wellness', 'AI Agent', 'AI & Real-Time', 'Mobile AI', 'Frontend', 'Full Stack'];
+
+const wellnessTerms = ['wellness', 'breath', 'meditation', 'sleep', 'fitness', 'health', 'coaching'];
+
+const hasUsableLink = (link: string) => link && link !== '#';
+
 export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProps) => {
-   console.log(projects);
-   
   const [filter, setFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,7 +40,12 @@ export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProp
 
   // Filter projects
   const filteredProjects = projects.filter(project => {
-    const matchesFilter = filter === 'all' || project.category.name.toLowerCase() === filter.toLowerCase();
+    const searchableProject = `${project.title} ${project.description} ${project.category.name}`.toLowerCase();
+    const matchesWellness = wellnessTerms.some((term) => searchableProject.includes(term));
+    const matchesFilter =
+      filter === 'all' ||
+      (filter === 'wellness' && matchesWellness) ||
+      project.category.name.toLowerCase() === filter.toLowerCase();
     const matchesSearch = 
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,11 +66,12 @@ export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProp
     <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      id="projects"
       className="space-y-8"
     >
       <h2 className="text-3xl font-mono text-white mb-8 flex items-center gap-3">
         <Terminal className="text-[#5cbef8]" />
-        Featured_Projects
+        Selected_Case_Studies
       </h2>
 
       {/* Filters and Search */}
@@ -177,20 +185,30 @@ export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProp
                 ))}
               </div>
               <div className="flex gap-4">
-                <motion.a
-                  whileHover={{ scale: 1.1 }}
-                  href={project.github}
-                  className="text-gray-400 hover:text-[#5cbef8]"
-                >
-                  <Github size={20} />
-                </motion.a>
-                <motion.a
-                  whileHover={{ scale: 1.1 }}
-                  href={project.live}
-                  className="text-gray-400 hover:text-[#5cbef8]"
-                >
-                  <ExternalLink size={20} />
-                </motion.a>
+                {hasUsableLink(project.github) && (
+                  <motion.a
+                    whileHover={{ scale: 1.1 }}
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${project.title} repository or source`}
+                    className="text-gray-400 hover:text-[#5cbef8]"
+                  >
+                    <Github size={20} />
+                  </motion.a>
+                )}
+                {hasUsableLink(project.live) && (
+                  <motion.a
+                    whileHover={{ scale: 1.1 }}
+                    href={project.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${project.title} live demo`}
+                    className="text-gray-400 hover:text-[#5cbef8]"
+                  >
+                    <ExternalLink size={20} />
+                  </motion.a>
+                )}
               </div>
             </motion.div>
           ))}
@@ -231,6 +249,4 @@ export const ProjectsSection = ({ projects = mockProjects }: ProjectsSectionProp
     </motion.section>
   );
 };
-
-
 
