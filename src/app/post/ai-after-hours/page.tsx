@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -45,8 +45,9 @@ const purposePoints = [
   },
 ];
 
-const speakers = [
+const FALLBACK_SPEAKERS = [
   {
+    id: 1,
     name: 'Erix Mendoza',
     role: 'Android Engineer in Mercado Libre | GDG Medellín Lead',
     image: '/social/ai-after-hours/speakers/erix-mendoza.png',
@@ -54,6 +55,7 @@ const speakers = [
     accent: VB.magenta,
   },
   {
+    id: 2,
     name: 'Penelope Sloan Creative',
     role: 'Creative Director, Brand Strategist and AI Consultant',
     image: '/social/ai-after-hours/speakers/penelope-sloan.png',
@@ -61,6 +63,15 @@ const speakers = [
     accent: VB.purple,
   },
 ];
+
+type SlideSpeaker = {
+  id: number;
+  name: string;
+  role: string;
+  image: string;
+  initials: string;
+  accent: string;
+};
 
 const sponsors = [
   {
@@ -445,6 +456,44 @@ function SlidePurpose() {
 
 /* ── Slide 3: Talks ── */
 function SlideTalks() {
+  const [speakers, setSpeakers] = useState<SlideSpeaker[]>(FALLBACK_SPEAKERS);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/speakers', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = (await res.json()) as {
+          speakers?: Array<{
+            id: number;
+            name: string;
+            role: string;
+            imageUrl: string;
+            accent: string;
+            initials: string;
+          }>;
+        };
+        if (cancelled || !data.speakers?.length) return;
+        setSpeakers(
+          data.speakers.map((s) => ({
+            id: s.id,
+            name: s.name,
+            role: s.role,
+            image: s.imageUrl,
+            initials: s.initials,
+            accent: s.accent || VB.cyan,
+          }))
+        );
+      } catch {
+        // keep fallback
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden" style={{ background: VB.bg }}>
       <div className="pointer-events-none absolute inset-0 opacity-[0.04]"
@@ -471,9 +520,9 @@ function SlideTalks() {
           </p>
         </div>
 
-        <div className="flex w-full flex-1 flex-col items-center justify-center gap-10 sm:flex-row sm:items-start sm:justify-center sm:gap-20 md:gap-28">
+        <div className="flex w-full flex-1 flex-col items-center justify-center gap-10 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center sm:gap-20 md:gap-28">
           {speakers.map((speaker) => (
-            <div key={speaker.name} className="flex max-w-[420px] flex-col items-center text-center">
+            <div key={speaker.id} className="flex max-w-[420px] flex-col items-center text-center">
               <SpeakerAvatar image={speaker.image} name={speaker.name} initials={speaker.initials} accent={speaker.accent} />
               <p className="mt-6 font-sans text-xl font-black uppercase leading-tight tracking-wide sm:text-2xl" style={{ color: VB.white }}>
                 {speaker.name}
@@ -565,6 +614,12 @@ export default function AIAfterHoursPost() {
             Portfolio
           </Link>
           <p className="font-mono text-xs font-bold uppercase tracking-[0.2em]" style={{ color: VB.muted }}>AI After Hours</p>
+          <Link
+            href="/post/ai-after-hours/admin"
+            className="font-mono text-[10px] font-bold uppercase tracking-wider text-white/30 transition-colors hover:text-[#00f2ff]"
+          >
+            Admin
+          </Link>
         </div>
       </header>
 
