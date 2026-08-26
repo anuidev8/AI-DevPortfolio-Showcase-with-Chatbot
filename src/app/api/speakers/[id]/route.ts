@@ -23,6 +23,7 @@ export async function PATCH(request: Request, { params }: Params) {
       imageUrl: string;
       accent: string;
       initials: string;
+      imageFit: "cover" | "contain";
       sortOrder: number;
       enabled: boolean;
     }>;

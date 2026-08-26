@@ -45,25 +45,6 @@ const purposePoints = [
   },
 ];
 
-const FALLBACK_SPEAKERS = [
-  {
-    id: 1,
-    name: 'Erix Mendoza',
-    role: 'Android Engineer in Mercado Libre | GDG Medellín Lead',
-    image: '/social/ai-after-hours/speakers/erix-mendoza.png',
-    initials: 'EM',
-    accent: VB.magenta,
-  },
-  {
-    id: 2,
-    name: 'Penelope Sloan Creative',
-    role: 'Creative Director, Brand Strategist and AI Consultant',
-    image: '/social/ai-after-hours/speakers/penelope-sloan.png',
-    initials: 'PS',
-    accent: VB.purple,
-  },
-];
-
 type SlideSpeaker = {
   id: number;
   name: string;
@@ -71,6 +52,7 @@ type SlideSpeaker = {
   image: string;
   initials: string;
   accent: string;
+  imageFit?: 'cover' | 'contain';
 };
 
 const sponsors = [
@@ -305,15 +287,37 @@ function MartiniGlass() {
 }
 
 /* ── Speaker avatar ── */
-function SpeakerAvatar({ image, name, initials, accent }: { image: string; name: string; initials: string; accent: string }) {
+function SpeakerAvatar({
+  image,
+  name,
+  initials,
+  accent,
+  imageFit = 'cover',
+}: {
+  image: string;
+  name: string;
+  initials: string;
+  accent: string;
+  imageFit?: 'cover' | 'contain';
+}) {
   const [ok, setOk] = useState(true);
+  const isLogo = imageFit === 'contain';
   return (
     <div
       className="mx-auto h-64 w-64 overflow-hidden rounded-full sm:h-80 sm:w-80 md:h-[26rem] md:w-[26rem]"
-      style={{ border: `4px solid ${accent}`, boxShadow: `0 0 56px ${accent}88` }}
+      style={{
+        border: `4px solid ${accent}`,
+        boxShadow: `0 0 56px ${accent}88`,
+        background: isLogo ? '#f5f0e8' : undefined,
+      }}
     >
       {ok ? (
-        <img src={image} alt={name} className="h-full w-full object-cover object-top" onError={() => setOk(false)} />
+        <img
+          src={image}
+          alt={name}
+          className={`h-full w-full ${isLogo ? 'object-contain p-6' : 'object-cover object-top'}`}
+          onError={() => setOk(false)}
+        />
       ) : (
         <div className="flex h-full w-full items-center justify-center text-6xl font-black" style={{ backgroundColor: accent + '22', color: accent }}>
           {initials}
@@ -456,7 +460,8 @@ function SlidePurpose() {
 
 /* ── Slide 3: Talks ── */
 function SlideTalks() {
-  const [speakers, setSpeakers] = useState<SlideSpeaker[]>(FALLBACK_SPEAKERS);
+  const [speakers, setSpeakers] = useState<SlideSpeaker[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -472,6 +477,7 @@ function SlideTalks() {
             imageUrl: string;
             accent: string;
             initials: string;
+            imageFit?: 'cover' | 'contain';
           }>;
         };
         if (cancelled || !data.speakers?.length) return;
@@ -483,10 +489,13 @@ function SlideTalks() {
             image: s.imageUrl,
             initials: s.initials,
             accent: s.accent || VB.cyan,
+            imageFit: s.imageFit === 'contain' ? 'contain' : 'cover',
           }))
         );
       } catch {
-        // keep fallback
+        // empty state
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     })();
     return () => {
@@ -521,17 +530,39 @@ function SlideTalks() {
         </div>
 
         <div className="flex w-full flex-1 flex-col items-center justify-center gap-10 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center sm:gap-20 md:gap-28">
-          {speakers.map((speaker) => (
-            <div key={speaker.id} className="flex max-w-[420px] flex-col items-center text-center">
-              <SpeakerAvatar image={speaker.image} name={speaker.name} initials={speaker.initials} accent={speaker.accent} />
-              <p className="mt-6 font-sans text-xl font-black uppercase leading-tight tracking-wide sm:text-2xl" style={{ color: VB.white }}>
-                {speaker.name}
-              </p>
-              <p className="mt-2 max-w-sm font-mono text-sm leading-relaxed sm:text-base" style={{ color: VB.muted }}>
-                {speaker.role}
-              </p>
-            </div>
-          ))}
+          {loading ? (
+            <p className="font-mono text-sm uppercase tracking-widest" style={{ color: VB.muted }}>
+              Loading speakers…
+            </p>
+          ) : speakers.length === 0 ? (
+            <p className="font-mono text-sm uppercase tracking-widest" style={{ color: VB.muted }}>
+              Speakers coming soon
+            </p>
+          ) : (
+            speakers.map((speaker) => (
+              <div key={speaker.id} className="flex max-w-[420px] flex-col items-center text-center">
+                <SpeakerAvatar
+                  image={speaker.image}
+                  name={speaker.name}
+                  initials={speaker.initials}
+                  accent={speaker.accent}
+                  imageFit={speaker.imageFit}
+                />
+                <span
+                  className="mt-6 inline-block px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]"
+                  style={{ border: `1px solid ${speaker.accent}66`, color: speaker.accent }}
+                >
+                  Speaker
+                </span>
+                <p className="mt-3 font-sans text-xl font-black uppercase leading-tight tracking-wide sm:text-2xl" style={{ color: VB.white }}>
+                  {speaker.name}
+                </p>
+                <p className="mt-2 max-w-sm font-mono text-sm leading-relaxed sm:text-base" style={{ color: VB.muted }}>
+                  {speaker.role}
+                </p>
+              </div>
+            ))
+          )}
         </div>
 
         <div className="mt-8 text-center">

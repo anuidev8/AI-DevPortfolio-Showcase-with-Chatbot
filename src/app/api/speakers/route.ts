@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       imageUrl?: string;
       accent?: string;
       initials?: string;
+      imageFit?: "cover" | "contain";
       sortOrder?: number;
       enabled?: boolean;
     };
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
       imageUrl: body.imageUrl,
       accent: body.accent,
       initials: body.initials,
+      imageFit: body.imageFit,
       sortOrder: body.sortOrder,
       enabled: body.enabled,
     });
