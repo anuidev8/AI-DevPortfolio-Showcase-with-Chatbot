@@ -15,28 +15,28 @@ export type EventSpeaker = {
 
 export const FALLBACK_SPEAKERS: Omit<EventSpeaker, "id" | "enabled" | "sortOrder" | "createdAt">[] = [
   {
-    name: "Erix Mendoza",
-    role: "Android Engineer in Mercado Libre | GDG Medellín Lead",
-    imageUrl: "/social/ai-after-hours/speakers/erix-mendoza.png",
+    name: "Oscar Barajas (GNDX)",
+    role: "AI-Powered Legal Tech — Cómo la IA está transformando el sector legal",
+    imageUrl: "/social/ai-after-hours/speakers/oscar-barajas.webp",
     accent: "#ff007a",
-    initials: "EM",
+    initials: "OB",
     imageFit: "cover",
   },
   {
-    name: "Penelope Sloan Creative",
-    role: "Creative Director, Brand Strategist and AI Consultant",
-    imageUrl: "/social/ai-after-hours/speakers/penelope-sloan.png",
+    name: "Jennifer Salazar Duke",
+    role: "My AI Workflow — Cómo uso IA para construir mejores proyectos",
+    imageUrl: "/social/ai-after-hours/speakers/jennifer-salazar-duke.png",
     accent: "#b44aff",
-    initials: "PS",
+    initials: "JS",
     imageFit: "cover",
   },
   {
-    name: "Leonel Meneses",
-    role: "SHAKE-SOCIAL",
-    imageUrl: "/social/ai-after-hours/speakers/leonel-meneses.png",
+    name: "Hector Cantillo",
+    role: "From Consumer to Creator — La gran oportunidad de crear con IA",
+    imageUrl: "/social/ai-after-hours/speakers/hector-cantillo.jpg",
     accent: "#00f2ff",
-    initials: "LM",
-    imageFit: "contain",
+    initials: "HC",
+    imageFit: "cover",
   },
 ];
 
@@ -85,22 +85,30 @@ export async function ensureSpeakersSchema() {
         [s.name]
       );
       if (!existing.rows[0]) {
-        const max = await query<{ max: number | null }>(`SELECT MAX(sort_order) AS max FROM event_speakers`);
-        const sortOrder = (max.rows[0]?.max ?? -1) + 1;
         await query(
           `INSERT INTO event_speakers (name, role, image_url, accent, initials, image_fit, sort_order, enabled)
            VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE)`,
-          [s.name, s.role, s.imageUrl, s.accent, s.initials, s.imageFit, sortOrder]
+          [s.name, s.role, s.imageUrl, s.accent, s.initials, s.imageFit, i]
         );
       } else {
         await query(
           `UPDATE event_speakers
-           SET role = $2, image_url = $3, accent = $4, initials = $5, image_fit = $6, updated_at = NOW()
+           SET role = $2, image_url = $3, accent = $4, initials = $5, image_fit = $6,
+               sort_order = $7, enabled = TRUE, updated_at = NOW()
            WHERE id = $1`,
-          [existing.rows[0].id, s.role, s.imageUrl, s.accent, s.initials, s.imageFit]
+          [existing.rows[0].id, s.role, s.imageUrl, s.accent, s.initials, s.imageFit, i]
         );
       }
     }
+
+    // Keep the public lineup in sync with FALLBACK_SPEAKERS; hide anyone else.
+    const keepNames = FALLBACK_SPEAKERS.map((s) => s.name.toLowerCase().trim());
+    await query(
+      `UPDATE event_speakers
+       SET enabled = FALSE, updated_at = NOW()
+       WHERE lower(trim(name)) <> ALL($1::text[])`,
+      [keepNames]
+    );
   }
 }
 

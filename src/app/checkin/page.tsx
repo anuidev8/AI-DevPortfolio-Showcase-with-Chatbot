@@ -8,17 +8,17 @@ type Guest = {
   id: string;
   name: string;
   email: string;
-  status: "approved" | "waitlist" | "invited" | string;
+  status: string;
 };
 
-type StatusFilter = "approved" | "waitlist" | "invited" | "all" | "checked";
+type StatusFilter = "going" | "checked";
 
 const GUESTS = guestsData as Guest[];
-const EVENT = "ai-after-hours";
+const EVENT = "ai-after-hours-rooftop";
 
 export default function CheckinAdminPage() {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<StatusFilter>("all");
+  const [filter, setFilter] = useState<StatusFilter>("going");
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -50,30 +50,15 @@ export default function CheckinAdminPage() {
     return () => window.clearInterval(timer);
   }, [loadCheckins]);
 
-  const counts = useMemo(() => {
-    const base = {
-      approved: 0,
-      waitlist: 0,
-      invited: 0,
-      checked: 0,
-      total: GUESTS.length,
-    };
-    for (const g of GUESTS) {
-      if (g.status in base)
-        base[g.status as "approved" | "waitlist" | "invited"] += 1;
-      if (checked[g.id]) base.checked += 1;
-    }
-    return base;
-  }, [checked]);
+  const checkedCount = useMemo(
+    () => GUESTS.filter((g) => checked[g.id]).length,
+    [checked]
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return GUESTS.filter((g) => {
-      if (filter === "checked") {
-        if (!checked[g.id]) return false;
-      } else if (filter !== "all" && g.status !== filter) {
-        return false;
-      }
+      if (filter === "checked" && !checked[g.id]) return false;
       if (!q) return true;
       return (
         g.name.toLowerCase().includes(q) || g.email.toLowerCase().includes(q)
@@ -124,21 +109,18 @@ export default function CheckinAdminPage() {
   };
 
   const tabs: { id: StatusFilter; label: string; count: number }[] = [
-    { id: "approved", label: "Approved", count: counts.approved },
-    { id: "waitlist", label: "Waitlist", count: counts.waitlist },
-    { id: "invited", label: "Invited", count: counts.invited },
-    { id: "checked", label: "Checked in", count: counts.checked },
-    { id: "all", label: "All", count: counts.total },
+    { id: "going", label: "Going", count: GUESTS.length },
+    { id: "checked", label: "Checked in", count: checkedCount },
   ];
 
   return (
     <main className="checkin-page">
       <header className="checkin-header">
         <div>
-          <p className="checkin-eyebrow">Staff · AI After Hours</p>
+          <p className="checkin-eyebrow">Staff · AI After Hours Rooftop</p>
           <h1>Door check-in</h1>
           <p className="checkin-sub">
-            {counts.checked} / {counts.approved} approved checked in
+            {checkedCount} / {GUESTS.length} going checked in
             {syncError ? ` · ${syncError}` : " · synced to Railway DB"}
           </p>
         </div>
@@ -161,7 +143,7 @@ export default function CheckinAdminPage() {
         />
       </div>
 
-      <div className="checkin-tabs" role="tablist" aria-label="Filter by status">
+      <div className="checkin-tabs" role="tablist" aria-label="Filter list">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -198,9 +180,7 @@ export default function CheckinAdminPage() {
                   <strong>{g.name}</strong>
                   <em>{g.email || "—"}</em>
                 </span>
-                <span className={`checkin-status status-${g.status}`}>
-                  {g.status}
-                </span>
+                <span className="checkin-status status-approved">going</span>
               </button>
             </li>
           );
@@ -215,7 +195,7 @@ export default function CheckinAdminPage() {
       )}
 
       <p className="checkin-foot">
-        Check-ins save to Postgres (Railway). All staff phones stay in sync.
+        Approved guests only. Check-ins save to Postgres (Railway).
         Share only with door staff.
       </p>
     </main>

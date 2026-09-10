@@ -3,7 +3,7 @@ import { query } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-const EVENT = "ai-after-hours";
+const EVENT = "ai-after-hours-rooftop";
 
 async function ensureTable() {
   await query(`

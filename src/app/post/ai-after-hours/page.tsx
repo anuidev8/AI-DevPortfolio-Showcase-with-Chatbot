@@ -512,8 +512,8 @@ function SlideTalks() {
       <CircuitPattern />
       <WaveTexture />
 
-      <div className="relative z-10 flex flex-1 flex-col items-center px-8 py-10">
-        <div className="mb-8 w-full text-center">
+      <div className="relative z-10 flex flex-1 flex-col items-center px-6 py-8 sm:px-8 sm:py-10">
+        <div className="w-full shrink-0 text-center">
           <div className="mx-auto mb-4 inline-block px-4 py-1 font-mono text-xs font-bold uppercase tracking-widest"
             style={{ border: `1px solid ${VB.cyan}`, background: VB.cyan + '14', boxShadow: VB.glow }}>
             <span style={{ color: VB.cyan }}>VISIBLE</span>{' '}
@@ -529,7 +529,7 @@ function SlideTalks() {
           </p>
         </div>
 
-        <div className="flex w-full flex-1 flex-col items-center justify-center gap-10 sm:flex-row sm:flex-wrap sm:items-start sm:justify-center sm:gap-20 md:gap-28">
+        <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-8 sm:flex-row sm:flex-nowrap sm:items-center sm:justify-center sm:gap-10 md:gap-14">
           {loading ? (
             <p className="font-mono text-sm uppercase tracking-widest" style={{ color: VB.muted }}>
               Loading speakers…
@@ -540,7 +540,7 @@ function SlideTalks() {
             </p>
           ) : (
             speakers.map((speaker) => (
-              <div key={speaker.id} className="flex max-w-[420px] flex-col items-center text-center">
+              <div key={speaker.id} className="flex w-full max-w-[420px] flex-col items-center text-center">
                 <SpeakerAvatar
                   image={speaker.image}
                   name={speaker.name}
@@ -565,7 +565,7 @@ function SlideTalks() {
           )}
         </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-4 shrink-0 text-center sm:mt-6">
           <p className="font-mono text-sm font-black uppercase tracking-[0.18em]" style={{ color: VB.white }}>
             JOIN THE <span style={{ color: VB.magenta, textShadow: VB.glowMagenta }}>BUILD</span>
           </p>
