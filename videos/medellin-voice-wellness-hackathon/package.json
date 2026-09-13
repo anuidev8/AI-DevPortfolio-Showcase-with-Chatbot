@@ -1,0 +1,14 @@
+{
+  "name": "medellin-voice-wellness-hackathon",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "hyperframes lint",
+    "check": "hyperframes check",
+    "preview": "hyperframes preview",
+    "render": "hyperframes render --quality high --output out.mp4"
+  },
+  "devDependencies": {
+    "hyperframes": "0.8.36"
+  }
+}

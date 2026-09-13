@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "medellin-voice-wellness-hackathon",
+  "name": "Medellín Voice Wellness Hackathon",
+  "skill": "general-video",
+  "entry": "index.html",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30
+}

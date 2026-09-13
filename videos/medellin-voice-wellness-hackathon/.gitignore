@@ -1,0 +1,6 @@
+node_modules/
+.npm-cache/
+.env
+out.mp4
+*.mp4
+.DS_Store

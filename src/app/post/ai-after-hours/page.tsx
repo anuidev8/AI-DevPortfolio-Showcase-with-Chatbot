@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { VoiceGuide } from '@/components/ai-after-hours/VoiceGuide';
+import { SLIDE_IDS, type SlideId } from '@/lib/ai-after-hours/slides';
 
 // VisibleBuilders brand palette — cyber neon from visiblebuilders.io
 const VB = {
@@ -21,8 +23,8 @@ const VB = {
   glowMagenta: '0 0 24px rgba(255,0,122,0.4)',
 };
 
-const SLIDES = ['intro', 'purpose', 'talks', 'community'] as const;
-type Slide = (typeof SLIDES)[number];
+const SLIDES = SLIDE_IDS;
+type Slide = SlideId;
 
 const purposePoints = [
   {
@@ -673,8 +675,9 @@ export default function AIAfterHoursPost() {
         </AnimatePresence>
       </div>
 
-      {/* Controls */}
+      {/* Controls + voice guide */}
       <div className="absolute bottom-6 inset-x-0 z-50 flex flex-col items-center gap-3">
+        <VoiceGuide current={current} onSlideChange={setCurrent} />
         <div className="flex items-center gap-3">
           {SLIDES.map((s, i) => (
             <button

@@ -22,3 +22,8 @@ pnpm-debug.log*
 
 # MacOS
 .DS_Store
+
+# Video project secrets
+videos/**/.env
+videos/**/node_modules/
+videos/**/.npm-cache/

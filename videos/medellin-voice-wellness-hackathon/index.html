@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Guía del Hackathon — Agentic Voice Wellness</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Geist";
+        src: url("fonts/GeistVF.woff") format("woff");
+        font-weight: 100 900;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Geist Mono";
+        src: url("fonts/GeistMonoVF.woff") format("woff");
+        font-weight: 100 900;
+        font-display: block;
+      }
+      :root {
+        --bg: #0b011d;
+        --cyan: #00f2ff;
+        --magenta: #ff2d8f;
+        --purple: #b44aff;
+        --white: #f5f5f5;
+        --muted: rgba(245, 245, 245, 0.55);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #05010f;
+        color: var(--white);
+        font-family: "Geist", system-ui, sans-serif;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+      .scene-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 55% 45% at 72% 28%, rgba(180, 74, 255, 0.22) 0%, transparent 55%),
+          radial-gradient(ellipse 40% 40% at 12% 78%, rgba(255, 45, 143, 0.14) 0%, transparent 50%),
+          linear-gradient(180deg, #0b011d 0%, #12081f 100%);
+      }
+      .grid {
+        position: absolute;
+        inset: 0;
+        opacity: 0.14;
+        background-image:
+          linear-gradient(rgba(0, 242, 255, 0.18) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 242, 255, 0.18) 1px, transparent 1px);
+        background-size: 48px 48px;
+      }
+      .glow-orb {
+        position: absolute;
+        width: 520px;
+        height: 520px;
+        border-radius: 50%;
+        opacity: 0.32;
+      }
+      .glow-orb.cyan {
+        left: -120px;
+        top: 220px;
+        background: radial-gradient(circle, rgba(0, 242, 255, 0.5), transparent 70%);
+      }
+      .glow-orb.magenta {
+        right: -140px;
+        bottom: 80px;
+        background: radial-gradient(circle, rgba(255, 45, 143, 0.45), transparent 70%);
+      }
+      .ghost-bar {
+        position: absolute;
+        width: 640px;
+        height: 180px;
+        top: 48px;
+        left: 80px;
+        opacity: 0.06;
+        background: repeating-linear-gradient(90deg, var(--cyan) 0 18px, transparent 18px 36px);
+        mask-image: linear-gradient(90deg, #000 0%, transparent 100%);
+        -webkit-mask-image: linear-gradient(90deg, #000 0%, transparent 100%);
+        pointer-events: none;
+      }
+      .clip { position: absolute; inset: 0; }
+      .stage {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 88px 110px;
+      }
+      .brand {
+        display: inline-block;
+        width: fit-content;
+        font-family: "Geist Mono", monospace;
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        padding: 12px 22px;
+        border: 2px solid var(--cyan);
+        background: rgba(0, 242, 255, 0.08);
+        box-shadow: 0 0 24px rgba(0, 242, 255, 0.35);
+        margin-bottom: 24px;
+      }
+      .brand .c { color: var(--cyan); }
+      .brand .m { color: var(--magenta); }
+      .section-num {
+        font-family: "Geist Mono", monospace;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin: 0 0 16px;
+      }
+      h1, h2 {
+        margin: 0;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: -0.03em;
+        line-height: 0.92;
+      }
+      h1 { font-size: 108px; max-width: 1600px; }
+      h2 { font-size: 76px; max-width: 1550px; }
+      .lede {
+        margin: 24px 0 0;
+        max-width: 1200px;
+        font-family: "Geist Mono", monospace;
+        font-size: 26px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+      .accent-cyan { color: var(--cyan); text-shadow: 0 0 28px rgba(0, 242, 255, 0.45); }
+      .accent-magenta { color: var(--magenta); text-shadow: 0 0 28px rgba(255, 45, 143, 0.4); }
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 36px;
+        max-width: 1600px;
+      }
+      .pill {
+        font-family: "Geist Mono", monospace;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 12px 20px;
+        border: 1px solid rgba(0, 242, 255, 0.35);
+        color: var(--cyan);
+        background: rgba(0, 242, 255, 0.06);
+      }
+      .pill.mag {
+        border-color: rgba(255, 45, 143, 0.4);
+        color: var(--magenta);
+        background: rgba(255, 45, 143, 0.06);
+      }
+      .pill.pur {
+        border-color: rgba(180, 74, 255, 0.45);
+        color: var(--purple);
+        background: rgba(180, 74, 255, 0.08);
+      }
+      .grid-5 {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 16px;
+        margin-top: 40px;
+        max-width: 1600px;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 36px;
+        margin-top: 32px;
+        max-width: 1500px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 32px;
+        max-width: 1600px;
+      }
+      .card {
+        padding: 24px 22px;
+        background: linear-gradient(160deg, rgba(0, 242, 255, 0.12), rgba(18, 8, 31, 0.92));
+        border: 1px solid rgba(0, 242, 255, 0.28);
+        min-height: 150px;
+      }
+      .card.m {
+        background: linear-gradient(160deg, rgba(255, 45, 143, 0.14), rgba(18, 8, 31, 0.92));
+        border-color: rgba(255, 45, 143, 0.3);
+      }
+      .card.p {
+        background: linear-gradient(160deg, rgba(180, 74, 255, 0.16), rgba(18, 8, 31, 0.92));
+        border-color: rgba(180, 74, 255, 0.35);
+      }
+      .card .n {
+        font-family: "Geist Mono", monospace;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--cyan);
+        margin-bottom: 10px;
+      }
+      .card.m .n { color: var(--magenta); }
+      .card.p .n { color: var(--purple); }
+      .card .t {
+        font-size: 28px;
+        font-weight: 900;
+        text-transform: uppercase;
+        line-height: 1.05;
+      }
+      .card .s {
+        margin-top: 10px;
+        font-family: "Geist Mono", monospace;
+        font-size: 18px;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+      .cat {
+        padding: 22px 20px;
+        background: #12081f;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .cat .letter {
+        font-family: "Geist Mono", monospace;
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--cyan);
+        margin-bottom: 6px;
+      }
+      .cat:nth-child(2) .letter,
+      .cat:nth-child(5) .letter { color: var(--magenta); }
+      .cat:nth-child(3) .letter,
+      .cat:nth-child(6) .letter { color: var(--purple); }
+      .cat .name {
+        font-size: 28px;
+        font-weight: 900;
+        text-transform: uppercase;
+        line-height: 1.05;
+      }
+      .row {
+        display: flex;
+        gap: 18px;
+        align-items: baseline;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px 0;
+        font-family: "Geist Mono", monospace;
+        font-size: 24px;
+      }
+      .row .k {
+        width: 110px;
+        font-weight: 700;
+        color: var(--cyan);
+        flex-shrink: 0;
+      }
+      .row:nth-child(even) .k { color: var(--magenta); }
+      .bullet {
+        display: flex;
+        gap: 14px;
+        font-family: "Geist Mono", monospace;
+        font-size: 24px;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+      .bullet span { color: var(--cyan); font-weight: 700; }
+      .bullet strong { color: var(--white); font-weight: 700; }
+      .footer-line {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+        bottom: 48px;
+        display: flex;
+        justify-content: space-between;
+        font-family: "Geist Mono", monospace;
+        font-size: 18px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .footer-line .mark { color: var(--cyan); }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="204"
+    >
+      <div class="scene-bg" aria-hidden="true"></div>
+      <div class="grid" aria-hidden="true"></div>
+      <div id="orb-cyan" class="glow-orb cyan" aria-hidden="true"></div>
+      <div id="orb-mag" class="glow-orb magenta" aria-hidden="true"></div>
+      <div id="ghost" class="ghost-bar" aria-hidden="true"></div>
+
+      <audio
+        id="vo"
+        src="audio/narration.wav"
+        data-start="0"
+        data-duration="203.31"
+        data-track-index="0"
+        preload="auto"
+      ></audio>
+
+      <!-- 00 Intro -->
+      <section id="s0" class="clip" data-start="0" data-duration="9" data-track-index="1">
+        <div class="stage">
+          <div class="brand"><span class="c">VISIBLE</span> <span class="m">BUILDERS</span></div>
+          <p class="section-num">Sesión para builders · Medellín</p>
+          <h1>
+            Guía del<br />
+            <span class="accent-cyan">Hackathon</span>
+          </h1>
+          <p class="lede">Agentic Voice Wellness — un día para construir agentes de voz que ayudan.</p>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> visiblebuilders.io</span><span>00 / INTRO</span></div>
+      </section>
+
+      <!-- 01 Concepto -->
+      <section id="s1" class="clip" data-start="9" data-duration="24" data-track-index="1">
+        <div class="stage">
+          <p class="section-num">01 — Concepto del evento</p>
+          <h2>Escuchar. Razonar.<br /><span class="accent-cyan">Actuar.</span></h2>
+          <p class="lede">Prototipos de voz agentic para wellness: escucha, entiende, razona, usa tools, responde y completa una acción útil.</p>
+          <div class="grid-5">
+            <div class="card" id="f1"><div class="n">01</div><div class="t">Escucha</div></div>
+            <div class="card m" id="f2"><div class="n">02</div><div class="t">Entiende</div></div>
+            <div class="card p" id="f3"><div class="n">03</div><div class="t">Razona</div></div>
+            <div class="card" id="f4"><div class="n">04</div><div class="t">Tools</div></div>
+            <div class="card m" id="f5"><div class="n">05</div><div class="t">Acción</div></div>
+          </div>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> breathe · move · focus · rest</span><span>01 / CONCEPTO</span></div>
+      </section>
+
+      <!-- 02 Objetivo -->
+      <section id="s2" class="clip" data-start="33" data-duration="26" data-track-index="1">
+        <div class="stage">
+          <p class="section-num">02 — Objetivo principal</p>
+          <h2>Seguros. Útiles.<br /><span class="accent-magenta">Accesibles.</span></h2>
+          <p class="lede">Prevención y wellness cotidiano — no diagnóstico ni tratamiento médico.</p>
+          <div class="grid-2">
+            <div class="bullet" id="g1"><span>▸</span><strong>Interacción de voz real</strong></div>
+            <div class="bullet" id="g2"><span>▸</span><strong>Problema + usuario claros</strong></div>
+            <div class="bullet" id="g3"><span>▸</span><strong>Al menos una acción agentic</strong></div>
+            <div class="bullet" id="g4"><span>▸</span><strong>Respuesta segura si no sabe</strong></div>
+            <div class="bullet" id="g5"><span>▸</span><strong>Prototipo funcionando</strong></div>
+            <div class="bullet" id="g6"><span>▸</span><strong>Impacto negocio / comunidad</strong></div>
+          </div>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> demo day requirements</span><span>02 / OBJETIVO</span></div>
+      </section>
+
+      <!-- 03 Categorías -->
+      <section id="s3" class="clip" data-start="59" data-duration="32" data-track-index="1">
+        <div class="stage" style="justify-content: flex-start; padding-top: 72px;">
+          <p class="section-num">03 — Categorías para builders</p>
+          <h2>Seis tracks.<br /><span class="accent-cyan">Elijan uno.</span></h2>
+          <div class="grid-3">
+            <div class="cat" id="c1"><div class="letter">A</div><div class="name">Respiración</div></div>
+            <div class="cat" id="c2"><div class="letter">B</div><div class="name">Yoga &amp; movimiento</div></div>
+            <div class="cat" id="c3"><div class="letter">C</div><div class="name">Mindfulness</div></div>
+            <div class="cat" id="c4"><div class="letter">D</div><div class="name">Sueño &amp; recovery</div></div>
+            <div class="cat" id="c5"><div class="letter">E</div><div class="name">Bienestar laboral</div></div>
+            <div class="cat" id="c6"><div class="letter">F</div><div class="name">Wellness inclusivo</div></div>
+          </div>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> pick your challenge</span><span>03 / CATEGORÍAS</span></div>
+      </section>
+
+      <!-- 04 Agentic -->
+      <section id="s4" class="clip" data-start="91" data-duration="22" data-track-index="1">
+        <div class="stage">
+          <p class="section-num">04 — Qué es agentic voice</p>
+          <h2>Más que un<br /><span class="accent-magenta">audio fijo</span></h2>
+          <p class="lede">Incluyan al menos dos capacidades. Sin decisión, tool use o adaptación — no califica.</p>
+          <div class="pill-row">
+            <div class="pill" id="p1">Conversación</div>
+            <div class="pill mag" id="p2">Planificación</div>
+            <div class="pill pur" id="p3">Memoria + consentimiento</div>
+            <div class="pill" id="p4">Tool use</div>
+            <div class="pill mag" id="p5">Personalización</div>
+            <div class="pill pur" id="p6">Multimodal</div>
+            <div class="pill" id="p7">Escalamiento</div>
+            <div class="pill mag" id="p8">Evaluación</div>
+          </div>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> quality bar</span><span>04 / AGENTIC</span></div>
+      </section>
+
+      <!-- 05 Alcance + stack -->
+      <section id="s5" class="clip" data-start="113" data-duration="26" data-track-index="1">
+        <div class="stage">
+          <p class="section-num">05 — Alcance y stack</p>
+          <h2>Prototipo pequeño.<br /><span class="accent-cyan">Demo real.</span></h2>
+          <div class="grid-2" style="margin-top: 28px;">
+            <div class="card" id="d1"><div class="n">Scope</div><div class="t">1 usuario · 1 problema</div><div class="s">1 flujo de voz · 1 demo · pitch 5 min · repo + README</div></div>
+            <div class="card m" id="d2"><div class="n">Agentic</div><div class="t">≥ 1 tool / acción</div><div class="s">Seguridad y privacidad explicadas</div></div>
+          </div>
+          <div class="pill-row">
+            <div class="pill">ElevenLabs</div>
+            <div class="pill mag">LiveKit</div>
+            <div class="pill pur">CopilotKit</div>
+            <div class="pill">Next.js</div>
+            <div class="pill mag">Vercel</div>
+            <div class="pill pur">MCP</div>
+          </div>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> ship a working prototype</span><span>05 / ALCANCE</span></div>
+      </section>
+
+      <!-- 06 Seguridad -->
+      <section id="s6" class="clip" data-start="139" data-duration="22" data-track-index="1">
+        <div class="stage">
+          <p class="section-num">06 — Seguridad y privacidad</p>
+          <h2>No son médicos.<br /><span class="accent-magenta">Diseñen seguro.</span></h2>
+          <div class="grid-2">
+            <div class="bullet" id="x1"><span>▸</span><strong>Sin diagnóstico ni medicamentos</strong></div>
+            <div class="bullet" id="x2"><span>▸</span><strong>Sin promesas de curar</strong></div>
+            <div class="bullet" id="x3"><span>▸</span><strong>Stop inmediato de sesión</strong></div>
+            <div class="bullet" id="x4"><span>▸</span><strong>Consentimiento antes de guardar</strong></div>
+            <div class="bullet" id="x5"><span>▸</span><strong>Minimización de datos</strong></div>
+            <div class="bullet" id="x6"><span>▸</span><strong>Escalamiento humano</strong></div>
+          </div>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> prevention only</span><span>06 / SEGURIDAD</span></div>
+      </section>
+
+      <!-- 07 Agenda -->
+      <section id="s7" class="clip" data-start="161" data-duration="20" data-track-index="1">
+        <div class="stage">
+          <p class="section-num">07 — Agenda</p>
+          <h2>Un día enfocado</h2>
+          <div class="grid-2" style="margin-top: 28px;">
+            <div>
+              <div class="row" id="a1"><span class="k">9:30</span><span>Registro</span></div>
+              <div class="row" id="a2"><span class="k">10:00</span><span>Welcome + sponsors</span></div>
+              <div class="row" id="a3"><span class="k">10:15</span><span>Keynote wellness</span></div>
+              <div class="row" id="a4"><span class="k">10:35</span><span>Briefing Voice AI</span></div>
+            </div>
+            <div>
+              <div class="row" id="a5"><span class="k">11:10</span><span>Equipos + categorías</span></div>
+              <div class="row" id="a6"><span class="k">12:00</span><span>Sprints de build</span></div>
+              <div class="row" id="a7"><span class="k">16:00</span><span>Demos + judging</span></div>
+              <div class="row" id="a8"><span class="k">16:45</span><span>Premios + cierre</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> prep workshops 1–2 weeks before</span><span>07 / AGENDA</span></div>
+      </section>
+
+      <!-- 08 Eval + close -->
+      <section id="s8" class="clip" data-start="181" data-duration="23" data-track-index="1">
+        <div class="stage">
+          <p class="section-num">08 — Evaluación y premios</p>
+          <h2>100 puntos.<br /><span class="accent-cyan">Construyan.</span></h2>
+          <div class="pill-row">
+            <div class="pill" id="j1">Problema 20</div>
+            <div class="pill mag" id="j2">Voz 20</div>
+            <div class="pill pur" id="j3">Wellness 20</div>
+            <div class="pill" id="j4">Agentic 15</div>
+            <div class="pill mag" id="j5">Seguridad 15</div>
+            <div class="pill pur" id="j6">Acceso + piloto 10</div>
+          </div>
+          <p class="lede" style="margin-top: 36px; color: var(--white); font-size: 30px; font-weight: 700;">
+            Elijan categoría · Construyan agentic · Demuestren con voz · Cuiden la seguridad.
+          </p>
+        </div>
+        <div class="footer-line"><span><span class="mark">&gt;</span> visiblebuilders.io</span><span>08 / CIERRE</span></div>
+      </section>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      tl.to("#orb-cyan", { x: 36, y: -24, duration: 10, ease: "sine.inOut", yoyo: true, repeat: 20 }, 0);
+      tl.to("#orb-mag", { x: -40, y: 18, duration: 11, ease: "sine.inOut", yoyo: true, repeat: 18 }, 0);
+      tl.to("#ghost", { x: 50, duration: 22, ease: "none", yoyo: true, repeat: 8 }, 0);
+
+      // 00
+      tl.from("#s0 .brand", { y: 24, opacity: 0, duration: 0.5, ease: "power3.out" }, 0.2);
+      tl.from("#s0 .section-num", { y: 20, opacity: 0, duration: 0.45, ease: "power3.out" }, 0.4);
+      tl.from("#s0 h1", { y: 40, opacity: 0, duration: 0.65, ease: "power3.out" }, 0.55);
+      tl.from("#s0 .lede", { y: 20, opacity: 0, duration: 0.5, ease: "power3.out" }, 0.9);
+
+      // 01
+      tl.from("#s1 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 9.15);
+      tl.from("#s1 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 9.3);
+      tl.from("#s1 .lede", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 9.6);
+      tl.from(["#f1","#f2","#f3","#f4","#f5"], { y: 28, opacity: 0, duration: 0.45, stagger: 0.08, ease: "power3.out" }, 10.0);
+
+      // 02
+      tl.from("#s2 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 33.15);
+      tl.from("#s2 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 33.3);
+      tl.from("#s2 .lede", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 33.6);
+      tl.from(["#g1","#g2","#g3","#g4","#g5","#g6"], { x: -18, opacity: 0, duration: 0.4, stagger: 0.07, ease: "power3.out" }, 34.0);
+
+      // 03
+      tl.from("#s3 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 59.15);
+      tl.from("#s3 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 59.3);
+      tl.from(["#c1","#c2","#c3","#c4","#c5","#c6"], { y: 26, opacity: 0, duration: 0.4, stagger: 0.07, ease: "power3.out" }, 59.9);
+
+      // 04
+      tl.from("#s4 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 91.15);
+      tl.from("#s4 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 91.3);
+      tl.from("#s4 .lede", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 91.6);
+      tl.from(["#p1","#p2","#p3","#p4","#p5","#p6","#p7","#p8"], { y: 22, opacity: 0, duration: 0.35, stagger: 0.06, ease: "power3.out" }, 92.0);
+
+      // 05
+      tl.from("#s5 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 113.15);
+      tl.from("#s5 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 113.3);
+      tl.from(["#d1","#d2"], { y: 28, opacity: 0, duration: 0.45, stagger: 0.1, ease: "power3.out" }, 113.8);
+      tl.from("#s5 .pill", { y: 18, opacity: 0, duration: 0.35, stagger: 0.05, ease: "power3.out" }, 114.6);
+
+      // 06
+      tl.from("#s6 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 139.15);
+      tl.from("#s6 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 139.3);
+      tl.from(["#x1","#x2","#x3","#x4","#x5","#x6"], { x: -18, opacity: 0, duration: 0.4, stagger: 0.07, ease: "power3.out" }, 139.9);
+
+      // 07
+      tl.from("#s7 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 161.15);
+      tl.from("#s7 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 161.3);
+      tl.from(["#a1","#a2","#a3","#a4","#a5","#a6","#a7","#a8"], { x: -16, opacity: 0, duration: 0.35, stagger: 0.05, ease: "power3.out" }, 161.8);
+
+      // 08
+      tl.from("#s8 .section-num", { y: 18, opacity: 0, duration: 0.4, ease: "power3.out" }, 181.15);
+      tl.from("#s8 h2", { y: 36, opacity: 0, duration: 0.55, ease: "power3.out" }, 181.3);
+      tl.from(["#j1","#j2","#j3","#j4","#j5","#j6"], { y: 20, opacity: 0, duration: 0.35, stagger: 0.06, ease: "power3.out" }, 181.9);
+      tl.from("#s8 .lede", { y: 18, opacity: 0, duration: 0.45, ease: "power3.out" }, 183.0);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
