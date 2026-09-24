@@ -1,7 +1,84 @@
 import { NextResponse } from "next/server";
-import { query } from "@/lib/db";
+import { getPool, query } from "@/lib/db";
+import { isAdminAuthorized } from "@/lib/speakers";
 
 export const dynamic = "force-dynamic";
+
+type DeleteBody = {
+  memberId?: number;
+  username?: string;
+};
+
+export async function DELETE(request: Request) {
+  let body: DeleteBody;
+  try {
+    body = (await request.json()) as DeleteBody;
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const memberId = typeof body.memberId === "number" && Number.isInteger(body.memberId) ? body.memberId : null;
+  if (memberId == null) {
+    return NextResponse.json({ error: "memberId is required" }, { status: 400 });
+  }
+
+  const isAdmin = isAdminAuthorized(request);
+  const username = (body.username ?? "").trim().toLowerCase();
+  if (!isAdmin && !username) {
+    return NextResponse.json({ error: "Username is required to delete your profile" }, { status: 401 });
+  }
+
+  try {
+    await query(`CREATE TABLE IF NOT EXISTS connections (id SERIAL PRIMARY KEY, member_id INT, profile_id TEXT, action TEXT, created_at TIMESTAMPTZ DEFAULT NOW())`);
+    await query(`CREATE TABLE IF NOT EXISTS join_events (id SERIAL PRIMARY KEY, event_type TEXT, payload JSONB, created_at TIMESTAMPTZ DEFAULT NOW())`);
+    await query(`CREATE TABLE IF NOT EXISTS member_skills (member_id INT REFERENCES members(id), skill TEXT, PRIMARY KEY (member_id, skill))`);
+  } catch (error) {
+    console.error("members DELETE schema check failed", error);
+    return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
+  }
+
+  const client = await getPool().connect();
+  try {
+    await client.query("BEGIN");
+
+    const found = await client.query<{ id: number; username: string | null; display_name: string | null }>(
+      `SELECT id, username, display_name FROM members WHERE id = $1 FOR UPDATE`,
+      [memberId]
+    );
+    const member = found.rows[0];
+    if (!member) {
+      await client.query("ROLLBACK");
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    }
+    if (!isAdmin && (member.username ?? "").trim().toLowerCase() !== username) {
+      await client.query("ROLLBACK");
+      return NextResponse.json({ error: "Username does not match this profile" }, { status: 403 });
+    }
+
+    await client.query(`DELETE FROM member_skills WHERE member_id = $1`, [memberId]);
+    const connections = await client.query(
+      `DELETE FROM connections WHERE member_id = $1 OR profile_id = $2`,
+      [memberId, `member-${memberId}`]
+    );
+    await client.query(`DELETE FROM members WHERE id = $1`, [memberId]);
+    await client.query(
+      `INSERT INTO join_events (event_type, payload) VALUES ($1, $2::jsonb)`,
+      [
+        "member_deleted",
+        JSON.stringify({ memberId, username: member.username, by: isAdmin ? "admin" : "self", connectionsRemoved: connections.rowCount }),
+      ]
+    );
+
+    await client.query("COMMIT");
+    return NextResponse.json({ ok: true, memberId });
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    console.error("members DELETE failed", error);
+    return NextResponse.json({ error: "Failed to delete member" }, { status: 500 });
+  } finally {
+    client.release();
+  }
+}
 
 export async function GET() {
   try {
@@ -70,7 +147,6 @@ export async function GET() {
         return {
           id: `member-${m.id}`,
           memberId: m.id,
-          username: m.username ?? undefined,
           name,
           role: m.role?.trim() || "Community member",
           avatar: m.animal_id || name,

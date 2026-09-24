@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
 import {
   ArrowRight, BookOpen, ChevronRight, Compass,
-  Handshake, Heart, MapPin, MessageSquare, QrCode, Sparkles, Users, X,
+  Handshake, Heart, MapPin, MessageSquare, QrCode, Sparkles, Trash2, Users, X,
 } from "lucide-react";
 import {
   COMMUNITY_CIRCLES, NETWORKING_ANIMALS, NOSHY_QUESTIONS,
@@ -16,6 +16,7 @@ import { matchesFor, rankPairs, type MatchPair } from "@/lib/noshy-match";
 
 const cardEase = [0.22, 1, 0.36, 1] as const;
 const SESSION_KEY = "noshy-session";
+const ADMIN_KEY_STORAGE = "noshy-admin-key";
 type Screen = "welcome" | "login" | "onboarding" | "home" | "connect" | "match";
 type HomeTab = "nearby" | "matched" | "circles";
 type DeskPerson = CommunityProfile & { fromDatabase?: boolean; memberId?: number };
@@ -92,6 +93,8 @@ export default function NoshyPage() {
   const [joinUrl, setJoinUrl] = useState("");
   const [loginUsername, setLoginUsername] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState("");
   const matchRequest = useRef(0);
 
   const selectedAnimal = getNetworkingAnimal(animalId);
@@ -185,7 +188,7 @@ export default function NoshyPage() {
         const res = await fetch("/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ memberId: session.memberId }),
+          body: JSON.stringify({ memberId: session.memberId, username: session.username }),
         });
         if (!res.ok) {
           clearSession();
@@ -345,6 +348,56 @@ export default function NoshyPage() {
       } catch { if (matchRequest.current !== requestId) return; }
       finally { if (matchRequest.current === requestId) setAiLoading(false); }
     })();
+  };
+
+  const deleteMember = async (target: { memberId: number; username?: string; name: string }, self: boolean) => {
+    if (deletingId != null) return;
+    const ok = window.confirm(
+      self
+        ? "Delete your NoShy profile? Your matches and connections will be removed. This cannot be undone."
+        : `Delete ${target.name} from the event? This removes their profile and connections.`
+    );
+    if (!ok) return;
+
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (!self) {
+      let key = sessionStorage.getItem(ADMIN_KEY_STORAGE) ?? "";
+      if (!key) {
+        key = window.prompt("Admin key")?.trim() ?? "";
+        if (!key) return;
+      }
+      headers["x-admin-key"] = key;
+    }
+
+    setDeletingId(target.memberId);
+    setDeleteError("");
+    try {
+      const res = await fetch("/api/members", {
+        method: "DELETE",
+        headers,
+        body: JSON.stringify({ memberId: target.memberId, username: target.username }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        if (!self && res.status === 401) sessionStorage.removeItem(ADMIN_KEY_STORAGE);
+        setDeleteError(data.error || "Could not delete the profile.");
+        return;
+      }
+      if (!self && headers["x-admin-key"]) sessionStorage.setItem(ADMIN_KEY_STORAGE, headers["x-admin-key"]);
+      setDbMembers((prev) => prev.filter((p) => p.id !== `member-${target.memberId}`));
+      if (self) {
+        clearSession();
+        setMemberId(null);
+        setUsername(""); setDisplayName(""); setRole(""); setAnimalId("");
+        setBusiness(""); setLookingFor(""); setCanHelp("");
+        setPassedIds([]); setStep(0);
+        setScreen("welcome");
+      }
+    } catch {
+      setDeleteError("Could not delete the profile. Check your connection and try again.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const connectPerson = () => {
@@ -556,8 +609,19 @@ export default function NoshyPage() {
                   </div>
                   <div className="noshy-home-actions">
                     <button type="button" className="noshy-btn noshy-btn-primary" onClick={() => setScreen("connect")}><Compass size={16} />Meet people</button>
+                    {!isAdmin && memberId != null && (
+                      <button
+                        type="button"
+                        className="noshy-link-danger"
+                        disabled={deletingId === memberId}
+                        onClick={() => void deleteMember({ memberId, username, name: displayName }, true)}
+                      >
+                        <Trash2 size={13} />{deletingId === memberId ? "Deleting…" : "Delete my profile"}
+                      </button>
+                    )}
                   </div>
                 </div>
+                {deleteError && <p className="noshy-error">{deleteError}</p>}
 
                 <div className="noshy-tabs">
                   {([["nearby", "Nearby"], ["matched", "Event matches"], ["circles", "Circles"]] as const).map(([id, label]) => (
@@ -581,7 +645,19 @@ export default function NoshyPage() {
                               {profile.lookingFor ? <span>{profile.lookingFor.slice(0, 42)}</span> : profile.skills.slice(0, 2).length ? profile.skills.slice(0, 2).map((s) => <span key={s}>{s}</span>) : <span>Community</span>}
                             </div>
                           </div>
-                          <ChevronRight size={16} />
+                          {isAdmin && profile.memberId != null ? (
+                            <button
+                              type="button"
+                              className="noshy-delete-btn"
+                              aria-label={`Delete ${profile.name}`}
+                              disabled={deletingId === profile.memberId}
+                              onClick={() => void deleteMember({ memberId: profile.memberId!, name: profile.name }, false)}
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          ) : (
+                            <ChevronRight size={16} />
+                          )}
                         </article>
                       );
                     })}

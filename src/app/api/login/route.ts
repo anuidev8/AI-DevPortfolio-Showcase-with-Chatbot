@@ -116,7 +116,10 @@ export async function POST(request: Request) {
             [username]
           );
 
-    if (!result.rows[0]) {
+    const row = result.rows[0];
+    const usernameMismatch =
+      memberId != null && row && (!username || (row.username ?? "").trim().toLowerCase() !== username);
+    if (!row || usernameMismatch) {
       return NextResponse.json(
         { error: "No profile found with that username. Start NoShy to register." },
         { status: 404 }

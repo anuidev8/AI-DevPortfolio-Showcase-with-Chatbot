@@ -110,7 +110,7 @@ Rules:
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://visiblebuilders.io",
-        "X-Title": "NoShy Networking — AI After Hours",
+        "X-Title": "NoShy Networking - AI After Hours",
       },
       body: JSON.stringify({
         model,
