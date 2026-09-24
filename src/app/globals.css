@@ -798,6 +798,7 @@ body {
 .status-approved { color: #4ad47a; }
 .status-waitlist { color: #e0a84a; }
 .status-invited { color: #8a9aab; }
+.status-declined { color: #e06a6a; }
 .checkin-empty {
   display: flex;
   flex-direction: column;

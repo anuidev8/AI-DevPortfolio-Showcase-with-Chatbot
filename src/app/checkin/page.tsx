@@ -11,14 +11,24 @@ type Guest = {
   status: string;
 };
 
-type StatusFilter = "going" | "checked";
+type StatusFilter = "all" | "going" | "waitlist" | "invited" | "checked";
 
 const GUESTS = guestsData as Guest[];
 const EVENT = "ai-after-hours-rooftop";
 
+const STATUS_LABEL: Record<string, string> = {
+  approved: "going",
+  waitlist: "waitlist",
+  invited: "invited",
+  declined: "declined",
+};
+
+const countStatus = (status: string) =>
+  GUESTS.filter((g) => g.status === status).length;
+
 export default function CheckinAdminPage() {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<StatusFilter>("going");
+  const [filter, setFilter] = useState<StatusFilter>("all");
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -59,6 +69,9 @@ export default function CheckinAdminPage() {
     const q = query.trim().toLowerCase();
     return GUESTS.filter((g) => {
       if (filter === "checked" && !checked[g.id]) return false;
+      if (filter === "going" && g.status !== "approved") return false;
+      if (filter === "waitlist" && g.status !== "waitlist") return false;
+      if (filter === "invited" && g.status !== "invited") return false;
       if (!q) return true;
       return (
         g.name.toLowerCase().includes(q) || g.email.toLowerCase().includes(q)
@@ -109,7 +122,10 @@ export default function CheckinAdminPage() {
   };
 
   const tabs: { id: StatusFilter; label: string; count: number }[] = [
-    { id: "going", label: "Going", count: GUESTS.length },
+    { id: "all", label: "All", count: GUESTS.length },
+    { id: "going", label: "Going", count: countStatus("approved") },
+    { id: "waitlist", label: "Waitlist", count: countStatus("waitlist") },
+    { id: "invited", label: "Invited", count: countStatus("invited") },
     { id: "checked", label: "Checked in", count: checkedCount },
   ];
 
@@ -120,7 +136,7 @@ export default function CheckinAdminPage() {
           <p className="checkin-eyebrow">Staff · AI After Hours Rooftop</p>
           <h1>Door check-in</h1>
           <p className="checkin-sub">
-            {checkedCount} / {GUESTS.length} going checked in
+            {checkedCount} / {GUESTS.length} checked in
             {syncError ? ` · ${syncError}` : " · synced to Railway DB"}
           </p>
         </div>
@@ -180,7 +196,9 @@ export default function CheckinAdminPage() {
                   <strong>{g.name}</strong>
                   <em>{g.email || "—"}</em>
                 </span>
-                <span className="checkin-status status-approved">going</span>
+                <span className={`checkin-status status-${g.status}`}>
+                  {STATUS_LABEL[g.status] ?? g.status}
+                </span>
               </button>
             </li>
           );
@@ -195,7 +213,7 @@ export default function CheckinAdminPage() {
       )}
 
       <p className="checkin-foot">
-        Approved guests only. Check-ins save to Postgres (Railway).
+        All Luma registrations. Check-ins save to Postgres (Railway).
         Share only with door staff.
       </p>
     </main>
