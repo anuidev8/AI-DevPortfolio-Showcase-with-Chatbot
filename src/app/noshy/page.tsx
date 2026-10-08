@@ -4,21 +4,31 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
 import {
-  ArrowRight, BookOpen, ChevronRight, Compass,
-  Handshake, Heart, MapPin, MessageSquare, QrCode, Sparkles, Trash2, Users, X,
+  ArrowRight, Bell, BookOpen, ChevronRight, Compass, Handshake, Heart, Mic,
+  QrCode, ScanLine, Search, Sparkles, Trash2, Trophy, Users, X,
 } from "lucide-react";
 import {
   COMMUNITY_CIRCLES, NETWORKING_ANIMALS, NOSHY_QUESTIONS,
   getNetworkingAnimal, type CommunityProfile,
 } from "@/lib/community-data";
 import { fetchAiMatch } from "@/lib/noshy-ai";
+import { CONNECTION_XP, meetUrl, memberIdOf, parseNoshyCode, type NoshyCode } from "@/lib/noshy-game";
 import { matchesFor, rankPairs, type MatchPair } from "@/lib/noshy-match";
+import {
+  CardScreen, ConnectionsScreen, Leaderboard, MissionsScreen, NightScreen, PersonScreen, ScanScreen,
+} from "@/components/noshy/NoshyGameScreens";
+import {
+  BottomNav, MatchCard, MatchPill, PersonAvatar, Tags, TopBar, animalTags, type NavTab,
+} from "@/components/noshy/NoshyUi";
+import { useNoshyProgress } from "@/components/noshy/useNoshyProgress";
 
 const cardEase = [0.22, 1, 0.36, 1] as const;
 const SESSION_KEY = "noshy-session";
 const ADMIN_KEY_STORAGE = "noshy-admin-key";
-type Screen = "welcome" | "login" | "onboarding" | "home" | "connect" | "match";
-type HomeTab = "nearby" | "matched" | "circles";
+type Screen =
+  | "welcome" | "mode" | "login" | "onboarding" | "home" | "people" | "connect" | "match"
+  | "scan" | "person" | "missions" | "connections" | "night" | "card";
+type HomeTab = "nearby" | "matched" | "board" | "circles";
 type DeskPerson = CommunityProfile & { fromDatabase?: boolean; memberId?: number };
 
 type SessionMember = {
@@ -56,18 +66,6 @@ function readSession(): SessionMember | null {
   }
 }
 
-function AnimalAvatar({ animalId, name, className, online }: {
-  animalId?: string; name: string; className?: string; online?: boolean;
-}) {
-  const animal = getNetworkingAnimal(animalId);
-  return (
-    <div className={`noshy-animal-avatar ${className ?? ""}`} style={{ background: animal?.color ?? "#00f2ff" }} aria-label={animal ? `${name}, ${animal.name}` : name}>
-      <span aria-hidden="true">{animal?.emoji ?? name.slice(0, 1).toUpperCase()}</span>
-      {online ? <i /> : null}
-    </div>
-  );
-}
-
 export default function NoshyPage() {
   const [screen, setScreen] = useState<Screen>("welcome");
   const [step, setStep] = useState(0);
@@ -96,8 +94,18 @@ export default function NoshyPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState("");
   const matchRequest = useRef(0);
+  const [activeMission, setActiveMission] = useState<string | null>(null);
+  const [missionEarned, setMissionEarned] = useState<number | null>(null);
+  const [gameBusy, setGameBusy] = useState(false);
+  const [gameError, setGameError] = useState("");
+  const [scanNotice, setScanNotice] = useState("");
+  // A card or mission QR opened before the profile was ready (deep link from the phone camera).
+  const [pendingCode, setPendingCode] = useState<NoshyCode | null>(null);
+  const afterJoin = useRef<"home" | "scan">("home");
+  const [showJoinQr, setShowJoinQr] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [peopleQuery, setPeopleQuery] = useState("");
 
-  const selectedAnimal = getNetworkingAnimal(animalId);
   const totalSteps = 3;
   const lastStep = totalSteps - 1;
 
@@ -119,7 +127,8 @@ export default function NoshyPage() {
     setCanHelp(member.canHelp ?? "");
     saveSession(member);
     setHomeTab("matched");
-    setScreen("home");
+    setScreen(afterJoin.current);
+    afterJoin.current = "home";
     void loadMembers();
   };
 
@@ -173,6 +182,7 @@ export default function NoshyPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    setPendingCode(parseNoshyCode(window.location.search));
     if (params.get("admin") === "1") {
       setIsAdmin(true);
       setScreen("home");
@@ -217,21 +227,22 @@ export default function NoshyPage() {
 
   // Welcome screen stays until the user taps "Start NoShy"
 
-  const loadMembers = async () => {
+  const loadMembers = async (): Promise<DeskPerson[] | null> => {
     try {
       const res = await fetch("/api/members");
-      if (!res.ok) return;
+      if (!res.ok) return null;
       const data = (await res.json()) as { members?: DeskPerson[] };
       setDbMembers(data.members ?? []);
-    } catch { /* keep local */ }
+      return data.members ?? [];
+    } catch { return null; }
   };
 
   useEffect(() => {
-    if (screen !== "home" && screen !== "connect" && !isAdmin) return;
+    if (memberId == null && !isAdmin) return;
     void loadMembers();
     const timer = window.setInterval(() => void loadMembers(), 8000);
     return () => window.clearInterval(timer);
-  }, [isAdmin, screen]);
+  }, [isAdmin, memberId]);
 
   const registered = useMemo(() => dbMembers.filter((p) => p.id !== youProfile.id), [dbMembers, youProfile.id]);
   const attendees = useMemo(() => {
@@ -260,6 +271,71 @@ export default function NoshyPage() {
   const remaining = connectPool.filter((p) => !passedIds.includes(p.id));
   const currentConnect = remaining[connectIndex] ?? remaining[0];
   const currentBrief = currentConnect && (displayName.trim() || memberId != null) ? matchesFor(youProfile, [currentConnect])[0] : null;
+
+  const game = useNoshyProgress(memberId, memberId != null || isAdmin);
+  const { progress } = game;
+  const peopleById = useMemo(() => {
+    const map = new Map<number, DeskPerson>();
+    for (const person of dbMembers) if (person.memberId != null) map.set(person.memberId, person);
+    return map;
+  }, [dbMembers]);
+  const myCard = memberId != null && joinUrl
+    ? { name: displayName, role, animalId, lookingFor, url: meetUrl(joinUrl.replace(/\/noshy$/, ""), memberId) }
+    : null;
+  const personId = matchPair ? memberIdOf(matchPair.right.id) : null;
+  const strongest = useMemo(() => {
+    const confirmed = new Set(progress.connections.filter((c) => c.status === "confirmed").map((c) => `member-${c.memberId}`));
+    return yourMatches.find((pair) => confirmed.has(pair.right.id)) ?? null;
+  }, [progress.connections, yourMatches]);
+
+  const openPerson = (person: DeskPerson) => {
+    const pair = matchesFor(youProfile, [person])[0];
+    if (!pair) return;
+    setGameError("");
+    openPair(pair, "person");
+  };
+
+  const handleCode = async (code: NoshyCode) => {
+    setScanNotice("");
+    if (code.kind === "mission") {
+      setMissionEarned(null); setGameError(""); setActiveMission(code.missionId); setScreen("missions");
+      return;
+    }
+    if (code.memberId === memberId) { setScanNotice("That's your own card. Scan someone else's."); setScreen("scan"); return; }
+    const person = peopleById.get(code.memberId)
+      ?? (await loadMembers())?.find((p) => p.memberId === code.memberId);
+    if (!person) { setScanNotice("That card isn't registered at this event yet."); setScreen("scan"); return; }
+    openPerson(person);
+  };
+
+  useEffect(() => {
+    if (!pendingCode || memberId == null) return;
+    if (pendingCode.kind === "meet" && dbMembers.length === 0) return;
+    setPendingCode(null);
+    window.history.replaceState(null, "", window.location.pathname);
+    void handleCode(pendingCode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingCode, memberId, dbMembers]);
+
+  const connectWith = async (targetId: number, note: string) => {
+    setGameBusy(true); setGameError("");
+    const result = await game.meet(targetId, "scan", note || undefined);
+    if (!result.ok) setGameError(result.error);
+    setGameBusy(false);
+  };
+
+  const completeMission = async (missionId: string, targetId: number) => {
+    setGameBusy(true); setGameError("");
+    const result = await game.completeMission(missionId, targetId);
+    if (result.ok) { setMissionEarned(result.alreadyDone ? null : result.xp); setActiveMission(null); }
+    else setGameError(result.error);
+    setGameBusy(false);
+  };
+
+  const startOnboarding = (then: "home" | "scan") => {
+    afterJoin.current = then;
+    setSaveError(""); setStep(0); setScreen("onboarding");
+  };
 
   const finishOnboarding = async () => {
     setSaving(true); setSaveError("");
@@ -337,9 +413,9 @@ export default function NoshyPage() {
     setPassedIds((prev) => [...prev, currentConnect.id]); setConnectIndex(0);
   };
 
-  const openPair = (pair: MatchPair) => {
+  const openPair = (pair: MatchPair, target: "match" | "person" = "match") => {
     const requestId = matchRequest.current + 1; matchRequest.current = requestId;
-    setMatchPair(pair); setAiLoading(true); setScreen("match");
+    setMatchPair(pair); setAiLoading(true); setScreen(target);
     void (async () => {
       try {
         const brief = await fetchAiMatch(pair);
@@ -406,116 +482,246 @@ export default function NoshyPage() {
     setPassedIds((prev) => [...prev, currentConnect.id]); openPair(currentBrief);
   };
 
+  const navTo = (tab: NavTab) => {
+    if (tab === "home") setScreen("home");
+    else if (tab === "people") setScreen("people");
+    else if (tab === "scan") { setScanNotice(""); setScreen("scan"); }
+    else if (tab === "missions") { setMissionEarned(null); setActiveMission(null); setScreen("missions"); }
+    else setScreen("card");
+  };
+  const navActive: NavTab | null =
+    screen === "home" ? "home" : screen === "people" ? "people" : screen === "card" ? "profile" : null;
+  const showNav = !isAdmin && memberId != null && navActive != null;
+
+  const query = peopleQuery.trim().toLowerCase();
+  const matchesQuery = (p: { name: string; role: string }) => !query || `${p.name} ${p.role}`.toLowerCase().includes(query);
+  const confirmedCount = progress.connections.filter((c) => c.status === "confirmed").length;
+  const motionProps = {
+    initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -8 },
+    transition: { duration: 0.35, ease: cardEase },
+  };
+
+  const pairRow = (pair: MatchPair) => (
+    <button key={`${pair.left.id}-${pair.right.id}`} type="button" className="noshy-row" onClick={() => openPair(pair)}>
+      <div className="noshy-pair-avatars">
+        <PersonAvatar animalId={pair.left.animalId} name={pair.left.name} size={40} shape="circle" />
+        <PersonAvatar animalId={pair.right.animalId} name={pair.right.name} size={40} shape="circle" />
+      </div>
+      <div>
+        <MatchPill score={pair.brief.score} />
+        <h3>{pair.left.name} × {pair.right.name}</h3>
+        <p className="noshy-why-line">{pair.brief.why}</p>
+      </div>
+      <ChevronRight size={18} />
+    </button>
+  );
+
+  const peoplePanel = (
+    <>
+      <div className="noshy-chips" role="tablist">
+        {([["matched", "Top matches"], ["nearby", "All attendees"], ["board", "Leaderboard"], ["circles", "Circles"]] as const).map(([id, label]) => (
+          <button key={id} type="button" role="tab" aria-selected={homeTab === id} className={homeTab === id ? "active" : ""} onClick={() => setHomeTab(id)}>{label}</button>
+        ))}
+      </div>
+
+      {homeTab === "nearby" && (
+        <div className="noshy-list">
+          {nearby.length === 0 && (
+            <div className="noshy-empty compact"><Users size={28} /><h3>No one checked in yet</h3><p>Scan the event QR, pick an animal, and answer the 3 questions.</p></div>
+          )}
+          {nearby.filter(matchesQuery).map((profile) => {
+            const isYou = memberId != null && profile.id === `member-${memberId}`;
+            const canOpen = !isYou && !isAdmin && memberId != null;
+            return (
+              <article key={profile.id} className={`noshy-row${isYou ? " you" : ""}`} onClick={canOpen ? () => openPerson(profile) : undefined}>
+                <PersonAvatar animalId={profile.animalId} name={profile.name} size={52} online={profile.online} />
+                <div>
+                  <h3>{profile.name}{isYou ? <small> · You</small> : null}</h3>
+                  <p>{profile.role}</p>
+                  <Tags items={profile.lookingFor ? [profile.lookingFor.slice(0, 32)] : animalTags(profile.animalId)} />
+                </div>
+                {isAdmin && profile.memberId != null ? (
+                  <button
+                    type="button"
+                    className="noshy-delete-btn"
+                    aria-label={`Delete ${profile.name}`}
+                    disabled={deletingId === profile.memberId}
+                    onClick={() => void deleteMember({ memberId: profile.memberId!, name: profile.name }, false)}
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                ) : (
+                  <ChevronRight size={18} />
+                )}
+              </article>
+            );
+          })}
+        </div>
+      )}
+
+      {homeTab === "matched" && (
+        <div className="noshy-list">
+          {!pickLeft && yourMatches.filter((pair) => matchesQuery(pair.right)).map((pair) => (
+            <MatchCard key={pair.right.id} pair={pair} onOpen={() => openPair(pair)} />
+          ))}
+          <p className="noshy-section-label">Match two people</p>
+          <div className="noshy-note"><Sparkles size={15} />Pick two people. AI writes why they should talk, the topics, and how they help each other.</div>
+          <div className="noshy-admin-pick">
+            <label>Person A
+              <select value={pickLeftId} onChange={(e) => setPickLeftId(e.target.value)}>
+                <option value="">Select attendee</option>
+                {attendees.map((p) => <option key={p.id} value={p.id}>{getNetworkingAnimal(p.animalId)?.emoji ?? "•"} {p.name}</option>)}
+              </select>
+            </label>
+            <label>Person B
+              <select value={pickRightId} onChange={(e) => setPickRightId(e.target.value)}>
+                <option value="">Best matches for A</option>
+                {attendees.filter((p) => p.id !== pickLeftId).map((p) => <option key={p.id} value={p.id}>{getNetworkingAnimal(p.animalId)?.emoji ?? "•"} {p.name}</option>)}
+              </select>
+            </label>
+            <button type="button" className="noshy-btn noshy-btn-primary" disabled={!pickedBrief} onClick={() => pickedBrief && openPair(pickedBrief)}>Show match</button>
+          </div>
+          {attendees.length < 2 && <div className="noshy-empty compact"><Users size={28} /><h3>Waiting for check-ins</h3><p>Matches appear when at least two people register.</p></div>}
+          {pickedBrief && pairRow(pickedBrief)}
+          {pickLeft && !pickRight && pickedMatches.map((pair) => (
+            <MatchCard key={`${pair.left.id}-${pair.right.id}`} pair={pair} onOpen={() => openPair(pair)} />
+          ))}
+          {!pickLeft && eventPairs.length > 0 && <>
+            <p className="noshy-section-label">Best pairs in the room</p>
+            {eventPairs.map(pairRow)}
+          </>}
+        </div>
+      )}
+
+      {homeTab === "board" && <Leaderboard rows={progress.leaderboard} memberId={memberId} />}
+
+      {homeTab === "circles" && (
+        <div className="noshy-list">
+          {COMMUNITY_CIRCLES.map((circle) => (
+            <article key={circle.id} className="noshy-circle">
+              <div className="noshy-circle-avatars">{circle.avatars.map((a) => <img key={a} src={a} alt="" />)}</div>
+              <h3>{circle.name}</h3><p>{circle.description}</p>
+              <span><Users size={13} /> {circle.active} active · {circle.members} members</span>
+            </article>
+          ))}
+        </div>
+      )}
+    </>
+  );
+
   return (
     <main className="noshy-page">
       <div className="noshy-shell">
-        <header className="noshy-topbar">
-          <div className="noshy-brand"><span className="noshy-brand-mark">VB</span><span>Visible Builders</span></div>
-          <span className="noshy-top-label">{isAdmin ? "Admin" : "NoShy"}</span>
-        </header>
         <div className="noshy-stage">
           <AnimatePresence mode="wait">
 
             {screen === "welcome" && (
-              <motion.section key="welcome" className="noshy-panel noshy-welcome"
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: cardEase }}>
-                <div className="noshy-logo-stack">
-                  <div className="noshy-qr" aria-label="Scan to open NoShy">
-                    {joinUrl ? (
-                      <QRCodeSVG
-                        value={joinUrl}
-                        size={168}
-                        level="M"
-                        bgColor="#0b011d"
-                        fgColor="#00f2ff"
-                        marginSize={1}
-                      />
-                    ) : (
-                      <QrCode size={72} />
-                    )}
+              <motion.section key="welcome" className="noshy-panel noshy-welcome" {...motionProps}>
+                <div className="noshy-welcome-bg" aria-hidden="true" />
+                <TopBar
+                  right={joinUrl ? (
+                    <button type="button" className="noshy-icon-btn" onClick={() => setShowJoinQr((v) => !v)} aria-label={showJoinQr ? "Hide join QR" : "Show join QR"} aria-pressed={showJoinQr}>
+                      {showJoinQr ? <X size={18} /> : <QrCode size={18} />}
+                    </button>
+                  ) : undefined}
+                />
+                {showJoinQr && joinUrl ? (
+                  <div className="noshy-join-qr">
+                    <QRCodeSVG value={joinUrl} size={180} level="M" bgColor="#ffffff" fgColor="#000000" marginSize={2} />
+                    <p>Scan to join NoShy</p>
+                    <span>{joinUrl.replace(/^https?:\/\//, "")}</span>
                   </div>
-                  <div className="noshy-logo-accent"><Sparkles size={18} /></div>
+                ) : (
+                  <div className="noshy-welcome-copy">
+                    <h1>Meet<br />people<br /><span>worth<br />meeting.</span></h1>
+                    <p>AI-powered networking<br />for real builders.</p>
+                  </div>
+                )}
+                <div className="noshy-welcome-actions">
+                  {pendingCode && <div className="noshy-note"><Sparkles size={15} />{pendingCode.kind === "meet" ? "You scanned a NoShy card. Register and we'll show your match with them." : "You scanned a mission card. Register to complete it."}</div>}
+                  <button type="button" className="noshy-btn noshy-btn-white noshy-btn-full" onClick={() => setScreen("mode")}>
+                    Get started<ArrowRight size={18} />
+                  </button>
+                  <button type="button" className="noshy-text-btn" onClick={() => { setSaveError(""); setLoginUsername(username); setScreen("login"); }}>
+                    I already have a profile
+                  </button>
+                  <p className="noshy-powered">Powered by <strong>VisibleBuilders</strong></p>
                 </div>
-                {joinUrl ? <p className="noshy-qr-url">{joinUrl.replace(/^https?:\/\//, "")}</p> : null}
-                <p className="noshy-eyebrow">NoShy Networking App</p>
-                <h1>Scan. Match. Talk.</h1>
-                <p>Name, animal, 3 questions. We match people by business — who to talk to, why, and what to say. Direct. No BS.</p>
-                <ul className="noshy-welcome-steps">
-                  <li><QrCode size={16} />Scan QR</li>
-                  <li><span aria-hidden="true">🦁</span>Animal avatar</li>
-                  <li><MessageSquare size={16} />3 questions</li>
-                </ul>
-                <button type="button" className="noshy-btn noshy-btn-primary noshy-btn-full" onClick={() => { setSaveError(""); setStep(0); setScreen("onboarding"); }}>
-                  Start NoShy<ArrowRight size={16} />
+              </motion.section>
+            )}
+
+            {screen === "mode" && (
+              <motion.section key="mode" className="noshy-panel" {...motionProps}>
+                <TopBar right={<button type="button" className="noshy-text-btn" onClick={() => startOnboarding("home")}>Skip</button>} />
+                <div className="noshy-title">
+                  <h2>How do you want<br />to connect?</h2>
+                  <p>You can always switch later.</p>
+                </div>
+                <div className="noshy-modes">
+                  <a className="noshy-mode featured" href="/noshy-voice">
+                    <span className="noshy-mode-icon"><Mic size={22} /></span>
+                    <div><strong>Talk to NoShy</strong><span>Let the AI host guide you. Answer with your voice.</span></div>
+                    <ChevronRight size={20} />
+                  </a>
+                  <button type="button" className="noshy-mode" onClick={() => startOnboarding("scan")}>
+                    <span className="noshy-mode-icon"><ScanLine size={22} /></span>
+                    <div><strong>Scan &amp; Discover</strong><span>Use NoShy cards to find people around you.</span></div>
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+                <button type="button" className="noshy-btn noshy-btn-secondary noshy-btn-full" onClick={() => startOnboarding("home")}>
+                  Explore manually<ArrowRight size={16} />
                 </button>
-                <button
-                  type="button"
-                  className="noshy-btn noshy-btn-secondary noshy-btn-full"
-                  onClick={() => { setSaveError(""); setLoginUsername(username); setScreen("login"); }}
-                >
-                  I already registered
-                </button>
+                <button type="button" className="noshy-text-btn center" onClick={() => setScreen("welcome")}>Back</button>
               </motion.section>
             )}
 
             {screen === "login" && (
-              <motion.section key="login" className="noshy-panel noshy-onboarding"
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: cardEase }}>
-                <div className="noshy-step">
-                  <h2>Welcome back</h2>
+              <motion.section key="login" className="noshy-panel" {...motionProps}>
+                <TopBar onBack={() => { setSaveError(""); setScreen("welcome"); }} />
+                <div className="noshy-title">
+                  <h2>Welcome back.</h2>
                   <p>Enter your username to open your matches.</p>
-                  <div className="noshy-fields">
-                    <label>
-                      Username
-                      <input
-                        value={loginUsername}
-                        onChange={(e) => setLoginUsername(e.target.value)}
-                        placeholder="e.g. camila.r"
-                        autoComplete="username"
-                        autoCapitalize="none"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") void loginByUsername(loginUsername);
-                        }}
-                      />
-                    </label>
-                  </div>
                 </div>
+                <label className="noshy-field">
+                  Username
+                  <input
+                    value={loginUsername}
+                    onChange={(e) => setLoginUsername(e.target.value)}
+                    placeholder="e.g. camila.r"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") void loginByUsername(loginUsername);
+                    }}
+                  />
+                </label>
                 {saveError && <p className="noshy-error">{saveError}</p>}
-                <div className="noshy-nav-row">
-                  <button type="button" className="noshy-btn noshy-btn-secondary" onClick={() => { setSaveError(""); setScreen("welcome"); }}>
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    className="noshy-btn noshy-btn-primary noshy-btn-grow"
-                    disabled={loggingIn}
-                    onClick={() => void loginByUsername(loginUsername)}
-                  >
-                    {loggingIn ? "Opening…" : "Open my matches"}
-                    <ArrowRight size={16} />
-                  </button>
-                </div>
+                <div className="noshy-spacer" />
+                <button
+                  type="button"
+                  className="noshy-btn noshy-btn-primary noshy-btn-full"
+                  disabled={loggingIn}
+                  onClick={() => void loginByUsername(loginUsername)}
+                >
+                  {loggingIn ? "Opening…" : "Open my matches"}
+                  <ArrowRight size={16} />
+                </button>
               </motion.section>
             )}
 
             {screen === "onboarding" && (
-              <motion.section key="onboarding" className="noshy-panel noshy-onboarding"
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: cardEase }}>
-                <div className="noshy-progress">
-                  {Array.from({ length: totalSteps }).map((_, i) => (
-                    <i key={i} className={i === step ? "active" : i < step ? "done" : ""} />
-                  ))}
-                </div>
+              <motion.section key="onboarding" className="noshy-panel" {...motionProps}>
+                <TopBar right={<span className="noshy-counter">{step + 1}/{totalSteps}</span>} />
 
                 {step === 0 && (
-                  <div className="noshy-step">
-                    <h2>Username, name & role</h2>
-                    <p>Username is for login. Name is what people see when we match you.</p>
+                  <>
+                    <div className="noshy-title">
+                      <h2>Let&apos;s get to know you.</h2>
+                      <p>Answer a few questions so we can find the right people for you.</p>
+                    </div>
                     <div className="noshy-fields">
-                      <label>
+                      <label className="noshy-field">
                         Username
                         <input
                           value={username}
@@ -525,7 +731,7 @@ export default function NoshyPage() {
                           autoCapitalize="none"
                         />
                       </label>
-                      <label>
+                      <label className="noshy-field">
                         Name
                         <input
                           value={displayName}
@@ -534,8 +740,8 @@ export default function NoshyPage() {
                           autoComplete="name"
                         />
                       </label>
-                      <label>
-                        Role
+                      <label className="noshy-field">
+                        What do you do?
                         <input
                           value={role}
                           onChange={(e) => setRole(e.target.value)}
@@ -543,22 +749,20 @@ export default function NoshyPage() {
                         />
                       </label>
                     </div>
-                  </div>
+                  </>
                 )}
 
                 {step === 1 && (
-                  <div className="noshy-step">
-                    <h2>Choose your animal</h2>
-                    <p>This is your avatar. Wear it, remember it, find your match by it.</p>
-                    {selectedAnimal && (
-                      <div className="noshy-animal-avatar xl" style={{ background: selectedAnimal.color }}>
-                        <span aria-hidden="true">{selectedAnimal.emoji}</span>
-                      </div>
-                    )}
+                  <>
+                    <div className="noshy-title">
+                      <h2>Pick your animal.</h2>
+                      <p>This is your avatar in the room. Wear it, remember it, find your match by it.</p>
+                    </div>
                     <div className="noshy-animal-grid">
                       {NETWORKING_ANIMALS.map((animal) => (
                         <button key={animal.id} type="button"
                           className={`noshy-animal${animalId === animal.id ? " selected" : ""}`}
+                          aria-pressed={animalId === animal.id}
                           onClick={() => setAnimalId(animal.id)}>
                           <span className="noshy-animal-emoji" aria-hidden="true">{animal.emoji}</span>
                           <strong>{animal.name}</strong>
@@ -566,252 +770,296 @@ export default function NoshyPage() {
                         </button>
                       ))}
                     </div>
-                  </div>
+                  </>
                 )}
 
                 {step === 2 && (
-                  <div className="noshy-step">
-                    <h2>Answer 3 questions</h2>
-                    <p>Only these. We match people from these answers — no categories.</p>
-                    <div className="noshy-fields noshy-fields-wide">
+                  <>
+                    <div className="noshy-title">
+                      <h2>What brings you here?</h2>
+                      <p>We match people from these 3 answers. No categories.</p>
+                    </div>
+                    <div className="noshy-fields">
                       {NOSHY_QUESTIONS.map((q) => {
                         const value = q.id === "business" ? business : q.id === "lookingFor" ? lookingFor : canHelp;
                         const onChange = q.id === "business" ? setBusiness : q.id === "lookingFor" ? setLookingFor : setCanHelp;
                         return (
-                          <label key={q.id}>{q.label}
+                          <label key={q.id} className="noshy-field">{q.label}
                             <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={q.placeholder} rows={3} />
                           </label>
                         );
                       })}
                     </div>
-                  </div>
+                  </>
                 )}
 
                 {saveError && <p className="noshy-error">{saveError}</p>}
-                <div className="noshy-nav-row">
-                  {step > 0 && <button type="button" className="noshy-btn noshy-btn-secondary" onClick={() => setStep(step - 1)}>Back</button>}
-                  <button type="button" className="noshy-btn noshy-btn-primary noshy-btn-grow" onClick={nextStep} disabled={saving}>
-                    {step === lastStep ? (saving ? "Saving…" : "See my matches") : "Next"}<ArrowRight size={16} />
+                <div className="noshy-spacer" />
+                <div className="noshy-btn-row">
+                  <button type="button" className="noshy-btn noshy-btn-secondary noshy-btn-narrow" onClick={() => (step > 0 ? setStep(step - 1) : setScreen("mode"))}>Back</button>
+                  <button type="button" className="noshy-btn noshy-btn-primary" onClick={nextStep} disabled={saving}>
+                    {step === lastStep ? (saving ? "Saving…" : "See my matches") : "Continue"}<ArrowRight size={16} />
                   </button>
                 </div>
               </motion.section>
             )}
 
-            {screen === "home" && (
-              <motion.section key="home" className="noshy-panel noshy-home"
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: cardEase }}>
-                <div className="noshy-home-head">
-                  <div>
-                    <p className="noshy-eyebrow">{isAdmin ? "Event admin · NoShy" : "Community desk · NoShy"}</p>
-                    <h2>{attendees.length ? (isAdmin ? "Find matches in the room." : "People are already gathering.") : "Waiting for check-ins."}</h2>
-                    <p className="noshy-muted"><MapPin size={14} /> Medellín · {attendees.length} registered{selectedAnimal ? <> · {selectedAnimal.emoji} {selectedAnimal.name}</> : null}</p>
-                  </div>
-                  <div className="noshy-home-actions">
-                    <button type="button" className="noshy-btn noshy-btn-primary" onClick={() => setScreen("connect")}><Compass size={16} />Meet people</button>
-                    {!isAdmin && memberId != null && (
-                      <button
-                        type="button"
-                        className="noshy-link-danger"
-                        disabled={deletingId === memberId}
-                        onClick={() => void deleteMember({ memberId, username, name: displayName }, true)}
-                      >
-                        <Trash2 size={13} />{deletingId === memberId ? "Deleting…" : "Delete my profile"}
-                      </button>
-                    )}
-                  </div>
+            {screen === "home" && isAdmin && (
+              <motion.section key="home-admin" className="noshy-panel" {...motionProps}>
+                <TopBar right={<span className="noshy-counter">Admin</span>} />
+                <div className="noshy-title">
+                  <h2>{attendees.length ? "Find matches in the room." : "Waiting for check-ins."}</h2>
+                  <p>Medellín · {attendees.length} registered</p>
                 </div>
                 {deleteError && <p className="noshy-error">{deleteError}</p>}
+                {peoplePanel}
+              </motion.section>
+            )}
 
-                <div className="noshy-tabs">
-                  {([["nearby", "Nearby"], ["matched", "Event matches"], ["circles", "Circles"]] as const).map(([id, label]) => (
-                    <button key={id} type="button" className={homeTab === id ? "active" : ""} onClick={() => setHomeTab(id)}>{label}</button>
+            {screen === "home" && !isAdmin && (
+              <motion.section key="home" className="noshy-panel" {...motionProps}>
+                <TopBar
+                  right={memberId != null ? (
+                    <button type="button" className="noshy-icon-btn" onClick={() => setScreen("connections")} aria-label={`Connections${progress.incoming.length ? `, ${progress.incoming.length} waiting` : ""}`}>
+                      <Bell size={19} />
+                      {progress.incoming.length > 0 && <i className="noshy-badge">{progress.incoming.length}</i>}
+                    </button>
+                  ) : undefined}
+                />
+                <div className="noshy-title">
+                  <h2>Your top matches</h2>
+                  <p>Based on your goals, skills and what you&apos;re looking for.</p>
+                </div>
+
+                {memberId != null && (
+                  <button type="button" className="noshy-xp" onClick={() => setScreen("night")}>
+                    <Trophy size={17} /><strong>{progress.xp} XP</strong>
+                    <span>{confirmedCount} connections · {progress.missions.length} missions{progress.rank ? ` · #${progress.rank}` : ""}</span>
+                    <ChevronRight size={16} />
+                  </button>
+                )}
+                {progress.incoming.map((id) => {
+                  const person = peopleById.get(id);
+                  return person ? (
+                    <button key={id} type="button" className="noshy-note noshy-note-action" onClick={() => openPerson(person)}>
+                      <Handshake size={15} />{person.name} says you two talked. Confirm for +{CONNECTION_XP} XP.
+                    </button>
+                  ) : null;
+                })}
+
+                <div className="noshy-list">
+                  {yourMatches.length === 0 && (
+                    <div className="noshy-empty compact"><Users size={28} /><h3>No matches yet</h3><p>Your matches show up here as people check in.</p></div>
+                  )}
+                  {yourMatches.slice(0, 5).map((pair) => (
+                    <MatchCard key={pair.right.id} pair={pair} onOpen={() => openPerson(pair.right)} />
                   ))}
                 </div>
 
-                {homeTab === "nearby" && (
-                  <div className="noshy-list">
-                    {nearby.length === 0 && (
-                      <div className="noshy-empty compact"><Users size={28} /><h3>No one checked in yet</h3><p>Scan the event QR, pick an animal, and answer the 3 questions.</p></div>
-                    )}
-                    {nearby.map((profile) => {
-                      const isYou = memberId != null && profile.id === `member-${memberId}`;
-                      return (
-                        <article key={profile.id} className={`noshy-person${isYou ? " you" : ""}`}>
-                          <AnimalAvatar animalId={profile.animalId} name={profile.name} className="noshy-person-avatar" online={profile.online} />
-                          <div>
-                            <h3>{profile.name}</h3><p>{profile.role}</p>
-                            <div className="noshy-mini-tags">
-                              {profile.lookingFor ? <span>{profile.lookingFor.slice(0, 42)}</span> : profile.skills.slice(0, 2).length ? profile.skills.slice(0, 2).map((s) => <span key={s}>{s}</span>) : <span>Community</span>}
-                            </div>
-                          </div>
-                          {isAdmin && profile.memberId != null ? (
-                            <button
-                              type="button"
-                              className="noshy-delete-btn"
-                              aria-label={`Delete ${profile.name}`}
-                              disabled={deletingId === profile.memberId}
-                              onClick={() => void deleteMember({ memberId: profile.memberId!, name: profile.name }, false)}
-                            >
-                              <Trash2 size={15} />
-                            </button>
-                          ) : (
-                            <ChevronRight size={16} />
-                          )}
-                        </article>
-                      );
-                    })}
-                  </div>
-                )}
+                <div className="noshy-quick">
+                  <a href="/noshy-voice"><Mic size={18} />Talk to NoShy</a>
+                  <button type="button" onClick={() => setScreen("connect")}><Compass size={18} />Meet people</button>
+                </div>
+              </motion.section>
+            )}
 
-                {homeTab === "matched" && (
-                  <div className="noshy-list">
-                    <div className="noshy-note"><Sparkles size={15} />Pick two people. AI writes why they should talk, the topics, and how they help each other.</div>
-                    <div className="noshy-admin-pick">
-                      <label>Person A
-                        <select value={pickLeftId} onChange={(e) => setPickLeftId(e.target.value)}>
-                          <option value="">Select attendee</option>
-                          {attendees.map((p) => <option key={p.id} value={p.id}>{getNetworkingAnimal(p.animalId)?.emoji ?? "•"} {p.name}</option>)}
-                        </select>
-                      </label>
-                      <label>Person B
-                        <select value={pickRightId} onChange={(e) => setPickRightId(e.target.value)}>
-                          <option value="">Best matches for A</option>
-                          {attendees.filter((p) => p.id !== pickLeftId).map((p) => <option key={p.id} value={p.id}>{getNetworkingAnimal(p.animalId)?.emoji ?? "•"} {p.name}</option>)}
-                        </select>
-                      </label>
-                      <button type="button" className="noshy-btn noshy-btn-primary" disabled={!pickedBrief} onClick={() => pickedBrief && openPair(pickedBrief)}>Show match</button>
-                    </div>
-                    {attendees.length < 2 && <div className="noshy-empty compact"><Users size={28} /><h3>Waiting for check-ins</h3><p>Matches appear when at least two people register.</p></div>}
-                    {pickedBrief && (
-                      <article className="noshy-pair" onClick={() => openPair(pickedBrief)}>
-                        <div className="noshy-pair-people"><AnimalAvatar animalId={pickedBrief.left.animalId} name={pickedBrief.left.name} /><Handshake size={18} /><AnimalAvatar animalId={pickedBrief.right.animalId} name={pickedBrief.right.name} /></div>
-                        <div><h3>{pickedBrief.left.name} × {pickedBrief.right.name} <em>{pickedBrief.brief.score}%</em></h3><p className="noshy-why-line">{pickedBrief.brief.why}</p></div>
-                      </article>
-                    )}
-                    {pickLeft && !pickRight && pickedMatches.map((pair) => (
-                      <article key={`${pair.left.id}-${pair.right.id}`} className="noshy-pair" onClick={() => openPair(pair)}>
-                        <AnimalAvatar animalId={pair.right.animalId} name={pair.right.name} className="noshy-person-avatar" />
-                        <div><h3>{pair.right.name} <em>{pair.brief.score}%</em></h3><p>{pair.right.role}</p><p className="noshy-why-line">{pair.brief.why}</p></div>
-                        <ChevronRight size={16} />
-                      </article>
-                    ))}
-                    {!pickLeft && yourMatches.length > 0 && <>
-                      <p className="noshy-section-label">Your matches</p>
-                      {yourMatches.map((pair) => (
-                        <article key={`${pair.left.id}-${pair.right.id}`} className="noshy-pair" onClick={() => openPair(pair)}>
-                          <AnimalAvatar animalId={pair.right.animalId} name={pair.right.name} className="noshy-person-avatar" />
-                          <div><h3>{pair.right.name} <em>{pair.brief.score}%</em></h3><p>{pair.right.role}</p><p className="noshy-why-line">{pair.brief.why}</p></div>
-                          <ChevronRight size={16} />
-                        </article>
-                      ))}
-                    </>}
-                    {!pickLeft && eventPairs.length > 0 && <>
-                      <p className="noshy-section-label">Best pairs in the room</p>
-                      {eventPairs.map((pair) => (
-                        <article key={`${pair.left.id}-${pair.right.id}`} className="noshy-pair" onClick={() => openPair(pair)}>
-                          <div className="noshy-pair-people"><AnimalAvatar animalId={pair.left.animalId} name={pair.left.name} /><Handshake size={16} /><AnimalAvatar animalId={pair.right.animalId} name={pair.right.name} /></div>
-                          <div><h3>{pair.left.name} × {pair.right.name} <em>{pair.brief.score}%</em></h3><p className="noshy-why-line">{pair.brief.why}</p></div>
-                          <ChevronRight size={16} />
-                        </article>
-                      ))}
-                    </>}
-                  </div>
+            {screen === "people" && (
+              <motion.section key="people" className="noshy-panel" {...motionProps}>
+                <TopBar
+                  right={
+                    <button type="button" className="noshy-icon-btn" onClick={() => { setSearchOpen((v) => !v); setPeopleQuery(""); }} aria-label={searchOpen ? "Close search" : "Search people"} aria-pressed={searchOpen}>
+                      {searchOpen ? <X size={19} /> : <Search size={19} />}
+                    </button>
+                  }
+                />
+                <div className="noshy-title"><h2>People</h2></div>
+                {searchOpen && (
+                  <input className="noshy-search" value={peopleQuery} onChange={(e) => setPeopleQuery(e.target.value)} placeholder="Search by name or role" aria-label="Search people" autoFocus />
                 )}
-
-                {homeTab === "circles" && (
-                  <div className="noshy-circles">
-                    {COMMUNITY_CIRCLES.map((circle) => (
-                      <article key={circle.id} className="noshy-circle">
-                        <div className="noshy-circle-avatars">{circle.avatars.map((a) => <img key={a} src={a} alt="" />)}</div>
-                        <h3>{circle.name}</h3><p>{circle.description}</p>
-                        <span style={{ color: circle.accent }}><Users size={13} /> {circle.active} active · {circle.members} members</span>
-                      </article>
-                    ))}
-                  </div>
-                )}
+                {deleteError && <p className="noshy-error">{deleteError}</p>}
+                {peoplePanel}
               </motion.section>
             )}
 
             {screen === "connect" && (
-              <motion.section key="connect" className="noshy-panel noshy-connect"
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: cardEase }}>
-                <div className="noshy-home-head">
-                  <div><p className="noshy-eyebrow">Meet people</p><h2>Connect with intention.</h2></div>
-                  <button type="button" className="noshy-btn noshy-btn-secondary" onClick={() => setScreen("home")}>Back</button>
-                </div>
+              <motion.section key="connect" className="noshy-panel" {...motionProps}>
+                <TopBar onBack={() => setScreen("home")} />
                 {currentConnect ? (
-                  <article className="noshy-connect-card">
-                    <AnimalAvatar animalId={currentConnect.animalId} name={currentConnect.name} className="noshy-connect-photo" />
-                    <h3>{getNetworkingAnimal(currentConnect.animalId)?.emoji} {currentConnect.name}</h3>
-                    <p className="noshy-muted">{currentConnect.role}</p>
-                    <div className="noshy-mini-tags center">
-                      {currentConnect.business && <span>{currentConnect.business}</span>}
-                      {currentConnect.lookingFor && <span>Wants: {currentConnect.lookingFor}</span>}
+                  <>
+                    <div className="noshy-profile-hero">
+                      <PersonAvatar animalId={currentConnect.animalId} name={currentConnect.name} size={116} shape="circle" />
+                      {currentBrief && <MatchPill score={currentBrief.brief.score} />}
+                      <h2>{currentConnect.name}</h2>
+                      <p>{currentConnect.role}</p>
+                      <Tags items={animalTags(currentConnect.animalId)} />
                     </div>
-                    <p className="noshy-bio">{currentConnect.bio || currentConnect.canHelp}</p>
-                    {currentBrief && <div className="noshy-connect-why"><strong>Why talk now</strong><p>{currentBrief.brief.why}</p></div>}
-                    <div className="noshy-connect-actions">
-                      <button type="button" className="noshy-round pass" onClick={passPerson} aria-label="Pass"><X size={22} /></button>
-                      <button type="button" className="noshy-round connect" onClick={connectPerson} aria-label="Connect"><Heart size={22} /></button>
+                    <div className="noshy-about">
+                      <h3>About</h3>
+                      <p>{currentConnect.bio || currentConnect.business || currentConnect.canHelp}</p>
+                      {currentConnect.lookingFor && <p><b>Looking for:</b> {currentConnect.lookingFor}</p>}
                     </div>
-                  </article>
+                    {currentBrief && <article className="noshy-why"><h3>Why talk now</h3><p>{currentBrief.brief.why}</p></article>}
+                    <div className="noshy-spacer" />
+                    <div className="noshy-btn-row">
+                      <button type="button" className="noshy-btn noshy-btn-secondary" onClick={passPerson}><X size={16} />Skip</button>
+                      <button type="button" className="noshy-btn noshy-btn-primary" onClick={connectPerson}><Heart size={16} />Connect</button>
+                    </div>
+                  </>
                 ) : (
                   <div className="noshy-empty">
                     <BookOpen size={28} />
                     <h3>{dbMembers.length < 2 ? "Waiting for check-ins" : "You've seen everyone for now"}</h3>
                     <p>{dbMembers.length < 2 ? "Matches start when at least two people register." : "Come back after the next check-in."}</p>
-                    <button type="button" className="noshy-btn noshy-btn-primary" onClick={() => setScreen("home")}>Back to desk</button>
+                    <button type="button" className="noshy-btn noshy-btn-primary" onClick={() => setScreen("home")}>Back home</button>
                   </div>
                 )}
               </motion.section>
             )}
 
             {screen === "match" && matchPair && (
-              <motion.section key={`match-${matchPair.left.id}-${matchPair.right.id}`} className="noshy-panel noshy-match"
+              <motion.section key={`match-${matchPair.left.id}-${matchPair.right.id}`} className="noshy-panel"
                 initial={{ opacity: 0, y: 28, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }}
                 transition={{ duration: 0.5, ease: cardEase }}>
-                <motion.p className="noshy-eyebrow" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>NoShy match</motion.p>
-                <motion.h2 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.4, ease: cardEase }}>
-                  {matchPair.left.name} × {matchPair.right.name}
-                </motion.h2>
-                <motion.div className="noshy-match-avatars" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.16, duration: 0.4, ease: cardEase }}>
-                  <AnimalAvatar animalId={matchPair.left.animalId} name={matchPair.left.name} />
-                  <Handshake size={24} className="noshy-match-icon" />
-                  <AnimalAvatar animalId={matchPair.right.animalId} name={matchPair.right.name} />
-                </motion.div>
-                <p className="noshy-match-score">{matchPair.brief.score}% business fit · skip the small talk</p>
-                <span className={`noshy-ai-pill${aiLoading ? " loading" : ""}`}>
-                  <Sparkles size={13} />{aiLoading ? "AI is writing this match…" : "Written by AI from their 3 answers"}
-                </span>
-                <motion.article className="noshy-brief" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22, duration: 0.4, ease: cardEase }}>
+                <TopBar onBack={() => setScreen(isAdmin ? "home" : "people")} />
+                <div className="noshy-profile-hero">
+                  <motion.div className="noshy-duo" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.12, duration: 0.4, ease: cardEase }}>
+                    <PersonAvatar animalId={matchPair.left.animalId} name={matchPair.left.name} size={92} shape="circle" />
+                    <PersonAvatar animalId={matchPair.right.animalId} name={matchPair.right.name} size={92} shape="circle" />
+                  </motion.div>
+                  <MatchPill score={matchPair.brief.score} />
+                  <h2>{matchPair.left.name} × {matchPair.right.name}</h2>
+                  <span className={`noshy-ai-pill${aiLoading ? " loading" : ""}`}>
+                    <Sparkles size={13} />{aiLoading ? "AI is writing this match…" : "Written by AI from their 3 answers"}
+                  </span>
+                </div>
+                <article className="noshy-why">
                   <h3>Why this match</h3>
                   {aiLoading ? <div className="noshy-skeleton-stack"><i /><i /><i className="short" /></div> : <p>{matchPair.brief.why}</p>}
-                </motion.article>
-                <motion.article className="noshy-brief" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.4, ease: cardEase }}>
+                </article>
+                <div className="noshy-start">
                   <h3>Topics to discuss</h3>
-                  {aiLoading ? <div className="noshy-skeleton-stack"><i /><i /><i /></div> : <ol>{matchPair.brief.topics.map((t) => <li key={t}>{t}</li>)}</ol>}
-                </motion.article>
-                <motion.div className="noshy-help-row" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38, duration: 0.4, ease: cardEase }}>
-                  <article className="noshy-brief">
+                  {aiLoading ? <div className="noshy-skeleton-stack"><i /><i /><i /></div> : <ol className="noshy-numbered">{matchPair.brief.topics.map((t) => <li key={t}>{t}</li>)}</ol>}
+                </div>
+                <div className="noshy-help-row">
+                  <article className="noshy-about">
                     <h3>{matchPair.left.name.split(" ")[0]} helps</h3>
                     {aiLoading ? <div className="noshy-skeleton-stack"><i /><i className="short" /></div> : <p>{matchPair.brief.youHelpThem}</p>}
                   </article>
-                  <article className="noshy-brief">
+                  <article className="noshy-about">
                     <h3>{matchPair.right.name.split(" ")[0]} helps</h3>
                     {aiLoading ? <div className="noshy-skeleton-stack"><i /><i className="short" /></div> : <p>{matchPair.brief.theyHelpYou}</p>}
                   </article>
-                </motion.div>
-                <div className="noshy-nav-row">
-                  <button type="button" className="noshy-btn noshy-btn-secondary" onClick={() => setScreen("connect")}>Keep meeting</button>
-                  <button type="button" className="noshy-btn noshy-btn-primary" onClick={() => { setHomeTab("matched"); setScreen("home"); }}>All matches</button>
                 </div>
+                <div className="noshy-btn-row">
+                  <button type="button" className="noshy-btn noshy-btn-secondary" onClick={() => setScreen("connect")}>Keep meeting</button>
+                  <button type="button" className="noshy-btn noshy-btn-primary" onClick={() => { setHomeTab("matched"); setScreen(isAdmin ? "home" : "people"); }}>All matches</button>
+                </div>
+              </motion.section>
+            )}
+
+            {screen === "scan" && (
+              <motion.section key="scan" className="noshy-panel flush" {...motionProps}>
+                <ScanScreen
+                  notice={scanNotice}
+                  onCode={(code) => void handleCode(code)}
+                  onExplore={() => { setHomeTab("nearby"); setScreen("people"); }}
+                  onBack={() => setScreen("home")}
+                />
+              </motion.section>
+            )}
+
+            {screen === "person" && matchPair && personId != null && (
+              <motion.section key={`person-${personId}`} className="noshy-panel" {...motionProps}>
+                <PersonScreen
+                  pair={matchPair}
+                  aiLoading={aiLoading}
+                  status={progress.connections.find((c) => c.memberId === personId)?.status}
+                  theyLoggedYou={progress.incoming.includes(personId)}
+                  card={myCard}
+                  voiceHref={`/noshy-voice?meet=${personId}`}
+                  busy={gameBusy}
+                  error={gameError}
+                  onConnect={(note) => void connectWith(personId, note)}
+                  onBack={() => setScreen("home")}
+                />
+              </motion.section>
+            )}
+
+            {screen === "missions" && (
+              <motion.section key="missions" className="noshy-panel" {...motionProps}>
+                <MissionsScreen
+                  progress={progress}
+                  people={registered}
+                  activeId={activeMission}
+                  busy={gameBusy}
+                  error={gameError}
+                  earned={missionEarned}
+                  onPick={(id) => { setGameError(""); setMissionEarned(null); setActiveMission(id); }}
+                  onComplete={(missionId, targetId) => void completeMission(missionId, targetId)}
+                  onBack={() => setScreen("home")}
+                />
+              </motion.section>
+            )}
+
+            {screen === "connections" && (
+              <motion.section key="connections" className="noshy-panel" {...motionProps}>
+                <ConnectionsScreen
+                  progress={progress}
+                  people={peopleById}
+                  onOpen={(id) => { const person = peopleById.get(id); if (person) openPerson(person); }}
+                  onBack={() => setScreen("home")}
+                />
+              </motion.section>
+            )}
+
+            {screen === "night" && (
+              <motion.section key="night" className="noshy-panel" {...motionProps}>
+                <NightScreen progress={progress} memberId={memberId} strongest={strongest} onBack={() => setScreen("home")} />
+              </motion.section>
+            )}
+
+            {screen === "card" && myCard && (
+              <motion.section key="card" className="noshy-panel" {...motionProps}>
+                <CardScreen card={myCard}>
+                  <button type="button" className="noshy-xp" onClick={() => setScreen("night")}>
+                    <Trophy size={17} /><strong>{progress.xp} XP</strong>
+                    <span>See your night</span>
+                    <ChevronRight size={16} />
+                  </button>
+                  <button type="button" className="noshy-row" onClick={() => setScreen("connections")}>
+                    <span className="noshy-mission-icon"><Handshake size={20} /></span>
+                    <div><h3>Connections</h3><p>{confirmedCount} confirmed · {progress.incoming.length} waiting for you</p></div>
+                    <ChevronRight size={18} />
+                  </button>
+                  {joinUrl && (
+                    <div className="noshy-invite">
+                      <div className="noshy-invite-qr">
+                        <QRCodeSVG value={joinUrl} size={84} level="M" bgColor="#ffffff" fgColor="#000000" marginSize={1} />
+                      </div>
+                      <div>
+                        <strong>Invite someone</strong>
+                        <p>Show this QR so others can join and get matched.</p>
+                      </div>
+                    </div>
+                  )}
+                  {deleteError && <p className="noshy-error">{deleteError}</p>}
+                  {memberId != null && (
+                    <button
+                      type="button"
+                      className="noshy-link-danger"
+                      disabled={deletingId === memberId}
+                      onClick={() => void deleteMember({ memberId, username, name: displayName }, true)}
+                    >
+                      <Trash2 size={13} />{deletingId === memberId ? "Deleting…" : "Delete my profile"}
+                    </button>
+                  )}
+                </CardScreen>
               </motion.section>
             )}
 
           </AnimatePresence>
         </div>
+        {showNav && navActive && <BottomNav active={navActive} onSelect={navTo} />}
       </div>
     </main>
   );

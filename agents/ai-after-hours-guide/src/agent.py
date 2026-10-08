@@ -50,7 +50,7 @@ TTS_LANGUAGE = os.getenv("TTS_LANGUAGE", "es")
 
 _SPEED_PRESETS = {"slow": 0.8, "normal": 1.0, "fast": 1.2}
 
-SLIDE_IDS = ("intro", "purpose", "talks", "community")
+SLIDE_IDS = ("intro", "purpose", "talks", "benefits", "community")
 
 # Soft paced opening — one slide, speak, wait for playout, brief breath, next.
 # Keeps the LLM from racing through every go_to_slide in a single turn.
@@ -58,27 +58,41 @@ TOUR_PAUSE_S = float(os.getenv("TOUR_PAUSE_S", "1.1"))
 
 TOUR_LINES: dict[str, str] = {
     "intro": (
-        "Mira <break time=\"400ms\"/> qué bueno que llegaste. "
-        "Esto es AI After Hours, el rooftop de Visible Builders aquí en Medellín. "
-        "The Power of Being Visible… <break time=\"300ms\"/> "
-        "y gracias a The School of Breath y a Vivus La Martina por hacer posible esta noche."
+        "Hey, mor… <break time=\"350ms\"/> ¿qué más pues? "
+        "Qué bueno tenerte aquí esta noche. <break time=\"300ms\"/> "
+        "Bienvenido a AI After Hours, la noche de networking de Visible Builders en Medellín: "
+        "un espacio para salir de la pantalla, conocer a la gente que está construyendo "
+        "con inteligencia artificial, y convertir una conversación en tu próximo proyecto. "
+        "<break time=\"350ms\"/> Hoy no viniste solo a escuchar… viniste a que te vean. "
+        "Porque lo que no se muestra, no existe. <break time=\"300ms\"/> "
+        "Esto es The Power of Being Visible."
     ),
     "purpose": (
-        "Bueno <break time=\"300ms\"/> ¿para qué nos juntamos? "
-        "Real Talks: builders contando flujos reales con IA. "
-        "Real Experiences: historias en vivo, no paneles aburridos. "
-        "Y New Connections… <break time=\"250ms\"/> conocer la tribu Visible Builders en Medellín."
+        "¿Y por qué nos juntamos? <break time=\"300ms\"/> "
+        "Porque construir con IA a veces se siente solitario, y aquí lo hacemos en tribu. "
+        "Vas a escuchar historias reales, con aciertos y con errores, de gente que ya lo está haciendo. "
+        "Vas a vivir la noche, no solo verla. <break time=\"250ms\"/> "
+        "Y vas a salir con personas nuevas en tu red que mañana pueden ser tu socio, "
+        "tu cliente, o tu próximo equipo."
     ),
     "talks": (
         "Y en el escenario <break time=\"300ms\"/> van a estar "
-        "Oscar Barajas con legal tech e IA, "
-        "Jennifer Salazar Duke con su workflow para construir mejor, "
-        "y Hector Cantillo… <break time=\"250ms\"/> de consumidor a creator."
+        "Daniel Domínguez, fundador de Braina IA, mostrándonos cómo funciona una empresa de IA por dentro… "
+        "y auditando una en vivo, "
+        "Emily Ruiz Testa con las herramientas que construyó con IA para organizar sus finanzas, "
+        "y Carlos Garcia… <break time=\"250ms\"/> el Padrino del Tráfico, con estrategias de marketing digital, pauta y crecimiento de negocio."
+    ),
+    "benefits": (
+        "¿Y qué te llevas de venir? <break time=\"300ms\"/> "
+        "Comunidad y conexiones, networking de verdad, y espacio para crecer. "
+        "<break time=\"250ms\"/> Y no es cuento: un amigo consiguió trabajo en un hotel aquí mismo, "
+        "y David Elias salió con un cliente nuevo."
     ),
     "community": (
-        "Listo <break time=\"300ms\"/> si quieres seguir la conversación después, "
-        "en esta slide está el QR de WhatsApp de Medellín AI Visible Builders. "
-        "Escanealo cuando quieras y te unes al build."
+        "Y esto no se acaba cuando termina la noche. <break time=\"300ms\"/> "
+        "Escanea el QR que ves en pantalla y únete al WhatsApp de Medellín AI Visible Builders: "
+        "ahí compartimos lo que estamos construyendo, los próximos eventos y las oportunidades. "
+        "<break time=\"250ms\"/> Te esperamos adentro… y a construir juntos."
     ),
 }
 
@@ -95,9 +109,12 @@ EVENT_FACTS = textwrap.dedent(
     3. New Connections — conocer solo builders de IA, creators y la tribu Visible Builders en Medellín.
 
     SPEAKERS:
-    - Oscar Barajas (GNDX): AI-Powered Legal Tech — cómo la IA está transformando el sector legal.
-    - Jennifer Salazar Duke: My AI Workflow — cómo usa IA para construir mejores proyectos.
-    - Hector Cantillo: From Consumer to Creator — la gran oportunidad de crear con IA.
+    - Daniel Domínguez (Founder @ Braina IA): cómo funciona una empresa de IA por dentro (y auditamos una en vivo).
+    - Emily Ruiz Testa (Growth @wallib.app): herramientas que construyó con IA para organizar sus finanzas.
+    - Carlos Garcia (The Godfather of Traffic): estrategias de marketing digital, pauta (paid media) y crecimiento de negocio.
+
+    BENEFICIOS: Community & Connections, Networking, Grow.
+    TESTIMONIOS: un amigo consiguió trabajo en un hotel aquí; David Elias consiguió un cliente nuevo.
 
     COMUNIDAD: en la última slide hay un QR de WhatsApp para unirse a Medellín AI Visible Builders.
     """
@@ -116,15 +133,17 @@ INSTRUCTIONS = textwrap.dedent(
     - Después de un «eh» o «mira», inserta <break time="300ms"/> y sigue.
     - Varía el ritmo. NO abras dos turnos iguales.
     - 2 a 4 oraciones máximo por respuesta. Deja respirar.
+    - Nunca leas la slide palabra por palabra: cuenta el sentido con tus palabras.
+    - No menciones a los sponsors a menos que el invitado pregunte por ellos.
 
     {EVENT_FACTS}
 
-    SLIDES (ids): intro → purpose → talks → community
+    SLIDES (ids): intro → purpose → talks → benefits → community
 
     # Navegación (crítico — ritmo suave)
     - El tour de apertura ya corre en código. NO lo reinicies ni pases todas las slides de golpe.
     - Cuando el invitado pida otra slide: UNA sola llamada a go_to_slide, narras ESA slide, y PARAS.
-    - NUNCA encadenes intro→purpose→talks→community en el mismo turno.
+    - NUNCA encadenes intro→purpose→talks→benefits→community en el mismo turno.
     - Si no sabes qué hay en pantalla, llama get_slide_state una vez.
 
     HERRAMIENTAS EN SILENCIO:
@@ -266,7 +285,7 @@ class AfterHoursGuide(Agent):
         """Cambia a UNA sola slide. Llama esto máximo una vez por turno, luego narra y para.
 
         Args:
-            slide: Una de: intro, purpose, talks, community.
+            slide: Una de: intro, purpose, talks, benefits, community.
         """
         target = slide.strip().lower()
         if target not in SLIDE_IDS:

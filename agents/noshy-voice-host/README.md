@@ -63,10 +63,16 @@ lk agent update-secrets --secrets-file .env.cloud
 | `find_matches` | Saves the profile (`/api/join`), shows the globe, returns top 3 matches (~6 s) |
 | `focus_match` | Opens one match's swipe card (`index`), or back to the circles (`null`) |
 | `confirm_match` | Celebration screen + AI talking points and motivation lines |
-| `get_flow_state` | Current phase, question, answers, matches |
+| `show_scanner` | Opens the camera to scan another guest's NoShy card |
+| `log_connection` | Records "we talked" (`index`, `note`) via `/api/noshy/meet`; confirmed (+20 XP) when both sides log it |
+| `get_flow_state` | Current phase, question, answers, matches, and whether the guest is already registered |
 | `restart_flow` | Clears everything and starts over |
 
-3. Taps and typed answers are sent to the agent as `[screen] …` chat messages on
+   Guests who registered at `/noshy` (saved in `localStorage`) skip the interview: the agent
+   reads `get_flow_state` on join and goes straight to matches, or to the scanned card when
+   the page was opened as `/noshy-voice?meet=<memberId>`.
+
+3. Taps, scanned cards, and typed answers are sent to the agent as `[screen] …` chat messages on
    `lk.chat`, so it keeps talking in sync with the UI.
 
 See LiveKit docs: [Forwarding tools to the frontend](https://docs.livekit.io/agents/logic/tools/forwarding/).

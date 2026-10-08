@@ -15,7 +15,7 @@ export type VoiceAnswers = Record<VoiceField, string> & {
   animalId: string;
 };
 
-export type VoicePhase = "intro" | "interview" | "matching" | "matches" | "confirmed";
+export type VoicePhase = "intro" | "interview" | "matching" | "matches" | "confirmed" | "scan";
 
 export const EMPTY_ANSWERS: VoiceAnswers = {
   name: "",

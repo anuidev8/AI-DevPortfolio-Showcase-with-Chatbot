@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { RotateCcw, Sparkles, Users } from 'lucide-react';
+import { RotateCcw, Users } from 'lucide-react';
 import type { MatchPair } from '@/lib/noshy-match';
 import { firstName, motivationLines } from '@/lib/noshy-voice';
-import { AnimalOrb } from './AnimalOrb';
+import { MatchPill, PersonAvatar } from '@/components/noshy/NoshyUi';
 
 type MatchConfirmedProps = {
   pair: MatchPair;
@@ -16,6 +16,19 @@ type MatchConfirmedProps = {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const LINE_MS = 3800;
+
+function Bubble({ children, delay }: { children: ReactNode; delay: number }) {
+  return (
+    <motion.div
+      className="rounded-[20px] rounded-tl-md border border-white/[0.08] bg-[#141416] p-4 text-[15px] leading-relaxed text-white/90"
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease, delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export function MatchConfirmed({ pair, aiLoading, onMoreMatches, onRestart }: MatchConfirmedProps) {
   const lines = useMemo(() => motivationLines(pair), [pair]);
@@ -29,128 +42,92 @@ export function MatchConfirmed({ pair, aiLoading, onMoreMatches, onRestart }: Ma
   }, [lines]);
 
   return (
-    <div className="relative flex min-h-full w-full flex-col items-center justify-center px-6 py-6">
+    <div className="relative mx-auto flex min-h-full w-full max-w-md flex-col gap-4 px-5 py-4">
       <Burst />
 
-      <div className="relative flex items-center justify-center">
+      <div className="flex items-center gap-4">
         <motion.div
-          initial={{ x: -140, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 90, damping: 16, delay: 0.1 }}
+          className="noshy-duo"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 140, damping: 16, delay: 0.1 }}
         >
-          <AnimalOrb animalId={pair.left.animalId} name={pair.left.name} size={120} glow />
+          <PersonAvatar animalId={pair.left.animalId} name={pair.left.name} size={56} shape="circle" />
+          <PersonAvatar animalId={pair.right.animalId} name={pair.right.name} size={56} shape="circle" />
         </motion.div>
         <motion.div
-          className="mx-2 h-[3px] w-16 rounded-full bg-gradient-to-r from-[#00f2ff] to-[#ff007a] md:w-28"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.8, ease, delay: 0.55 }}
-          style={{ boxShadow: '0 0 18px rgba(255,0,122,0.6)' }}
-        />
-        <motion.div
-          initial={{ x: 140, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 90, damping: 16, delay: 0.1 }}
+          className="flex min-w-0 flex-col items-start gap-1"
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, ease, delay: 0.25 }}
         >
-          <AnimalOrb animalId={pair.right.animalId} name={pair.right.name} size={120} glow />
+          <MatchPill score={pair.brief.score} />
+          <h2 className="text-2xl font-bold tracking-tight text-white">Go talk to {them}.</h2>
         </motion.div>
       </div>
 
-      <motion.p
-        className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-[#ff007a]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-      >
-        It&apos;s a match · {pair.brief.score}% fit
-      </motion.p>
-      <motion.h2
-        className="mt-3 text-center text-4xl font-bold text-white md:text-6xl"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease, delay: 0.8 }}
-      >
-        Go talk to {them}.
-      </motion.h2>
-
-      <div className="mt-8 flex h-28 w-full max-w-2xl items-center justify-center md:h-24" aria-live="polite">
-        <AnimatePresence mode="wait">
-          <motion.p
-            key={lineIndex}
-            className="text-center text-xl leading-snug text-white/80 md:text-2xl"
-            initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
-            transition={{ duration: 0.6, ease }}
-          >
-            {lines[lineIndex]}
-          </motion.p>
-        </AnimatePresence>
-      </div>
-      <div className="mt-2 flex gap-1.5" aria-hidden="true">
-        {lines.map((_, i) => (
-          <motion.i
-            key={i}
-            className="block h-1 rounded-full bg-white/20"
-            animate={{ width: i === lineIndex ? 22 : 6, backgroundColor: i === lineIndex ? '#00f2ff' : 'rgba(255,255,255,0.2)' }}
-            transition={{ duration: 0.4 }}
-          />
-        ))}
-      </div>
-
-      <motion.div
-        className="mt-10 w-full max-w-2xl"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease, delay: 1.1 }}
-      >
-        <p className="flex items-center justify-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">
-          <Sparkles size={12} />
-          {aiLoading ? 'AI is writing your talking points…' : 'Talk about'}
+      <Bubble delay={0.4}>
+        <p>
+          You and {them} are a {pair.brief.score}% match.
         </p>
-        <div className="mt-3 flex flex-wrap justify-center gap-2">
-          {aiLoading
-            ? [0, 1, 2].map((i) => (
-                <motion.span
-                  key={i}
-                  className="h-9 w-40 rounded-full bg-white/[0.06]"
-                  animate={{ opacity: [0.4, 0.8, 0.4] }}
-                  transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.15 }}
-                />
-              ))
-            : pair.brief.topics.map((topic, i) => (
-                <motion.span
-                  key={topic}
-                  className="line-clamp-2 max-w-xl rounded-full border border-[#00f2ff]/25 bg-[#00f2ff]/[0.06] px-4 py-2 text-sm text-white/80"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.08, duration: 0.4, ease }}
-                >
-                  {topic}
-                </motion.span>
-              ))}
+        <div className="mt-1 min-h-[3.25rem]" aria-live="polite">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={lineIndex}
+              className="text-white/70"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.4, ease }}
+            >
+              {lines[lineIndex]}
+            </motion.p>
+          </AnimatePresence>
         </div>
-      </motion.div>
+        <div className="mt-2 flex gap-1.5" aria-hidden="true">
+          {lines.map((_, i) => (
+            <motion.i
+              key={i}
+              className="block h-1 rounded-full"
+              animate={{ width: i === lineIndex ? 18 : 6, backgroundColor: i === lineIndex ? '#5b8cff' : 'rgba(255,255,255,0.2)' }}
+              transition={{ duration: 0.4 }}
+            />
+          ))}
+        </div>
+      </Bubble>
+
+      <Bubble delay={0.6}>
+        <p>{aiLoading ? 'Writing your talking points…' : `Here are ${pair.brief.topics.length} things you could ask ${them}:`}</p>
+        {aiLoading ? (
+          <div className="mt-3 flex flex-col gap-2">
+            {[0, 1, 2].map((i) => (
+              <motion.span
+                key={i}
+                className="h-4 rounded-md bg-white/[0.07]"
+                style={{ width: `${90 - i * 15}%` }}
+                animate={{ opacity: [0.4, 0.8, 0.4] }}
+                transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.15 }}
+              />
+            ))}
+          </div>
+        ) : (
+          <ol className="noshy-numbered mt-3">
+            {pair.brief.topics.map((topic) => <li key={topic}>{topic}</li>)}
+          </ol>
+        )}
+      </Bubble>
 
       <motion.div
-        className="mt-10 flex flex-wrap justify-center gap-3"
+        className="mt-1 flex flex-col gap-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.3 }}
+        transition={{ delay: 0.9 }}
       >
-        <button
-          type="button"
-          onClick={onMoreMatches}
-          className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm text-white/80 transition hover:bg-white/10"
-        >
+        <button type="button" onClick={onMoreMatches} className="noshy-btn noshy-btn-secondary noshy-btn-full">
           <Users size={16} /> See my other matches
         </button>
-        <button
-          type="button"
-          onClick={onRestart}
-          className="flex items-center gap-2 rounded-full px-5 py-3 text-sm text-white/45 transition hover:text-white/80"
-        >
-          <RotateCcw size={16} /> Start over
+        <button type="button" onClick={onRestart} className="noshy-text-btn center">
+          <RotateCcw size={15} /> Start over
         </button>
       </motion.div>
     </div>
@@ -160,22 +137,22 @@ export function MatchConfirmed({ pair, aiLoading, onMoreMatches, onRestart }: Ma
 function Burst() {
   const sparks = useMemo(
     () =>
-      Array.from({ length: 26 }, (_, i) => {
-        const angle = (i / 26) * Math.PI * 2 + Math.random() * 0.3;
-        const distance = 180 + Math.random() * 260;
+      Array.from({ length: 22 }, (_, i) => {
+        const angle = (i / 22) * Math.PI * 2 + Math.random() * 0.3;
+        const distance = 140 + Math.random() * 200;
         return {
           x: Math.cos(angle) * distance,
           y: Math.sin(angle) * distance * 0.7,
-          size: 3 + Math.random() * 5,
-          color: i % 2 ? '#00f2ff' : '#ff007a',
-          delay: 0.45 + Math.random() * 0.25,
+          size: 3 + Math.random() * 4,
+          color: i % 2 ? '#1f5fff' : '#ffffff',
+          delay: 0.3 + Math.random() * 0.25,
         };
       }),
     []
   );
 
   return (
-    <div className="pointer-events-none absolute left-1/2 top-[30%]" aria-hidden="true">
+    <div className="pointer-events-none absolute left-16 top-10" aria-hidden="true">
       {sparks.map((s, i) => (
         <motion.span
           key={i}
@@ -183,7 +160,7 @@ function Burst() {
           style={{ width: s.size, height: s.size, background: s.color, boxShadow: `0 0 10px ${s.color}` }}
           initial={{ x: 0, y: 0, opacity: 0, scale: 0.4 }}
           animate={{ x: s.x, y: s.y, opacity: [0, 1, 0], scale: [0.4, 1, 0.6] }}
-          transition={{ duration: 1.8, ease: 'easeOut', delay: s.delay }}
+          transition={{ duration: 1.6, ease: 'easeOut', delay: s.delay }}
         />
       ))}
     </div>

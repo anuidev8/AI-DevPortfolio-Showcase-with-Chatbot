@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -47,6 +47,17 @@ const purposePoints = [
   },
 ];
 
+const benefits = [
+  { title: 'Community & Connections', accent: VB.cyan },
+  { title: 'Networking', accent: VB.magenta },
+  { title: 'Grow', accent: VB.purple },
+];
+
+const testimonials = [
+  { quote: 'My friend got a job at a hotel here.', author: 'Community member', accent: VB.cyan },
+  { quote: 'Got a new client.', author: 'David Elias', accent: VB.magenta },
+];
+
 type SlideSpeaker = {
   id: number;
   name: string;
@@ -56,84 +67,6 @@ type SlideSpeaker = {
   accent: string;
   imageFit?: 'cover' | 'contain';
 };
-
-const sponsors = [
-  {
-    name: 'The School of Breath',
-    image: '/sponsors/school-of-breath.png',
-    fit: 'cover' as const,
-    mark: 'photo' as const,
-  },
-  {
-    name: 'Vivus La Martina Boutique Hotel',
-    image: '/sponsors/vivus-la-martina.png',
-    fit: 'contain' as const,
-    mark: 'vivus' as const,
-  },
-];
-
-/* Vivus mark — overlapping circles + center dot */
-function VivusMark({ size = 'lg' }: { size?: 'lg' | 'sm' }) {
-  const box = size === 'lg' ? 'h-36 w-36 sm:h-44 sm:w-44' : 'h-20 w-20';
-  return (
-    <div
-      className={`${box} flex items-center justify-center overflow-hidden rounded-full`}
-      style={{
-        background: '#f5f0e8',
-        boxShadow: `0 0 ${size === 'lg' ? '36px' : '18px'} ${VB.magenta}44`,
-        border: `1px solid ${VB.magenta}40`,
-      }}
-      aria-label="Vivus La Martina"
-    >
-      <svg
-        viewBox="0 0 120 120"
-        xmlns="http://www.w3.org/2000/svg"
-        className={size === 'lg' ? 'h-[88%] w-[88%]' : 'h-[90%] w-[90%]'}
-      >
-        <circle cx="46" cy="62" r="34" fill="none" stroke="#6b5344" strokeWidth="2" opacity="0.55" />
-        <circle cx="74" cy="62" r="34" fill="none" stroke="#6b5344" strokeWidth="2" />
-        <circle cx="60" cy="38" r="23" fill="none" stroke="#6b5344" strokeWidth="1.2" opacity="0.32" />
-        <circle cx="60" cy="62" r="4" fill="#6b5344" />
-      </svg>
-    </div>
-  );
-}
-
-function SponsorLogo({
-  name,
-  image,
-  fit,
-  mark = 'photo',
-  size = 'lg',
-}: {
-  name: string;
-  image: string;
-  fit: 'cover' | 'contain';
-  mark?: 'photo' | 'vivus';
-  size?: 'lg' | 'sm';
-}) {
-  if (mark === 'vivus') {
-    return <VivusMark size={size} />;
-  }
-
-  const box = size === 'lg' ? 'h-36 w-36 sm:h-44 sm:w-44' : 'h-20 w-20';
-  return (
-    <div
-      className={`${box} overflow-hidden rounded-full`}
-      style={{
-        background: 'transparent',
-        boxShadow: `0 0 ${size === 'lg' ? '36px' : '18px'} ${VB.cyan}55`,
-        border: `1px solid ${VB.cyan}33`,
-      }}
-    >
-      <img
-        src={image}
-        alt={name}
-        className={`h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`}
-      />
-    </div>
-  );
-}
 
 /* ── Grid + purple ambience like visiblebuilders.io ── */
 function BrandAtmosphere() {
@@ -189,72 +122,141 @@ function CircuitPattern() {
   );
 }
 
-/* ── Wave mesh texture — edges only, center clear ── */
-function WaveTexture() {
-  const mesh = {
-    backgroundImage: 'url(/social/ai-after-hours/textures/hero-wave-mesh.jpg)',
-    backgroundSize: 'cover' as const,
-    backgroundRepeat: 'no-repeat' as const,
-    mixBlendMode: 'screen' as const,
-  };
+/*
+ * Voice-reactive wave styles. `--voice` (0–1) is written on <main> every frame by
+ * VoiceGuide; `data-voice="on"` runs the drift while the guide is talking.
+ */
+const WAVE_STYLES = `
+  .vb-wave-mesh {
+    position: absolute;
+    inset: -12%;
+    background-image: url(/social/ai-after-hours/textures/hero-wave-mesh.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    mix-blend-mode: screen;
+    scale: calc(1 + var(--voice, 0) * 0.07);
+    animation-name: var(--wave-drift);
+    animation-duration: var(--wave-duration, 12s);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-play-state: paused;
+    will-change: transform;
+  }
+  [data-voice='on'] .vb-wave-mesh { animation-play-state: running; }
+  .vb-wave-glow { opacity: calc(0.7 + var(--voice, 0) * 0.3); scale: calc(1 + var(--voice, 0) * 0.04); }
+  @keyframes vb-wave-drift-a {
+    0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    50% { transform: translate3d(2.5%, -2%, 0) rotate(1deg); }
+    100% { transform: translate3d(-2%, 2.5%, 0) rotate(-0.8deg); }
+  }
+  @keyframes vb-wave-drift-b {
+    0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+    50% { transform: translate3d(-2.5%, 2%, 0) rotate(-1deg); }
+    100% { transform: translate3d(2%, -2.5%, 0) rotate(0.8deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vb-wave-mesh { animation: none; scale: 1; }
+    .vb-wave-glow { scale: 1; }
+  }
+`;
 
+type WaveEdge = {
+  key: string;
+  className: string;
+  size: { width?: string; height?: string };
+  meshPosition: string;
+  baseOpacity: number;
+  boost: number;
+  filter: string;
+  mask: string;
+  drift: 'a' | 'b';
+  duration: string;
+};
+
+const WAVE_EDGES: WaveEdge[] = [
+  {
+    key: 'left',
+    className: 'absolute inset-y-0 left-0',
+    size: { width: 'min(42%, 520px)' },
+    meshPosition: 'left center',
+    baseOpacity: 0.7,
+    boost: 0.3,
+    filter: 'hue-rotate(175deg) saturate(2) brightness(1.3) contrast(1.1)',
+    mask: 'linear-gradient(90deg, #000 0%, #000 40%, transparent 100%)',
+    drift: 'a',
+    duration: '11s',
+  },
+  {
+    key: 'right',
+    className: 'absolute inset-y-0 right-0',
+    size: { width: 'min(42%, 520px)' },
+    meshPosition: 'right center',
+    baseOpacity: 0.7,
+    boost: 0.3,
+    filter: 'hue-rotate(300deg) saturate(2.2) brightness(1.25) contrast(1.1)',
+    mask: 'linear-gradient(270deg, #000 0%, #000 40%, transparent 100%)',
+    drift: 'b',
+    duration: '13s',
+  },
+  {
+    key: 'top',
+    className: 'absolute inset-x-0 top-0',
+    size: { height: 'min(28%, 240px)' },
+    meshPosition: 'center top',
+    baseOpacity: 0.45,
+    boost: 0.4,
+    filter: 'hue-rotate(180deg) saturate(1.8) brightness(1.25)',
+    mask: 'linear-gradient(180deg, #000 0%, #000 35%, transparent 100%)',
+    drift: 'b',
+    duration: '15s',
+  },
+  {
+    key: 'bottom',
+    className: 'absolute inset-x-0 bottom-0',
+    size: { height: 'min(30%, 260px)' },
+    meshPosition: 'center bottom',
+    baseOpacity: 0.5,
+    boost: 0.4,
+    filter: 'hue-rotate(310deg) saturate(2) brightness(1.3)',
+    mask: 'linear-gradient(0deg, #000 0%, #000 35%, transparent 100%)',
+    drift: 'a',
+    duration: '14s',
+  },
+];
+
+/* ── Wave mesh texture — edges only, center clear; pulses with the voice guide ── */
+function WaveTexture() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {/* Left edge */}
-      <div
-        className="absolute inset-y-0 left-0"
-        style={{
-          ...mesh,
-          width: 'min(42%, 520px)',
-          backgroundPosition: 'left center',
-          opacity: 0.7,
-          filter: 'hue-rotate(175deg) saturate(2) brightness(1.3) contrast(1.1)',
-          WebkitMaskImage: 'linear-gradient(90deg, #000 0%, #000 40%, transparent 100%)',
-          maskImage: 'linear-gradient(90deg, #000 0%, #000 40%, transparent 100%)',
-        }}
-      />
-      {/* Right edge */}
-      <div
-        className="absolute inset-y-0 right-0"
-        style={{
-          ...mesh,
-          width: 'min(42%, 520px)',
-          backgroundPosition: 'right center',
-          opacity: 0.7,
-          filter: 'hue-rotate(300deg) saturate(2.2) brightness(1.25) contrast(1.1)',
-          WebkitMaskImage: 'linear-gradient(270deg, #000 0%, #000 40%, transparent 100%)',
-          maskImage: 'linear-gradient(270deg, #000 0%, #000 40%, transparent 100%)',
-        }}
-      />
-      {/* Top edge */}
-      <div
-        className="absolute inset-x-0 top-0"
-        style={{
-          ...mesh,
-          height: 'min(28%, 240px)',
-          backgroundPosition: 'center top',
-          opacity: 0.45,
-          filter: 'hue-rotate(180deg) saturate(1.8) brightness(1.25)',
-          WebkitMaskImage: 'linear-gradient(180deg, #000 0%, #000 35%, transparent 100%)',
-          maskImage: 'linear-gradient(180deg, #000 0%, #000 35%, transparent 100%)',
-        }}
-      />
-      {/* Bottom edge */}
-      <div
-        className="absolute inset-x-0 bottom-0"
-        style={{
-          ...mesh,
-          height: 'min(30%, 260px)',
-          backgroundPosition: 'center bottom',
-          opacity: 0.5,
-          filter: 'hue-rotate(310deg) saturate(2) brightness(1.3)',
-          WebkitMaskImage: 'linear-gradient(0deg, #000 0%, #000 35%, transparent 100%)',
-          maskImage: 'linear-gradient(0deg, #000 0%, #000 35%, transparent 100%)',
-        }}
-      />
+      {WAVE_EDGES.map((edge) => (
+        <div
+          key={edge.key}
+          className={edge.className}
+          style={{
+            ...edge.size,
+            overflow: 'hidden',
+            opacity: `calc(${edge.baseOpacity} + var(--voice, 0) * ${edge.boost})`,
+            filter: edge.filter,
+            WebkitMaskImage: edge.mask,
+            maskImage: edge.mask,
+          }}
+        >
+          <div
+            className="vb-wave-mesh"
+            style={
+              {
+                backgroundPosition: edge.meshPosition,
+                '--wave-drift': `vb-wave-drift-${edge.drift}`,
+                '--wave-duration': edge.duration,
+              } as CSSProperties
+            }
+          />
+        </div>
+      ))}
       {/* Soft corner glows — cyan + magenta energy */}
       <div
-        className="absolute inset-0"
+        className="vb-wave-glow absolute inset-0"
         style={{
           background: `
             radial-gradient(ellipse 35% 50% at 0% 50%, ${VB.cyan}28 0%, transparent 70%),
@@ -361,27 +363,6 @@ function SlideIntro() {
           <br />
           HOURS
         </h1>
-
-        <p
-          className="mt-8 px-4 text-center font-sans font-black uppercase leading-tight tracking-tight"
-          style={{ fontSize: 'clamp(1.25rem, 4vw, 2.25rem)', color: VB.muted }}
-        >
-          <span style={{ color: VB.cyan, textShadow: VB.glow }}>The Power</span>
-          <span style={{ color: VB.white }}> of </span>
-          <span style={{ color: VB.magenta, textShadow: VB.glowMagenta }}>Being Visible</span>
-        </p>
-
-        {/* Sponsors */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-10 sm:gap-14">
-          {sponsors.map((sponsor) => (
-            <div key={sponsor.name} className="flex flex-col items-center gap-3">
-              <SponsorLogo name={sponsor.name} image={sponsor.image} fit={sponsor.fit} mark={sponsor.mark} size="lg" />
-              <p className="max-w-[200px] text-center font-mono text-sm font-bold uppercase leading-snug tracking-wide sm:text-base" style={{ color: VB.white }}>
-                {sponsor.name}
-              </p>
-            </div>
-          ))}
-        </div>
       </div>
 
       <div className="relative z-10 border-t px-8 py-4 text-center" style={{ borderColor: VB.border }}>
@@ -580,7 +561,86 @@ function SlideTalks() {
   );
 }
 
-/* ── Slide 4: Community ── */
+/* ── Slide 4: Benefits ── */
+function SlideBenefits() {
+  return (
+    <div className="relative flex h-full w-full flex-col overflow-hidden" style={{ background: VB.bg }}>
+      <div className="pointer-events-none absolute inset-0 opacity-[0.04]"
+        style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, #fff 2px, #fff 3px)', backgroundSize: '100% 3px' }} />
+
+      <BrandAtmosphere />
+      <CircuitPattern />
+      <WaveTexture />
+
+      <div className="relative z-10 flex flex-1 flex-col px-8 pb-40 pt-16 md:px-14">
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-3 inline-block px-4 py-1 font-mono text-xs font-bold uppercase tracking-widest"
+            style={{ border: `1px solid ${VB.cyan}`, background: VB.cyan + '14', boxShadow: VB.glow }}>
+            <span style={{ color: VB.cyan }}>VISIBLE</span>{' '}
+            <span style={{ color: VB.magenta }}>BUILDERS</span>
+          </div>
+          <h2
+            className="font-sans font-black uppercase leading-[0.88]"
+            style={{ fontSize: 'clamp(2.2rem, 8vw, 5rem)', color: VB.white }}
+          >
+            BENEFITS
+          </h2>
+          <p className="mt-3 font-mono text-xs font-bold uppercase tracking-[0.22em]" style={{ color: VB.muted }}>
+            What you get from showing up
+          </p>
+        </div>
+
+        <div className="mx-auto grid w-full max-w-5xl flex-1 content-center gap-6 md:grid-cols-2 md:gap-10">
+          <div className="flex flex-col gap-4">
+            {benefits.map((benefit, i) => (
+              <div
+                key={benefit.title}
+                className="flex items-center gap-5 px-5 py-5 md:px-7"
+                style={{
+                  background: `linear-gradient(135deg, ${benefit.accent}22 0%, ${VB.bgCard} 42%, ${VB.bg} 100%)`,
+                  border: `1px solid ${benefit.accent}55`,
+                  boxShadow: `0 0 28px ${benefit.accent}18`,
+                }}
+              >
+                <span
+                  className="shrink-0 font-mono text-3xl font-black md:text-4xl"
+                  style={{ color: benefit.accent, textShadow: `0 0 20px ${benefit.accent}66` }}
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className="font-sans text-2xl font-black uppercase leading-tight tracking-wide md:text-3xl" style={{ color: VB.white }}>
+                  {benefit.title}
+                </h3>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <p className="font-mono text-sm font-black uppercase tracking-[0.22em]" style={{ color: VB.magenta, textShadow: VB.glowMagenta }}>
+              {'>'} Testimonials
+            </p>
+            {testimonials.map((t) => (
+              <figure
+                key={t.author}
+                className="px-6 py-5"
+                style={{ background: VB.bgCard, borderLeft: `4px solid ${t.accent}`, boxShadow: `0 0 28px ${t.accent}18` }}
+              >
+                <blockquote className="font-sans text-xl font-bold leading-snug md:text-2xl" style={{ color: VB.white }}>
+                  “{t.quote}”
+                </blockquote>
+                <figcaption className="mt-3 font-mono text-xs font-bold uppercase tracking-widest" style={{ color: t.accent }}>
+                  — {t.author}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Slide 5: Community ── */
 function SlideCommunity() {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden" style={{ background: VB.bg }}>
@@ -634,11 +694,25 @@ export default function AIAfterHoursPost() {
   const [current, setCurrent] = useState<Slide>('intro');
   const idx = SLIDES.indexOf(current);
 
+  const mainRef = useRef<HTMLElement>(null);
+  const lastVoiceRef = useRef(0);
+
+  const handleVoiceLevel = useCallback((level: number) => {
+    const el = mainRef.current;
+    if (!el) return;
+    if (Math.abs(level - lastVoiceRef.current) < 0.004 && level !== 0) return;
+    lastVoiceRef.current = level;
+    el.style.setProperty('--voice', level.toFixed(3));
+    const voice = level > 0.05 ? 'on' : 'off';
+    if (el.dataset.voice !== voice) el.dataset.voice = voice;
+  }, []);
+
   function prev() { if (idx > 0) setCurrent(SLIDES[idx - 1]); }
   function next() { if (idx < SLIDES.length - 1) setCurrent(SLIDES[idx + 1]); }
 
   return (
-    <main className="relative flex h-screen flex-col overflow-hidden font-sans" style={{ background: VB.bg }}>
+    <main ref={mainRef} className="relative flex h-screen flex-col overflow-hidden font-sans" style={{ background: VB.bg }}>
+      <style>{WAVE_STYLES}</style>
       {/* Overlay nav */}
       <header className="absolute inset-x-0 top-0 z-50">
         <div className="flex items-center justify-between gap-4 px-5 py-4 md:px-8">
@@ -670,6 +744,7 @@ export default function AIAfterHoursPost() {
             {current === 'intro' && <SlideIntro />}
             {current === 'purpose' && <SlidePurpose />}
             {current === 'talks' && <SlideTalks />}
+            {current === 'benefits' && <SlideBenefits />}
             {current === 'community' && <SlideCommunity />}
           </motion.div>
         </AnimatePresence>
@@ -677,7 +752,7 @@ export default function AIAfterHoursPost() {
 
       {/* Controls + voice guide */}
       <div className="absolute bottom-6 inset-x-0 z-50 flex flex-col items-center gap-3">
-        <VoiceGuide current={current} onSlideChange={setCurrent} />
+        <VoiceGuide current={current} onSlideChange={setCurrent} onVoiceLevel={handleVoiceLevel} />
         <div className="flex items-center gap-3">
           {SLIDES.map((s, i) => (
             <button

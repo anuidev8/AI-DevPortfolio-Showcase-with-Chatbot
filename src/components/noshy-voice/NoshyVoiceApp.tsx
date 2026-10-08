@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Check, Keyboard, Loader2, Mic, MicOff, PhoneOff, Search } from 'lucide-react';
+import { ArrowRight, Check, Keyboard, LayoutGrid, Loader2, Mic, MicOff, ScanLine, Search, X } from 'lucide-react';
 import { getNetworkingAnimal, type CommunityProfile } from '@/lib/community-data';
 import { fetchAiMatch } from '@/lib/noshy-ai';
+import { CONNECTION_XP, memberIdOf, parseNoshyCode, type NoshyCode } from '@/lib/noshy-game';
 import { matchesFor, type MatchPair } from '@/lib/noshy-match';
 import {
   ANIMAL_IDS,
@@ -19,6 +20,8 @@ import {
   type VoiceField,
   type VoicePhase,
 } from '@/lib/noshy-voice';
+import { CardScanner } from '@/components/noshy/CardScanner';
+import { NoshyLogo } from '@/components/noshy/NoshyUi';
 import { ConnectionGlobe, type GlobeNode } from './ConnectionGlobe';
 import { MatchConfirmed } from './MatchConfirmed';
 import { MatchOrbs } from './MatchOrbs';
@@ -97,6 +100,41 @@ export function NoshyVoiceApp() {
   latest.current = { phase, stepIndex, answers, pairs, memberId, members, confirmedPair };
   const matchingRef = useRef<Promise<unknown> | null>(null);
   const connectedIdsRef = useRef(new Set<string>());
+  const [scanKey, setScanKey] = useState(0);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const scanReturnRef = useRef<VoicePhase>('matches');
+  const meetParamRef = useRef<number | null>(null);
+
+  // Guests who already registered at /noshy skip the interview; ?meet= comes from a scanned card.
+  useEffect(() => {
+    const code = parseNoshyCode(window.location.search);
+    if (code?.kind === 'meet') meetParamRef.current = code.memberId;
+    try {
+      const saved = JSON.parse(localStorage.getItem(SESSION_KEY) ?? 'null') as
+        | (Partial<VoiceAnswers> & { memberId?: number })
+        | null;
+      if (!saved?.memberId || !saved.name || !saved.business || !saved.lookingFor || !saved.canHelp) return;
+      const restored: VoiceAnswers = {
+        name: saved.name,
+        business: saved.business,
+        lookingFor: saved.lookingFor,
+        canHelp: saved.canHelp,
+        role: saved.role ?? '',
+        animalId: saved.animalId ?? '',
+      };
+      latest.current.answers = restored;
+      latest.current.memberId = saved.memberId;
+      setAnswers(restored);
+      setMemberId(saved.memberId);
+    } catch { /* start fresh */ }
+  }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
 
   const loadMembers = useCallback(async () => {
     try {
@@ -304,6 +342,95 @@ export function NoshyVoiceApp() {
     };
   }, []);
 
+  /** Open a scanned attendee card as the focused match (index 0). */
+  const scanPerson = useCallback(
+    async (targetId: number) => {
+      const s = latest.current;
+      if (nextOpenStep(s.answers) !== -1) return { ok: false, error: 'Finish the 3 questions first.' };
+      if (s.memberId === targetId) return { ok: false, error: "That's your own card. Scan someone else's." };
+      const person =
+        s.members.find((m) => m.memberId === targetId) ?? (await loadMembers()).find((m) => m.memberId === targetId);
+      if (!person) return { ok: false, error: "That card isn't registered at this event yet." };
+
+      const me: CommunityProfile = {
+        id: s.memberId != null ? `member-${s.memberId}` : 'you',
+        name: s.answers.name,
+        role: s.answers.role || guessRole(s.answers.business),
+        avatar: '',
+        location: 'Medellín',
+        skills: [],
+        intent: '',
+        bio: s.answers.business,
+        animalId: s.answers.animalId,
+        business: s.answers.business,
+        lookingFor: s.answers.lookingFor,
+        canHelp: s.answers.canHelp,
+      };
+      const pair = matchesFor(me, [person])[0];
+      const next = [pair, ...latest.current.pairs.filter((p) => p.right.id !== person.id)];
+      latest.current.pairs = next;
+      latest.current.confirmedPair = null;
+      setPairs(next);
+      setConfirmedPair(null);
+      setFocusedIndex(0);
+      setScanError(null);
+      setPhase('matches');
+      return {
+        ok: true,
+        scanned: summarize(next)[0],
+        topics: pair.brief.topics,
+        message:
+          'Their card is open on screen at index 0 (the matches list was re-indexed). Say you found them, the score, ' +
+          'one concrete reason, and one opening question. Then send the guest to talk to them.',
+      };
+    },
+    [loadMembers]
+  );
+
+  /** Record "we actually talked". Confirmed (+XP) once the other person logs it too. */
+  const logConnection = useCallback(async (index: number, note?: string) => {
+    const pair = latest.current.pairs[index] ?? latest.current.confirmedPair;
+    const targetId = pair ? memberIdOf(pair.right.id) : null;
+    if (!pair || targetId == null) return { ok: false, error: `No match at index ${index}` };
+    if (latest.current.memberId == null) return { ok: false, error: 'The guest has no saved profile yet.' };
+    try {
+      const res = await fetch('/api/noshy/meet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ memberId: latest.current.memberId, targetId, source: 'voice', note }),
+      });
+      const data = (await res.json()) as { status?: 'confirmed' | 'waiting'; progress?: { xp: number }; error?: string };
+      if (!res.ok) return { ok: false, error: data.error || 'Could not save the connection.' };
+      const them = firstName(pair.right.name);
+      const confirmed = data.status === 'confirmed';
+      setToast(
+        confirmed
+          ? `🤝 Connection confirmed with ${them} · +${CONNECTION_XP} XP`
+          : `Connection recorded. Ask ${them} to scan your card for +${CONNECTION_XP} XP.`
+      );
+      return {
+        ok: true,
+        name: pair.right.name,
+        status: data.status,
+        xp: data.progress?.xp ?? 0,
+        message: confirmed
+          ? `Both confirmed. Celebrate: connection made, plus ${CONNECTION_XP} XP.`
+          : `Recorded. It counts for ${CONNECTION_XP} XP when ${them} scans the guest's card too; tell them to ask for it.`,
+      };
+    } catch {
+      return { ok: false, error: 'Could not save the connection.' };
+    }
+  }, []);
+
+  const openScanner = useCallback(() => {
+    if (nextOpenStep(latest.current.answers) !== -1) return { ok: false, error: 'Finish the 3 questions first.' };
+    if (latest.current.phase !== 'scan') scanReturnRef.current = latest.current.phase;
+    setScanError(null);
+    setScanKey((key) => key + 1);
+    setPhase('scan');
+    return { ok: true, message: 'The camera is open. Tell the guest to point it at the QR on the other person\'s NoShy card.' };
+  }, []);
+
   const resetFlow = useCallback(() => {
     latest.current.answers = EMPTY_ANSWERS;
     latest.current.pairs = [];
@@ -336,6 +463,8 @@ export function NoshyVoiceApp() {
           complete: open === -1,
           matches: summarize(s.pairs),
           confirmed: s.confirmedPair?.right.name ?? null,
+          registered: s.memberId != null,
+          scannedMemberId: meetParamRef.current,
         };
       },
       show_question: (payload) => {
@@ -347,11 +476,21 @@ export function NoshyVoiceApp() {
         return { ok: true, step: stepInfo(index) };
       },
       save_answer: (payload) => saveAnswer(String(payload.field ?? ''), String(payload.value ?? '')),
-      find_matches: (payload) =>
-        runMatching({
+      find_matches: (payload) => {
+        const s = latest.current;
+        // Returning guests: matches may already be on screen when the host joins.
+        if (!matchingRef.current && s.phase === 'matches' && s.pairs.length) {
+          return { ok: true, matches: summarize(s.pairs), message: 'Matches are already on screen. Present them briefly, best first.' };
+        }
+        return runMatching({
           role: typeof payload.role === 'string' ? payload.role : undefined,
           animal: typeof payload.animal === 'string' ? payload.animal : undefined,
-        }),
+        });
+      },
+      show_scanner: () => openScanner(),
+      scan_card: (payload) => scanPerson(Number(payload.memberId)),
+      log_connection: (payload) =>
+        logConnection(Number(payload.index ?? 0), typeof payload.note === 'string' ? payload.note : undefined),
       focus_match: (payload) => focusMatch(payload.index == null ? null : Number(payload.index)),
       confirm_match: (payload) => confirmMatch(Number(payload.index ?? 0)),
       restart_flow: () => {
@@ -360,7 +499,7 @@ export function NoshyVoiceApp() {
         return { ok: true, step: stepInfo(0) };
       },
     }),
-    [confirmMatch, focusMatch, resetFlow, runMatching, saveAnswer]
+    [confirmMatch, focusMatch, logConnection, openScanner, resetFlow, runMatching, saveAnswer, scanPerson]
   );
 
   const voice = useNoshyVoiceAgent(handlers);
@@ -404,8 +543,31 @@ export function NoshyVoiceApp() {
     setNotice(null);
     setMode('voice');
     setTyping(false);
-    setPhase('interview');
+    if (nextOpenStep(latest.current.answers) === -1) {
+      // Already registered: the host picks this up from get_flow_state.
+      if (meetParamRef.current != null) void scanPerson(meetParamRef.current).then((r) => { if (!r.ok) void runMatching(); });
+      else void runMatching();
+    } else {
+      setPhase('interview');
+    }
     void voice.connect();
+  };
+
+  const onScanned = async (code: NoshyCode) => {
+    if (code.kind === 'mission') {
+      window.location.href = `/noshy?mission=${code.missionId}`;
+      return;
+    }
+    const result = await scanPerson(code.memberId);
+    if (!result.ok) {
+      setScanError(result.error ?? 'Could not read that card.');
+      setScanKey((key) => key + 1);
+      return;
+    }
+    tellAgent(
+      `[screen] I scanned a NoShy card: ${JSON.stringify(result.scanned)}. Their card is open at index 0. ` +
+        'Tell me why I should talk to them and how to open.'
+    );
   };
 
   const startTyping = () => {
@@ -450,8 +612,16 @@ export function NoshyVoiceApp() {
   };
 
   const endSession = () => {
+    // Keep a registered guest's profile so the next session doesn't re-interview them.
+    const { answers: savedAnswers, memberId: savedId } = latest.current;
     void voice.disconnect();
     resetFlow();
+    if (savedId != null) {
+      latest.current.answers = savedAnswers;
+      latest.current.memberId = savedId;
+      setAnswers(savedAnswers);
+      setMemberId(savedId);
+    }
     setPhase('intro');
     setMode('voice');
     setTyping(false);
@@ -498,7 +668,7 @@ export function NoshyVoiceApp() {
   const you: GlobeNode = {
     id: youProfile.id,
     emoji: getNetworkingAnimal(answers.animalId)?.emoji ?? '✨',
-    color: getNetworkingAnimal(answers.animalId)?.color ?? '#00f2ff',
+    color: getNetworkingAnimal(answers.animalId)?.color ?? '#1f5fff',
   };
   const globePeople: GlobeNode[] = members
     .filter((m) => m.id !== youProfile.id)
@@ -506,26 +676,36 @@ export function NoshyVoiceApp() {
     .map((m) => ({
       id: m.id,
       emoji: getNetworkingAnimal(m.animalId)?.emoji ?? '•',
-      color: getNetworkingAnimal(m.animalId)?.color ?? '#00f2ff',
+      color: getNetworkingAnimal(m.animalId)?.color ?? '#1f5fff',
     }));
+
+  const showScanInHeader = !connected && (phase === 'matches' || phase === 'confirmed');
+  const scanFromScreen = () => {
+    openScanner();
+    tellAgent('[screen] I opened the card scanner.');
+  };
 
   return (
     <main
-      className="fixed inset-0 overflow-clip bg-[#0b011d] text-white"
+      className="noshy-voice fixed inset-0 overflow-clip bg-black text-white"
       style={{ fontFamily: 'var(--font-geist-sans), system-ui, sans-serif' }}
     >
       <Backdrop />
 
-      <header className="absolute inset-x-0 top-0 z-30 flex min-h-[4.5rem] items-center justify-end px-5 py-4 md:min-h-[5.5rem] md:px-10 md:py-6">
+      <header className="absolute inset-x-0 top-0 z-30 flex min-h-[4rem] items-center justify-between px-4 py-3 md:min-h-[5rem] md:px-10">
+        <a href="/noshy" aria-label="NoShy home" className="text-white">
+          <NoshyLogo />
+        </a>
+
         {phase === 'interview' && (
-          <div className="absolute left-1/2 flex -translate-x-1/2 gap-2" aria-label={`Step ${stepIndex + 1} of ${VOICE_STEPS.length}`}>
+          <div className="absolute left-1/2 flex -translate-x-1/2 gap-1.5" aria-label={`Step ${stepIndex + 1} of ${VOICE_STEPS.length}`}>
             {VOICE_STEPS.map((s, i) => (
               <motion.i
                 key={s.id}
                 className="block h-1.5 rounded-full"
                 animate={{
-                  width: i === stepIndex ? 28 : 8,
-                  backgroundColor: answers[s.id] ? '#00f2ff' : i === stepIndex ? '#ff007a' : 'rgba(255,255,255,0.18)',
+                  width: i === stepIndex ? 24 : 8,
+                  backgroundColor: i === stepIndex ? '#ffffff' : answers[s.id] ? '#5b8cff' : 'rgba(255,255,255,0.18)',
                 }}
                 transition={{ duration: 0.45, ease }}
               />
@@ -535,23 +715,30 @@ export function NoshyVoiceApp() {
 
         {phase !== 'intro' && (
           <div className="flex items-center gap-2">
-            {connected && (
+            {showScanInHeader && (
               <button
                 type="button"
-                onClick={toggleMute}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:bg-white/10"
-                aria-label={muted ? 'Unmute microphone' : 'Mute microphone'}
+                onClick={scanFromScreen}
+                className="flex h-9 items-center gap-1.5 rounded-full bg-white/10 px-3.5 text-sm font-semibold text-white transition hover:bg-white/15"
               >
-                {muted ? <MicOff size={17} /> : <Mic size={17} />}
+                <ScanLine size={15} /> Scan
               </button>
+            )}
+            {memberId != null && (
+              <a
+                href="/noshy"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/80 transition hover:bg-white/15"
+                aria-label="Open NoShy home: missions, connections, your card"
+              >
+                <LayoutGrid size={16} />
+              </a>
             )}
             <button
               type="button"
               onClick={endSession}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:border-[#ff007a]/50 hover:text-[#ff007a]"
-              aria-label="End session"
+              className="flex h-9 items-center rounded-full bg-white/10 px-4 text-sm font-semibold text-white transition hover:bg-white/15"
             >
-              <PhoneOff size={17} />
+              End
             </button>
           </div>
         )}
@@ -559,107 +746,92 @@ export function NoshyVoiceApp() {
 
       <AnimatePresence mode="wait">
         {phase === 'intro' && (
-          <motion.section key="intro" {...sectionMotion} className="absolute inset-0 flex flex-col items-center justify-center px-6">
-            <VoiceWave levelsRef={voice.levelsRef} mode="idle" className="pointer-events-none absolute inset-x-0 top-1/2 h-[46vh] w-full -translate-y-1/2 opacity-80" />
-            <div className="relative z-10 flex flex-col items-center text-center">
-              <motion.p
-                className="font-mono text-xs uppercase tracking-[0.35em] text-[#00f2ff]"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.7, ease }}
-              >
-                NoShy Networking · Voice
-              </motion.p>
-              <motion.h1
-                className="mt-5 text-5xl font-extrabold leading-[1.02] tracking-tight md:text-8xl"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.9, ease }}
-              >
-                Talk. Match.
-                <br />
-                <span className="bg-gradient-to-r from-[#00f2ff] via-white to-[#ff007a] bg-clip-text text-transparent">Meet.</span>
-              </motion.h1>
-              <motion.p
-                className="mt-6 max-w-md text-base text-white/55 md:text-lg"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.55, duration: 0.8 }}
-              >
-                Answer 3 quick questions out loud. NoShy finds the people in this room you should talk to tonight.
-              </motion.p>
-              <motion.div
-                className="mt-10 flex flex-col items-center gap-4"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.75, duration: 0.7, ease }}
-              >
-                <motion.button
-                  type="button"
-                  onClick={startVoice}
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.96 }}
-                  className="relative flex items-center gap-3 rounded-full bg-gradient-to-r from-[#00f2ff] to-[#ff007a] px-9 py-4 text-base font-bold text-[#0b011d] shadow-[0_0_50px_rgba(0,242,255,0.35)]"
-                >
-                  <motion.span
-                    className="absolute inset-0 rounded-full border-2 border-[#00f2ff]"
-                    animate={{ scale: [1, 1.18], opacity: [0.6, 0] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-                  />
-                  <Mic size={20} /> Start talking
-                </motion.button>
-                <button
-                  type="button"
-                  onClick={startTyping}
-                  className="flex items-center gap-2 text-sm text-white/45 transition hover:text-white/80"
-                >
-                  <Keyboard size={15} /> I&apos;d rather type
-                </button>
-              </motion.div>
+          <motion.section key="intro" {...sectionMotion} className="absolute inset-0 flex flex-col items-center justify-center px-6 pb-40 pt-20">
+            <VoiceOrb mode="idle" className="h-52 w-52 md:h-64 md:w-64" />
+            <motion.h1
+              className="mt-10 text-center text-[2rem] font-bold leading-tight tracking-tight md:text-5xl"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.8, ease }}
+            >
+              Talk to NoShy.
+            </motion.h1>
+            <motion.p
+              className="mt-3 max-w-xs text-center text-[15px] leading-snug text-white/60 md:max-w-sm md:text-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.45, duration: 0.8 }}
+            >
+              {complete
+                ? `Welcome back, ${firstName(answers.name)}. I'll find who you should meet next.`
+                : "I'll ask you a few questions and find the people you should meet tonight."}
+            </motion.p>
+            <VoiceWave levelsRef={voice.levelsRef} mode="idle" className="pointer-events-none mt-6 h-16 w-full max-w-sm" />
+            <a href="/noshy" className="mt-2 text-sm text-white/45 transition hover:text-white/80">
+              Scan cards or explore manually
+            </a>
+
+            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-3 pb-8 md:pb-10">
+              <p className="text-xs text-white/40">Tap the mic to start</p>
+              <div className="flex items-center gap-7">
+                {!complete ? (
+                  <RoundButton onClick={startTyping} label="Type instead">
+                    <Keyboard size={20} />
+                  </RoundButton>
+                ) : (
+                  <span className="w-14" aria-hidden="true" />
+                )}
+                <MicButton onClick={startVoice} label="Start talking" pulse />
+                <RoundButton href="/noshy" label="Close voice host">
+                  <X size={20} />
+                </RoundButton>
+              </div>
             </div>
           </motion.section>
         )}
 
         {phase === 'interview' && step && (
-          <motion.section key="interview" {...sectionMotion} className="absolute inset-0 flex flex-col items-center justify-center px-6 pb-28 pt-24">
-            <div className="relative z-10 flex min-h-[9.5rem] w-full max-w-4xl flex-col items-center text-center">
+          <motion.section key="interview" {...sectionMotion} className="absolute inset-0 flex flex-col items-center px-6 pb-48 pt-20 md:pt-24">
+            <VoiceOrb mode={waveMode} className="h-28 w-28 shrink-0 md:h-36 md:w-36" />
+
+            <div className="relative z-10 mt-6 flex min-h-[8.5rem] w-full max-w-2xl flex-col items-center text-center">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={step.id}
-                  initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+                  initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -18, filter: 'blur(8px)' }}
-                  transition={{ duration: 0.7, ease }}
+                  exit={{ opacity: 0, y: -16, filter: 'blur(8px)' }}
+                  transition={{ duration: 0.6, ease }}
                   className="flex flex-col items-center"
                 >
-                  <p className="font-mono text-xs uppercase tracking-[0.35em] text-[#00f2ff]">{step.eyebrow}</p>
-                  <h2 className="mt-4 text-4xl font-bold leading-tight md:text-7xl">{step.label}</h2>
-                  <p className="mt-4 text-base text-white/45 md:text-xl">{step.hint}</p>
+                  <p className="text-sm font-medium text-[#5b8cff]">{step.eyebrow}</p>
+                  <h2 className="mt-2 text-[1.85rem] font-bold leading-tight tracking-tight md:text-5xl">{step.label}</h2>
+                  <p className="mt-2 text-[15px] text-white/50 md:text-lg">{step.hint}</p>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            <div className="relative my-4 h-[30vh] min-h-[180px] w-full max-w-6xl md:h-[34vh]">
+            <div className="relative my-2 h-24 w-full max-w-xl md:h-32">
               <VoiceWave levelsRef={voice.levelsRef} mode={waveMode} className="absolute inset-0 h-full w-full" />
             </div>
 
-            <div className="relative z-10 flex min-h-[5rem] w-full max-w-3xl flex-col items-center text-center">
+            <div className="relative z-10 flex min-h-[4.5rem] w-full max-w-xl flex-col items-center text-center">
               <AnimatePresence mode="wait">
                 {savedAnswer ? (
                   <motion.p
                     key={`saved-${step.id}`}
-                    className="flex items-start gap-2 text-xl text-white/85 md:text-2xl"
+                    className="flex items-start gap-2 rounded-2xl border border-white/[0.08] bg-[#141416] px-4 py-3 text-left text-[15px] text-white/90 md:text-lg"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5, ease }}
                   >
-                    <Check className="mt-1.5 shrink-0 text-[#00f2ff]" size={20} /> {savedAnswer}
+                    <Check className="mt-0.5 shrink-0 text-[#5b8cff]" size={18} /> {savedAnswer}
                   </motion.p>
                 ) : connected && voice.userTranscript && waveMode === 'listening' ? (
                   <motion.p
                     key="live"
-                    className="text-xl italic text-white/60 md:text-2xl"
+                    className="text-lg italic text-white/60 md:text-xl"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -676,35 +848,24 @@ export function NoshyVoiceApp() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease, delay: 0.3 }}
-                  className="mt-6 flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00f2ff] to-[#ff007a] px-7 py-3.5 font-bold text-[#0b011d] shadow-[0_0_40px_rgba(255,0,122,0.35)]"
+                  className="noshy-btn noshy-btn-primary mt-5 px-7"
                 >
                   <Search size={18} /> Find my matches
                 </motion.button>
               )}
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-3 px-5 pb-6 md:pb-8">
-              {notice && <p className="text-sm text-[#ff007a]/90">{notice}</p>}
+            <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-3 px-5 pb-7 md:pb-9">
+              {notice && <p className="text-center text-sm text-[#ff6b6b]">{notice}</p>}
               {connected && voice.agentTranscript && (
-                <p className="line-clamp-2 max-w-2xl text-center text-sm text-white/40">{voice.agentTranscript}</p>
+                <p className="line-clamp-2 max-w-xl text-center text-sm text-white/40">{voice.agentTranscript}</p>
               )}
-              <div className="flex w-full max-w-2xl items-center justify-center gap-3">
-                <StatusPill label={statusLabel} busy={voice.connection === 'connecting' || waveMode === 'thinking'} />
-                {!typing && (
-                  <button
-                    type="button"
-                    onClick={() => setTyping(true)}
-                    className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/60 transition hover:text-white"
-                  >
-                    <Keyboard size={14} /> Type instead
-                  </button>
-                )}
-              </div>
+              <StatusPill label={statusLabel} busy={voice.connection === 'connecting' || waveMode === 'thinking'} />
               <AnimatePresence>
                 {typing && !complete && (
                   <motion.form
                     onSubmit={submitDraft}
-                    className="flex w-full max-w-2xl items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] p-1.5 pl-5 backdrop-blur-xl focus-within:border-[#00f2ff]/50"
+                    className="flex w-full max-w-xl items-center gap-2 rounded-2xl border border-white/[0.14] bg-[#0e0e10] p-1.5 pl-4 focus-within:border-[#1f5fff]"
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 16 }}
@@ -716,12 +877,12 @@ export function NoshyVoiceApp() {
                       onChange={(e) => setDraft(e.target.value)}
                       placeholder={step.hint}
                       aria-label={step.label}
-                      className="flex-1 bg-transparent text-base text-white placeholder:text-white/30 focus:outline-none"
+                      className="min-w-0 flex-1 bg-transparent text-base text-white placeholder:text-white/30 focus:outline-none"
                     />
                     <button
                       type="submit"
                       disabled={!draft.trim()}
-                      className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[#00f2ff] to-[#ff007a] text-[#0b011d] transition disabled:opacity-40"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1f5fff] text-white transition disabled:opacity-40"
                       aria-label="Save answer"
                     >
                       <ArrowRight size={18} />
@@ -729,6 +890,19 @@ export function NoshyVoiceApp() {
                   </motion.form>
                 )}
               </AnimatePresence>
+              <div className="flex items-center gap-7">
+                <RoundButton onClick={() => setTyping((t) => !t)} label={typing ? 'Hide keyboard' : 'Type instead'} active={typing}>
+                  <Keyboard size={20} />
+                </RoundButton>
+                <MicButton
+                  onClick={connected ? toggleMute : startVoice}
+                  label={connected ? (muted ? 'Unmute microphone' : 'Mute microphone') : 'Start talking'}
+                  muted={connected && muted}
+                />
+                <RoundButton onClick={endSession} label="End session">
+                  <X size={20} />
+                </RoundButton>
+              </div>
             </div>
           </motion.section>
         )}
@@ -736,9 +910,9 @@ export function NoshyVoiceApp() {
         {phase === 'matching' && (
           <motion.section key="matching" {...sectionMotion} className="absolute inset-0">
             <ConnectionGlobe you={you} people={globePeople} highlightIds={highlightIds} className="absolute inset-0 h-full w-full" />
-            <div className="pointer-events-none absolute inset-x-0 top-24 flex flex-col items-center px-6 text-center md:top-28">
+            <div className="pointer-events-none absolute inset-x-0 top-20 flex flex-col items-center px-6 text-center md:top-28">
               <motion.p
-                className="font-mono text-xs uppercase tracking-[0.35em] text-[#00f2ff]"
+                className="text-sm font-medium text-[#5b8cff]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
@@ -748,7 +922,7 @@ export function NoshyVoiceApp() {
               <AnimatePresence mode="wait">
                 <motion.h2
                   key={highlightIds.length ? 'found' : 'scan'}
-                  className="mt-3 text-3xl font-bold md:text-5xl"
+                  className="mt-2 max-w-md text-[1.75rem] font-bold leading-tight tracking-tight md:text-5xl"
                   initial={{ opacity: 0, y: 12, filter: 'blur(6px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
@@ -761,7 +935,7 @@ export function NoshyVoiceApp() {
               </AnimatePresence>
             </div>
             <motion.p
-              className="pointer-events-none absolute inset-x-0 bottom-24 text-center text-base text-white/50"
+              className="pointer-events-none absolute inset-x-0 bottom-28 px-6 text-center text-[15px] text-white/50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
@@ -774,19 +948,15 @@ export function NoshyVoiceApp() {
         )}
 
         {phase === 'matches' && (
-          <motion.section key="matches" {...sectionMotion} className="absolute inset-0 overflow-y-auto pb-28 pt-24">
+          <motion.section key="matches" {...sectionMotion} className="absolute inset-0 overflow-y-auto pb-48 pt-16 md:pt-20">
             {pairs.length ? (
               <MatchOrbs pairs={pairs} focusedIndex={focusedIndex} onFocus={onFocusFromScreen} onConfirm={onConfirmFromScreen} />
             ) : (
               <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-                <p className="font-mono text-xs uppercase tracking-[0.35em] text-[#00f2ff]">You&apos;re early</p>
-                <h2 className="mt-4 text-4xl font-bold md:text-6xl">You&apos;re the first one here.</h2>
-                <p className="mt-4 max-w-md text-white/50">Your profile is saved. As people check in, your matches will show up.</p>
-                <button
-                  type="button"
-                  onClick={() => void runMatching()}
-                  className="mt-8 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm text-white/80 transition hover:bg-white/10"
-                >
+                <p className="text-sm font-medium text-[#5b8cff]">You&apos;re early</p>
+                <h2 className="mt-2 text-[1.85rem] font-bold tracking-tight md:text-5xl">You&apos;re the first one here.</h2>
+                <p className="mt-3 max-w-sm text-[15px] text-white/50">Your profile is saved. As people check in, your matches will show up.</p>
+                <button type="button" onClick={() => void runMatching()} className="noshy-btn noshy-btn-secondary mt-7">
                   Scan again
                 </button>
               </div>
@@ -795,7 +965,7 @@ export function NoshyVoiceApp() {
         )}
 
         {phase === 'confirmed' && confirmedPair && (
-          <motion.section key="confirmed" {...sectionMotion} className="absolute inset-0 overflow-y-auto pb-28 pt-24">
+          <motion.section key="confirmed" {...sectionMotion} className="absolute inset-0 overflow-y-auto pb-48 pt-16 md:pt-20">
             <MatchConfirmed
               pair={confirmedPair}
               aiLoading={aiLoading}
@@ -808,18 +978,52 @@ export function NoshyVoiceApp() {
             />
           </motion.section>
         )}
+
+        {phase === 'scan' && (
+          <motion.section key="scan" {...sectionMotion} className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-5 pb-28 pt-20 text-center">
+            <h2 className="text-[1.6rem] font-bold tracking-tight md:text-4xl">Scan their NoShy card.</h2>
+            <CardScanner key={scanKey} onCode={(code) => void onScanned(code)} className="w-full max-w-sm" />
+            {scanError && <p className="text-sm text-[#ff6b6b]">{scanError}</p>}
+            <button type="button" onClick={() => setPhase(scanReturnRef.current)} className="noshy-btn noshy-btn-secondary">
+              <X size={16} /> Cancel
+            </button>
+          </motion.section>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {toast && (
+          <motion.p
+            key={toast}
+            role="status"
+            className="absolute inset-x-4 top-16 z-40 mx-auto max-w-md rounded-2xl border border-[#1f5fff]/50 bg-[#0e0e10]/95 px-5 py-3 text-center text-sm text-white backdrop-blur-xl md:top-20"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.4, ease }}
+          >
+            {toast}
+          </motion.p>
+        )}
       </AnimatePresence>
 
       {connected && phase !== 'intro' && phase !== 'interview' && (
         <motion.div
-          className="absolute inset-x-0 bottom-6 z-30 flex justify-center"
+          className="absolute inset-x-0 bottom-0 z-30 flex flex-col items-center gap-2 bg-gradient-to-t from-black via-black/90 to-transparent px-5 pb-7 pt-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease }}
         >
-          <div className="flex items-center gap-3 rounded-full border border-white/10 bg-[#12081f]/80 py-1.5 pl-2 pr-4 backdrop-blur-xl">
-            <VoiceWave levelsRef={voice.levelsRef} mode={waveMode} className="h-9 w-28" />
-            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/55">{statusLabel}</span>
+          <VoiceWave levelsRef={voice.levelsRef} mode={waveMode} className="h-10 w-56" />
+          <span className="text-xs text-white/50">{statusLabel}</span>
+          <div className="mt-1 flex items-center gap-7">
+            <RoundButton onClick={scanFromScreen} label="Scan a card" disabled={phase === 'scan' || phase === 'matching'}>
+              <ScanLine size={20} />
+            </RoundButton>
+            <MicButton onClick={toggleMute} label={muted ? 'Unmute microphone' : 'Mute microphone'} muted={muted} />
+            <RoundButton onClick={endSession} label="End session">
+              <X size={20} />
+            </RoundButton>
           </div>
         </motion.div>
       )}
@@ -829,12 +1033,12 @@ export function NoshyVoiceApp() {
 
 function StatusPill({ label, busy }: { label: string; busy: boolean }) {
   return (
-    <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/60 backdrop-blur-xl">
+    <div className="flex items-center gap-2 rounded-full bg-white/[0.06] px-3.5 py-1.5 text-xs font-medium text-white/60">
       {busy ? (
-        <Loader2 size={13} className="animate-spin text-[#00f2ff]" />
+        <Loader2 size={13} className="animate-spin text-[#5b8cff]" />
       ) : (
         <motion.span
-          className="h-2 w-2 rounded-full bg-[#00f2ff]"
+          className="h-2 w-2 rounded-full bg-[#1f5fff]"
           animate={{ opacity: [0.35, 1, 0.35] }}
           transition={{ duration: 1.6, repeat: Infinity }}
         />
@@ -844,29 +1048,99 @@ function StatusPill({ label, busy }: { label: string; busy: boolean }) {
   );
 }
 
+function RoundButton({ children, label, onClick, href, active, disabled }: {
+  children: ReactNode;
+  label: string;
+  onClick?: () => void;
+  href?: string;
+  active?: boolean;
+  disabled?: boolean;
+}) {
+  const className = `flex h-14 w-14 items-center justify-center rounded-full border transition disabled:opacity-35 ${
+    active ? 'border-white/40 bg-white/15 text-white' : 'border-white/[0.12] bg-[#141416] text-white/85 hover:bg-[#1c1c1f]'
+  }`;
+  if (href) {
+    return <a href={href} className={className} aria-label={label}>{children}</a>;
+  }
+  return (
+    <button type="button" onClick={onClick} className={className} aria-label={label} aria-pressed={active} disabled={disabled}>
+      {children}
+    </button>
+  );
+}
+
+function MicButton({ onClick, label, muted, pulse }: { onClick: () => void; label: string; muted?: boolean; pulse?: boolean }) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileTap={{ scale: 0.94 }}
+      className={`relative flex h-[72px] w-[72px] items-center justify-center rounded-full text-white ${
+        muted ? 'bg-[#2c2c30]' : 'bg-[#1f5fff] shadow-[0_0_40px_rgba(31,95,255,0.55)]'
+      }`}
+      aria-label={label}
+    >
+      {pulse && (
+        <motion.span
+          className="absolute inset-0 rounded-full border-2 border-[#1f5fff]"
+          animate={{ scale: [1, 1.3], opacity: [0.7, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+        />
+      )}
+      {muted ? <MicOff size={26} /> : <Mic size={26} />}
+    </motion.button>
+  );
+}
+
+/** Glowing blue planet: the voice host. Breathes faster while NoShy talks. */
+function VoiceOrb({ mode, className }: { mode: WaveMode; className?: string }) {
+  const speed = mode === 'speaking' ? 1.1 : mode === 'listening' ? 1.8 : mode === 'thinking' ? 1.4 : 3.2;
+  const scale = mode === 'speaking' ? 1.07 : mode === 'listening' ? 1.04 : 1.02;
+  return (
+    <motion.div
+      className={`relative ${className ?? ''}`}
+      animate={{ scale: [1, scale, 1] }}
+      transition={{ duration: speed, repeat: Infinity, ease: 'easeInOut' }}
+      aria-hidden="true"
+    >
+      <div className="absolute -inset-[35%] rounded-full bg-[#1f5fff]/25 blur-3xl" />
+      <div
+        className="absolute inset-0 overflow-hidden rounded-full"
+        style={{
+          background: 'radial-gradient(circle at 34% 28%, #b9cfff 0%, #3a74ff 18%, #1446d6 42%, #061a6b 70%, #01061f 100%)',
+          boxShadow: '0 0 70px rgba(31,95,255,0.6), inset -18px -26px 60px rgba(0,0,0,0.65), inset 8px 10px 40px rgba(170,200,255,0.35)',
+        }}
+      >
+        <motion.svg
+          className="absolute inset-0 h-full w-full opacity-30"
+          viewBox="0 0 100 100"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+        >
+          <g fill="none" stroke="#c7d8ff" strokeWidth="0.35">
+            <ellipse cx="50" cy="50" rx="49" ry="16" />
+            <ellipse cx="50" cy="50" rx="49" ry="34" />
+            <ellipse cx="50" cy="50" rx="16" ry="49" />
+            <ellipse cx="50" cy="50" rx="34" ry="49" />
+            <line x1="1" y1="50" x2="99" y2="50" />
+            <line x1="50" y1="1" x2="50" y2="99" />
+          </g>
+        </motion.svg>
+      </div>
+      <div className="absolute inset-0 rounded-full ring-1 ring-[#8fb0ff]/40" />
+    </motion.div>
+  );
+}
+
 function Backdrop() {
   return (
     <div className="pointer-events-none absolute inset-0" aria-hidden="true">
       <motion.div
-        className="absolute -left-[20%] -top-[25%] h-[70vh] w-[70vh] rounded-full bg-[#00f2ff]/[0.10] blur-[120px]"
-        animate={{ x: [0, 60, 0], y: [0, 40, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute left-1/2 top-[30%] h-[60vh] w-[60vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1f5fff]/[0.12] blur-[120px]"
+        animate={{ opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       />
-      <motion.div
-        className="absolute -bottom-[25%] -right-[15%] h-[75vh] w-[75vh] rounded-full bg-[#ff007a]/[0.11] blur-[130px]"
-        animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
-        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <div
-        className="absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
-          backgroundSize: '56px 56px',
-          maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
-        }}
-      />
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black to-transparent" />
     </div>
   );
 }

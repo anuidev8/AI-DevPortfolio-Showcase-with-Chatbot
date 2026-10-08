@@ -17,11 +17,11 @@ type ConnectionGlobeProps = {
   className?: string;
 };
 
-const CYAN = 0x00f2ff;
-const MAGENTA = 0xff007a;
-const VIOLET = 0x140a33;
-const CYAN_COLOR = new THREE.Color(CYAN);
-const MAGENTA_COLOR = new THREE.Color(MAGENTA);
+const BLUE = 0x2f6bff;
+const ICE = 0xa8c4ff;
+const VIOLET = 0x040b2a;
+const BLUE_COLOR = new THREE.Color(BLUE);
+const ICE_COLOR = new THREE.Color(ICE);
 
 const RADIUS = 78;
 const HOME = { lat: 6.25, lon: -75.57 }; // Medellín: the guest's pin
@@ -80,9 +80,9 @@ function landMaterial(mask: THREE.Texture) {
     uniforms: {
       uMap: { value: mask },
       uTime: { value: 0 },
-      uDeep: { value: new THREE.Color(0x1a0f4d) },
-      uMid: { value: new THREE.Color(CYAN) },
-      uHot: { value: new THREE.Color(MAGENTA) },
+      uDeep: { value: new THREE.Color(0x0a1d66) },
+      uMid: { value: new THREE.Color(BLUE) },
+      uHot: { value: new THREE.Color(ICE) },
     },
     vertexShader: /* glsl */ `
       varying vec2 vUv;
@@ -238,7 +238,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
     const atmosphere = new THREE.Mesh(
       new THREE.SphereGeometry(RADIUS * 1.06, 32, 24),
       new THREE.MeshBasicMaterial({
-        color: CYAN,
+        color: BLUE,
         transparent: true,
         opacity: 0.08,
         side: THREE.BackSide,
@@ -270,7 +270,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
       new THREE.LineSegments(
         gridGeo,
         new THREE.LineBasicMaterial({
-          color: CYAN,
+          color: BLUE,
           transparent: true,
           opacity: 0.07,
           blending: THREE.AdditiveBlending,
@@ -284,7 +284,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
     const scanLine = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(scanPts),
       new THREE.LineBasicMaterial({
-        color: MAGENTA,
+        color: ICE,
         transparent: true,
         opacity: 0.7,
         blending: THREE.AdditiveBlending,
@@ -308,18 +308,18 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
       mesh.rotation.set(rx, ry, 0);
       orbits.add(mesh);
     };
-    addRing(RADIUS * 1.18, RADIUS * 1.195, CYAN, 0.4, Math.PI / 2.05);
-    addRing(RADIUS * 1.3, RADIUS * 1.312, MAGENTA, 0.22, Math.PI / 2.35, Math.PI / 9);
-    addRing(RADIUS * 1.42, RADIUS * 1.428, CYAN, 0.14, Math.PI / 1.9, -Math.PI / 11);
+    addRing(RADIUS * 1.18, RADIUS * 1.195, BLUE, 0.4, Math.PI / 2.05);
+    addRing(RADIUS * 1.3, RADIUS * 1.312, ICE, 0.22, Math.PI / 2.35, Math.PI / 9);
+    addRing(RADIUS * 1.42, RADIUS * 1.428, BLUE, 0.14, Math.PI / 1.9, -Math.PI / 11);
 
     const network = new THREE.Group();
     globe.add(network);
 
     const ghostDotGeo = new THREE.SphereGeometry(0.9, 8, 8);
     const ghostHaloGeo = new THREE.SphereGeometry(2.2, 8, 8);
-    const ghostDotMat = new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0.85 });
+    const ghostDotMat = new THREE.MeshBasicMaterial({ color: BLUE, transparent: true, opacity: 0.85 });
     const ghostHaloMat = new THREE.MeshBasicMaterial({
-      color: CYAN,
+      color: BLUE,
       transparent: true,
       opacity: 0.14,
       blending: THREE.AdditiveBlending,
@@ -338,7 +338,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pts),
         new THREE.LineBasicMaterial({
-          color: CYAN,
+          color: BLUE,
           transparent: true,
           opacity: 0.16,
           blending: THREE.AdditiveBlending,
@@ -366,7 +366,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
     youSprite.position.copy(homePos.clone().multiplyScalar(1.03));
     youSprite.renderOrder = 10;
     const youRing = new THREE.Sprite(
-      new THREE.SpriteMaterial({ map: ringTex, color: MAGENTA, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })
+      new THREE.SpriteMaterial({ map: ringTex, color: ICE, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })
     );
     youRing.position.copy(youSprite.position);
     youRing.renderOrder = 9;
@@ -401,7 +401,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
         const tube = new THREE.Mesh(
           new THREE.TubeGeometry(curve, TUBE_SEGMENTS, 0.32, TUBE_RADIAL, false),
           new THREE.MeshBasicMaterial({
-            color: CYAN,
+            color: BLUE,
             transparent: true,
             opacity: 0.6,
             blending: THREE.AdditiveBlending,
@@ -411,7 +411,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
         const glow = new THREE.Mesh(
           new THREE.TubeGeometry(curve, TUBE_SEGMENTS, 1.1, TUBE_RADIAL, false),
           new THREE.MeshBasicMaterial({
-            color: MAGENTA,
+            color: ICE,
             transparent: true,
             opacity: 0,
             blending: THREE.AdditiveBlending,
@@ -423,7 +423,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
 
         const traveler = new THREE.Mesh(
           travelerGeo,
-          new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0 })
+          new THREE.MeshBasicMaterial({ color: BLUE, transparent: true, opacity: 0 })
         );
 
         const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: textureFor(node), transparent: true, depthWrite: false }));
@@ -434,7 +434,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
         const ring = new THREE.Sprite(
           new THREE.SpriteMaterial({
             map: ringTex,
-            color: MAGENTA,
+            color: ICE,
             transparent: true,
             opacity: 0,
             depthWrite: false,
@@ -535,7 +535,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
         rig.glow.geometry.setDrawRange(0, tubeCount(grow));
 
         const tubeMat = rig.tube.material;
-        tubeMat.color.lerp(isHot ? MAGENTA_COLOR : CYAN_COLOR, 0.08);
+        tubeMat.color.lerp(isHot ? ICE_COLOR : BLUE_COLOR, 0.08);
         tubeMat.opacity += ((isHot ? 0.95 : hot.length ? 0.28 : 0.6) - tubeMat.opacity) * 0.08;
         rig.glow.material.opacity += ((isHot ? 0.28 + 0.1 * Math.sin(t * 3 + index) : 0) - rig.glow.material.opacity) * 0.08;
 
@@ -556,7 +556,7 @@ export function ConnectionGlobe({ you, people, highlightIds = [], className }: C
           const p = (t * (isHot ? 0.5 : 0.32) + index * 0.17) % 1;
           rig.traveler.position.copy(rig.curve.getPoint(p));
           rig.traveler.scale.setScalar(isHot ? 1.5 : 0.95);
-          travelerMat.color.setHex(isHot ? MAGENTA : CYAN);
+          travelerMat.color.setHex(isHot ? ICE : BLUE);
           travelerMat.opacity = facing(rig.traveler) * 0.95;
         } else {
           travelerMat.opacity = 0;

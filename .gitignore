@@ -27,3 +27,6 @@ pnpm-debug.log*
 videos/**/.env
 videos/**/node_modules/
 videos/**/.npm-cache/
+
+# local DB backups
+backups/

@@ -5,6 +5,8 @@ import {
   Room,
   RoomEvent,
   Track,
+  createAudioAnalyser,
+  type RemoteAudioTrack,
   type RemoteTrack,
   type RpcInvocationData,
 } from 'livekit-client';
@@ -28,9 +30,18 @@ const VB = {
 type VoiceGuideProps = {
   current: SlideId;
   onSlideChange: (slide: SlideId) => void;
+  /** Smoothed agent voice level (0–1), called every animation frame while audio plays. */
+  onVoiceLevel?: (level: number) => void;
 };
 
 type ConnState = 'idle' | 'connecting' | 'listening' | 'error';
+
+type VoiceMeter = ReturnType<typeof createAudioAnalyser>;
+
+const VOICE_GAIN = 2.4;
+/** Time constants in seconds — frame-rate independent so 120Hz displays aren't twice as twitchy. */
+const VOICE_ATTACK_S = 0.18;
+const VOICE_RELEASE_S = 0.6;
 
 /**
  * LiveKit room + agent audio + RPC slide control for AI After Hours.
@@ -38,7 +49,7 @@ type ConnState = 'idle' | 'connecting' | 'listening' | 'error';
  * @see https://docs.livekit.io/agents/logic/tools/forwarding/
  * @see https://docs.livekit.io/transport/data/rpc/
  */
-export function VoiceGuide({ current, onSlideChange }: VoiceGuideProps) {
+export function VoiceGuide({ current, onSlideChange, onVoiceLevel }: VoiceGuideProps) {
   const [state, setState] = useState<ConnState>('idle');
   const [error, setError] = useState<string | null>(null);
   const [agentSpeaking, setAgentSpeaking] = useState(false);
@@ -47,6 +58,10 @@ export function VoiceGuide({ current, onSlideChange }: VoiceGuideProps) {
   const audioElRef = useRef<HTMLAudioElement | null>(null);
   const currentRef = useRef(current);
   const onSlideChangeRef = useRef(onSlideChange);
+  const onVoiceLevelRef = useRef(onVoiceLevel);
+  const meterRef = useRef<VoiceMeter | null>(null);
+  const meterFrameRef = useRef<number | null>(null);
+  const levelRef = useRef(0);
 
   useEffect(() => {
     currentRef.current = current;
@@ -57,7 +72,12 @@ export function VoiceGuide({ current, onSlideChange }: VoiceGuideProps) {
   }, [onSlideChange]);
 
   useEffect(() => {
+    onVoiceLevelRef.current = onVoiceLevel;
+  }, [onVoiceLevel]);
+
+  useEffect(() => {
     return () => {
+      stopVoiceMeter();
       void roomRef.current?.disconnect();
       roomRef.current = null;
       if (audioElRef.current) {
@@ -66,10 +86,56 @@ export function VoiceGuide({ current, onSlideChange }: VoiceGuideProps) {
         audioElRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function stopVoiceMeter() {
+    if (meterFrameRef.current !== null) {
+      cancelAnimationFrame(meterFrameRef.current);
+      meterFrameRef.current = null;
+    }
+    const meter = meterRef.current;
+    meterRef.current = null;
+    if (meter) void meter.cleanup().catch(() => {});
+    levelRef.current = 0;
+    onVoiceLevelRef.current?.(0);
+  }
+
+  function startVoiceMeter(track: RemoteAudioTrack) {
+    stopVoiceMeter();
+    let meter: VoiceMeter;
+    try {
+      meter = createAudioAnalyser(track, {
+        fftSize: 256,
+        smoothingTimeConstant: 0.8,
+        minDecibels: -85,
+        maxDecibels: -25,
+      });
+    } catch (err) {
+      console.warn('[VoiceGuide] audio analyser unavailable', err);
+      return;
+    }
+    meterRef.current = meter;
+    void (meter.analyser.context as AudioContext).resume?.().catch(() => {});
+
+    let lastTime = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min(0.1, Math.max(0, (now - lastTime) / 1000));
+      lastTime = now;
+      const target = Math.min(1, meter.calculateVolume() * VOICE_GAIN);
+      const prev = levelRef.current;
+      const tau = target > prev ? VOICE_ATTACK_S : VOICE_RELEASE_S;
+      const next = prev + (target - prev) * (1 - Math.exp(-dt / tau));
+      levelRef.current = next < 0.003 ? 0 : next;
+      onVoiceLevelRef.current?.(levelRef.current);
+      meterFrameRef.current = requestAnimationFrame(tick);
+    };
+    meterFrameRef.current = requestAnimationFrame(tick);
+  }
 
   function attachAgentAudio(track: RemoteTrack) {
     if (track.kind !== Track.Kind.Audio) return;
+    startVoiceMeter(track as RemoteAudioTrack);
     let el = audioElRef.current;
     if (!el) {
       el = document.createElement('audio');
@@ -157,7 +223,10 @@ export function VoiceGuide({ current, onSlideChange }: VoiceGuideProps) {
       });
       room.on(RoomEvent.TrackUnsubscribed, (track) => {
         track.detach();
-        if (track.kind === Track.Kind.Audio) setAgentSpeaking(false);
+        if (track.kind === Track.Kind.Audio) {
+          stopVoiceMeter();
+          setAgentSpeaking(false);
+        }
       });
       room.on(RoomEvent.ActiveSpeakersChanged, (speakers) => {
         const agentTalking = speakers.some(
@@ -166,6 +235,7 @@ export function VoiceGuide({ current, onSlideChange }: VoiceGuideProps) {
         setAgentSpeaking(agentTalking);
       });
       room.on(RoomEvent.Disconnected, () => {
+        stopVoiceMeter();
         setState('idle');
         setAgentSpeaking(false);
       });
@@ -177,12 +247,14 @@ export function VoiceGuide({ current, onSlideChange }: VoiceGuideProps) {
       console.error('[VoiceGuide]', err);
       setError(err instanceof Error ? err.message : 'Could not start voice tour');
       setState('error');
+      stopVoiceMeter();
       void roomRef.current?.disconnect();
       roomRef.current = null;
     }
   }
 
   async function stop() {
+    stopVoiceMeter();
     await roomRef.current?.disconnect();
     roomRef.current = null;
     if (audioElRef.current) {

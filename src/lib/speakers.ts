@@ -15,27 +15,27 @@ export type EventSpeaker = {
 
 export const FALLBACK_SPEAKERS: Omit<EventSpeaker, "id" | "enabled" | "sortOrder" | "createdAt">[] = [
   {
-    name: "Oscar Barajas (GNDX)",
-    role: "AI-Powered Legal Tech — Cómo la IA está transformando el sector legal",
-    imageUrl: "/social/ai-after-hours/speakers/oscar-barajas.webp",
-    accent: "#ff007a",
-    initials: "OB",
-    imageFit: "cover",
-  },
-  {
-    name: "Jennifer Salazar Duke",
-    role: "My AI Workflow — Cómo uso IA para construir mejores proyectos",
-    imageUrl: "/social/ai-after-hours/speakers/jennifer-salazar-duke.png",
-    accent: "#b44aff",
-    initials: "JS",
-    imageFit: "cover",
-  },
-  {
-    name: "Hector Cantillo",
-    role: "From Consumer to Creator — La gran oportunidad de crear con IA",
-    imageUrl: "/social/ai-after-hours/speakers/hector-cantillo.jpg",
+    name: "Daniel Domínguez",
+    role: "Founder @ Braina IA — How an AI company works from the inside (and we audit one live)",
+    imageUrl: "/social/ai-after-hours/speakers/daniel-dominguez.jpg",
     accent: "#00f2ff",
-    initials: "HC",
+    initials: "DD",
+    imageFit: "cover",
+  },
+  {
+    name: "Emily Ruiz Testa",
+    role: "Growth @wallib.app — Tools I built with AI to organize my finances",
+    imageUrl: "/social/ai-after-hours/speakers/emily-ruiz-testa.jpg",
+    accent: "#b44aff",
+    initials: "ER",
+    imageFit: "cover",
+  },
+  {
+    name: "Carlos Garcia",
+    role: "The Godfather of Traffic — Digital marketing strategies, paid media and business growth",
+    imageUrl: "/social/ai-after-hours/speakers/carlos-garcia.jpg",
+    accent: "#ff007a",
+    initials: "CG",
     imageFit: "cover",
   },
 ];

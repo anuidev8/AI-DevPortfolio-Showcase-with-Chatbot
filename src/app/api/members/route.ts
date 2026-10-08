@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getPool, query } from "@/lib/db";
+import { ensureGameSchema } from "@/lib/noshy-game-db";
 import { isAdminAuthorized } from "@/lib/speakers";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,7 @@ export async function DELETE(request: Request) {
     await query(`CREATE TABLE IF NOT EXISTS connections (id SERIAL PRIMARY KEY, member_id INT, profile_id TEXT, action TEXT, created_at TIMESTAMPTZ DEFAULT NOW())`);
     await query(`CREATE TABLE IF NOT EXISTS join_events (id SERIAL PRIMARY KEY, event_type TEXT, payload JSONB, created_at TIMESTAMPTZ DEFAULT NOW())`);
     await query(`CREATE TABLE IF NOT EXISTS member_skills (member_id INT REFERENCES members(id), skill TEXT, PRIMARY KEY (member_id, skill))`);
+    await ensureGameSchema();
   } catch (error) {
     console.error("members DELETE schema check failed", error);
     return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
@@ -60,6 +62,8 @@ export async function DELETE(request: Request) {
       `DELETE FROM connections WHERE member_id = $1 OR profile_id = $2`,
       [memberId, `member-${memberId}`]
     );
+    await client.query(`DELETE FROM noshy_meets WHERE member_id = $1 OR target_id = $1`, [memberId]);
+    await client.query(`DELETE FROM noshy_mission_done WHERE member_id = $1`, [memberId]);
     await client.query(`DELETE FROM members WHERE id = $1`, [memberId]);
     await client.query(
       `INSERT INTO join_events (event_type, payload) VALUES ($1, $2::jsonb)`,
@@ -127,7 +131,7 @@ export async function GET() {
        FROM members
        WHERE display_name IS NOT NULL AND trim(display_name) <> ''
        ORDER BY created_at DESC
-       LIMIT 50`
+       LIMIT 200`
     );
 
     const skills = await query<{ member_id: number; skill: string }>(

@@ -11,8 +11,8 @@ type VoiceWaveProps = {
   className?: string;
 };
 
-const CYAN = [0, 242, 255] as const;
-const MAGENTA = [255, 0, 122] as const;
+const BLUE = [31, 95, 255] as const;
+const ICE = [140, 178, 255] as const;
 const LAYERS = 5;
 
 function mix(a: readonly number[], b: readonly number[], t: number) {
@@ -73,8 +73,8 @@ export function VoiceWave({ levelsRef, mode, className }: VoiceWaveProps) {
 
       ctx.clearRect(0, 0, width, height);
       const mid = height / 2;
-      const base = mix(CYAN, MAGENTA, tint);
-      const accent = mix(MAGENTA, CYAN, tint);
+      const base = mix(BLUE, ICE, tint);
+      const accent = mix(ICE, BLUE, tint);
 
       const coreR = Math.min(width, height) * (0.22 + energy * 0.35);
       const core = ctx.createRadialGradient(width / 2, mid, 0, width / 2, mid, coreR);

@@ -2,7 +2,8 @@
 
 Interviews an event guest with the 3 NoShy questions, then drives the
 /noshy-voice web app over frontend RPC tools (save_answer, find_matches,
-focus_match, confirm_match), following LiveKit client-tool forwarding:
+focus_match, confirm_match, open_scanner, log_connection), following LiveKit
+client-tool forwarding:
 https://docs.livekit.io/agents/logic/tools/forwarding/
 """
 
@@ -79,6 +80,11 @@ GREETINGS = {
         "It's just three quick questions, nothing heavy. <break time=\"450ms\"/> "
         "But first, <break time=\"250ms\"/> what's your name?"
     ),
+}
+
+WELCOME_BACK = {
+    "es": "Hey, {name}… qué bueno verte otra vez.",
+    "en": "Hey {name}… good to see you again.",
 }
 
 SCAN_LINES = {
@@ -161,8 +167,30 @@ INSTRUCTIONS = textwrap.dedent(
     8. When they say yes, call confirm_match(index). Then motivate them in 2–3 energetic sentences:
        tell them to go find that person now, give them the opening line from the topics,
        and remind them to leave with one next step.
+       End by sending them into the room: "Go find the Fox. I'll be here when you get back."
     9. If they want someone else, call focus_match with the other index, or focus_match with no index
        to go back to all matches. If they want to start over, call restart_flow.
+
+    # NoShy cards
+    Every guest has a physical NoShy card with their animal and a QR code.
+    If the guest is standing with someone, or asks to scan a card, call open_scanner and tell them
+    to point the camera at the QR.
+    A [screen] message saying they scanned a card includes that person's details, and their card
+    is already open at index 0. Answer like a host making an intro, not a profile reader:
+    "You found Sofia, a 91 percent match. She builds robotics, you build AI products.
+    Ask her what she is struggling with right now." Then tell them to go talk.
+
+    # Recording a real connection
+    When the guest comes back and says they talked to someone, ask what they talked about, one
+    short question. Then call log_connection(index, note). It only counts when both people
+    confirm, so if the result says waiting, tell them to ask the other person to scan their card.
+    If it says confirmed, celebrate briefly: connection made, plus 20 XP.
+    Missions, their own card, and the leaderboard live in the NoShy home screen (the grid button
+    at the top). Mention it only if they ask.
+
+    # Host, not chatbot
+    Never describe a person like a database entry. Say why the two of them fit, give one thing
+    to ask, and send the guest away from the screen. The app's job is to get them talking to a human.
 
     # Screen events
     Messages that start with [screen] are taps or typing in the app. They are ALREADY applied on screen.
@@ -256,12 +284,48 @@ class NoshyHost(Agent):
         await wait_for_frontend_participant()
         # Give the browser time to subscribe to the agent's audio so the first words aren't clipped.
         await asyncio.sleep(1.0)
+        if await self._greet_returning_guest():
+            return
         self._screen_task = asyncio.create_task(_soft_rpc("show_question", {"index": 0}))
         intro = INTROS[AGENT_LANGUAGE]
-        # Uninterruptible: mic noise or an early "hey" would otherwise cancel the greeting
-        # before its first audio frame arrives.
+        # Only the short opener is uninterruptible, so mic noise can't cancel it before its first
+        # audio frame; anything said meanwhile is kept and answered afterwards.
         self.session.say(intro, audio=_slow_audio(intro), allow_interruptions=False)
-        self.session.say(GREETINGS[AGENT_LANGUAGE], allow_interruptions=False)
+        self.session.say(GREETINGS[AGENT_LANGUAGE])
+
+    async def _greet_returning_guest(self) -> bool:
+        """Guests who registered in the manual app skip the interview and go straight to matches."""
+        try:
+            state = json.loads(await _soft_rpc("get_flow_state"))
+        except ValueError:
+            return False
+        if not state.get("complete"):
+            return False
+
+        answers = state.get("answers") or {}
+        name = str(answers.get("name") or "").split(" ")[0]
+        greeting = WELCOME_BACK[AGENT_LANGUAGE].format(name=name)
+        self.session.say(greeting, audio=_slow_audio(greeting), allow_interruptions=False)
+
+        matches = state.get("matches") or []
+        if state.get("scannedMemberId") and matches:
+            self.session.generate_reply(
+                instructions=(
+                    "The guest is already registered and just scanned this person's NoShy card, "
+                    f"which is open on screen at index 0: {json.dumps(matches[0], ensure_ascii=False)}. "
+                    "Say you found them, the match score, one concrete reason, and one opening question. "
+                    "Then tell them to go talk."
+                )
+            )
+        else:
+            self.session.generate_reply(
+                instructions=(
+                    "The guest is already registered, so skip the interview. Their saved answers: "
+                    f"{json.dumps(answers, ensure_ascii=False)}. Call find_matches now with their role and animal "
+                    "(infer them if empty), then present the matches."
+                )
+            )
+        return True
 
     @function_tool
     async def save_answer(self, context: RunContext, field: Field, value: str) -> str:
@@ -308,6 +372,22 @@ class NoshyHost(Agent):
         return await _soft_rpc("confirm_match", {"index": index}, timeout=15)
 
     @function_tool
+    async def open_scanner(self, context: RunContext) -> str:
+        """Open the camera on screen so the guest can scan another person's NoShy card."""
+        return await _soft_rpc("show_scanner")
+
+    @function_tool
+    async def log_connection(self, context: RunContext, index: int, note: str = "") -> str:
+        """Record that the guest actually talked to this match. Returns confirmed or waiting.
+
+        Args:
+            index: 0-based index from the matches list.
+            note: What they talked about, in a few words.
+        """
+        logger.info("[log_connection] %s %s", index, note[:80])
+        return await _soft_rpc("log_connection", {"index": index, "note": note}, timeout=12)
+
+    @function_tool
     async def get_flow_state(self, context: RunContext) -> str:
         """Current screen: phase, current question, saved answers, matches, confirmed match."""
         return await _soft_rpc("get_flow_state")
@@ -342,18 +422,20 @@ def _build_session() -> AgentSession:
         turn_handling=TurnHandlingOptions(
             turn_detection=inference.TurnDetector(),
             endpointing={"min_delay": 0.5, "max_delay": 1.8},
-            # Loud room: ignore short bursts of nearby chatter, and resume if an "interruption"
-            # turns out to be noise with no transcript.
+            # Guests can cut in normally, but it takes at least one recognized word, so crowd
+            # noise alone doesn't stop the agent; if it does, the agent resumes after 1.5 s.
             interruption={
                 "mode": "adaptive",
-                "min_duration": 0.7,
-                "min_words": 2,
+                "min_duration": 0.5,
+                "min_words": 1,
                 "resume_false_interruption": True,
                 "false_interruption_timeout": 1.5,
+                "discard_audio_if_uninterruptible": False,
             },
             preemptive_generation={"enabled": False},
         ),
         max_tool_steps=4,
+        aec_warmup_duration=1.0,
     )
 
 
