@@ -654,8 +654,14 @@ body {
   mask-composite: intersect;
 }
 .noshy-card-mission .noshy-card-foot { margin-top: 0; }
-.noshy-card-draw { margin-left: auto; text-align: right; font-size: 3.4cqw; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.55); }
-.noshy-card-draw b { display: block; margin-top: 0.6cqw; font-size: 7cqw; letter-spacing: 0; color: #fff; }
+.noshy-card-corner {
+  position: absolute; top: 7.5cqw; right: 7cqw; padding: 1.2cqw 2.8cqw; border-radius: 999px;
+  background: rgba(5,6,26,0.7); border: 1px solid rgba(120,130,255,0.45);
+  font-size: 3.4cqw; font-weight: 700; letter-spacing: 0.12em; color: rgba(255,255,255,0.85);
+}
+.noshy-card-player { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.6cqw; font-size: 3.8cqw; color: #6f93ff; }
+.noshy-card-player b { font-size: 5.4cqw; font-weight: 700; color: #fff; }
+.noshy-card-player, .noshy-card-player b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .noshy-card-front .noshy-card-art { height: 100%; object-position: 50% 40%; -webkit-mask-image: none; mask-image: none; }
 .noshy-card-front .noshy-card-body { margin-bottom: 11cqw; }
@@ -672,6 +678,17 @@ body {
 .noshy-challenge-eyebrow { margin: 0; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--nb-blue-hi); }
 .noshy-challenge-status { margin: 0; min-height: 1.3em; font-size: 0.9rem; color: var(--nb-muted); }
 .noshy-challenge-actions { width: min(100%, 360px); }
+.noshy-challenge-form { display: flex; flex-direction: column; gap: 0.8rem; width: min(100%, 360px); }
+.noshy-challenge-title { margin: 0.4rem 0 0; font-size: 2.1rem; font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; text-align: center; }
+.noshy-challenge-title em { display: block; font-style: normal; color: #4a7bff; }
+.noshy-challenge-sub { margin: 0 0 0.8rem; font-size: 0.95rem; line-height: 1.45; text-align: center; color: var(--nb-muted); }
+.noshy-flip { animation: noshy-card-in 0.5s cubic-bezier(0.2, 0.75, 0.2, 1) both; }
+@keyframes noshy-card-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.96); }
+}
+.noshy-challenge-form .noshy-btn { min-height: 52px; margin-top: 0.2rem; }
+.noshy-challenge-edit { border: none; background: none; padding: 0.25rem; cursor: pointer; font-size: 0.85rem; color: var(--nb-muted); text-decoration: underline; text-underline-offset: 3px; }
+.noshy-challenge-edit:hover { color: var(--nb-soft); }
 .noshy-challenge-actions .noshy-btn { min-height: 52px; padding: 0 0.9rem; white-space: nowrap; }
 .noshy-flip { width: min(100%, 360px, calc((100dvh - 14rem) * 0.68)); perspective: 1600px; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; }
 .noshy-flip:focus-visible .noshy-flip-face { outline: 2px solid var(--nb-blue-hi); outline-offset: 4px; }
@@ -681,6 +698,7 @@ body {
 .noshy-flip-back { transform: rotateY(180deg); }
 @media (prefers-reduced-motion: reduce) {
   .noshy-flip-inner { transition-duration: 0.01s; }
+  .noshy-flip { animation: none; }
 }
 
 /* Single big QR that opens the icebreaker */

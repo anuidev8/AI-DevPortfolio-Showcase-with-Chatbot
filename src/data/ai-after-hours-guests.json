@@ -1,46 +1,54 @@
 [
   {
-    "id": "gst-2eJfYVnLxPZgcOJ",
-    "name": "Alberto Daniel Garcia Nuñez",
-    "email": "agarcian5@gmail.com",
-    "status": "declined",
-    "first_name": "Alberto Daniel",
-    "last_name": "Garcia Nuñez"
-  },
-  {
-    "id": "gst-M4n4L0FkDRx21OS",
-    "name": "Alejandra Riaño",
-    "email": "aleja98riano@gmail.com",
+    "id": "gst-gQ7G241b3J2WLTN",
+    "name": "0xj4an (Personal)",
+    "email": "personal@0xj4an.xyz",
     "status": "approved",
-    "first_name": "Alejandra",
-    "last_name": "Riaño"
+    "first_name": "0xj4an",
+    "last_name": "0xj4an"
   },
   {
-    "id": "gst-oRVaAo1qlmdgZEu",
+    "id": "gst-LTz5XzhEMZh7ak0",
+    "name": "Aaron Bosloper",
+    "email": "abozloper@gmail.com",
+    "status": "approved",
+    "first_name": "Aaron",
+    "last_name": "Bosloper"
+  },
+  {
+    "id": "gst-6qisIuEn6kURBHG",
+    "name": "Alberto",
+    "email": "optionalholding@gmail.com",
+    "status": "approved",
+    "first_name": "Alberto",
+    "last_name": "D."
+  },
+  {
+    "id": "gst-lmZpzKISbnQzYUm",
     "name": "Alejandro Reyes Bradford",
     "email": "alejandro@adle.ai",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Alejandro",
     "last_name": "Reyes Bradford"
   },
   {
-    "id": "gst-xg8dLDEasYF9k7J",
-    "name": "Alvaro Henao González",
-    "email": "alvaro@synctrack.lat",
+    "id": "gst-HbrNchrNmvEikHL",
+    "name": "Alex Cheung",
+    "email": "yddxncpwn7@privaterelay.appleid.com",
     "status": "approved",
-    "first_name": "Alvaro",
-    "last_name": "Henao González"
+    "first_name": "Alex",
+    "last_name": "Cheung"
   },
   {
-    "id": "gst-8YrSDMp9PCfBiEG",
-    "name": "Ana Paula Bustamante",
-    "email": "anapaula_bustamante@outlook.com",
+    "id": "gst-UVsfzJBiIWjcRPL",
+    "name": "Andrea",
+    "email": "andrea.coronels12@gmail.com",
     "status": "approved",
-    "first_name": "Ana Paula",
-    "last_name": "Bustamante"
+    "first_name": "Andrea",
+    "last_name": ""
   },
   {
-    "id": "gst-GNW8xEEKwoEopO2",
+    "id": "gst-TaGhX0IuQhCzHQJ",
     "name": "Andrea Felipe",
     "email": "andreafelipet@gmail.com",
     "status": "approved",
@@ -48,39 +56,79 @@
     "last_name": "Felipe"
   },
   {
-    "id": "gst-AgQHf29Fg3QlDkM",
-    "name": "Andres Mauricio",
-    "email": "mauricioserna123@gmail.com",
-    "status": "waitlist",
-    "first_name": "",
-    "last_name": ""
+    "id": "gst-48qQkmp16ATmUYD",
+    "name": "Andrea Pinzon",
+    "email": "andrea.paola0893@gmail.com",
+    "status": "approved",
+    "first_name": "Andrea Paola",
+    "last_name": "Pinzón Barbosa"
   },
   {
-    "id": "gst-LIscrTssCif9wcV",
+    "id": "gst-18hXrBx4gzTxxO5",
+    "name": "Andres Felipe Carvajal Galvis",
+    "email": "merakisecu@gmail.com",
+    "status": "approved",
+    "first_name": "Andres",
+    "last_name": "Felipe Carvajal Galvis"
+  },
+  {
+    "id": "gst-ASiTR9Sd73AhkkT",
     "name": "Andrés Ayala",
     "email": "andresmayala@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Andres",
     "last_name": "Ayala"
   },
   {
-    "id": "gst-ZPkOB4Jll24lyVv",
-    "name": "Andrés Osorio",
-    "email": "andrew@nidumhaus.com",
+    "id": "gst-z89O5j52pCpawnM",
+    "name": "Andrés Menjura",
+    "email": "andres@cloudtask.com",
     "status": "waitlist",
+    "first_name": "Andrés",
+    "last_name": "Menjura"
+  },
+  {
+    "id": "gst-vYvYtY1nQOdmxvd",
+    "name": "Andrés Osorio",
+    "email": "andres@stardrew.com",
+    "status": "approved",
     "first_name": "Andrés",
     "last_name": "Osorio"
   },
   {
-    "id": "gst-3FbXCBbjU03iKBv",
+    "id": "gst-OK1LVjKlukS28yM",
+    "name": "Andy de Wit",
+    "email": "info@businessmine.co",
+    "status": "approved",
+    "first_name": "Andy",
+    "last_name": "de Wit"
+  },
+  {
+    "id": "gst-JmEGJG4MtaPoCf0",
+    "name": "Angela Roa",
+    "email": "angelaroa55@gmail.com",
+    "status": "approved",
+    "first_name": "",
+    "last_name": ""
+  },
+  {
+    "id": "gst-nkLmeBZD1Ql7KKQ",
+    "name": "Angely Sabrina Camargo Palacio",
+    "email": "angelysabrinacamargo@gmail.com",
+    "status": "approved",
+    "first_name": "Angely Sabrina",
+    "last_name": "Camargo Palacio"
+  },
+  {
+    "id": "gst-rRRNNFLGQBl4eTF",
     "name": "Angie Lorena Hernández",
     "email": "angieher11197@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Angie",
     "last_name": "Lorena Hernández"
   },
   {
-    "id": "gst-aOVdU9FQeUQcCq2",
+    "id": "gst-b0UnxNLCcPYcGAf",
     "name": "Anthony Alarcon",
     "email": "tonyalarcon27@gmail.com",
     "status": "approved",
@@ -88,7 +136,31 @@
     "last_name": "Alarcon"
   },
   {
-    "id": "gst-h5nN0GJeblNFqYF",
+    "id": "gst-oXi6HCF2iRkPFvX",
+    "name": "Anthony Dominguez",
+    "email": "anthony@iscream.io",
+    "status": "approved",
+    "first_name": "Anthony",
+    "last_name": "Dominguez"
+  },
+  {
+    "id": "gst-oFrKFL0NsOMaOhH",
+    "name": "Arturo",
+    "email": "arturo.spameame18@gmail.com",
+    "status": "approved",
+    "first_name": "Arturo",
+    "last_name": "Vargas"
+  },
+  {
+    "id": "gst-MjITWU8uoO3mzJi",
+    "name": "Benjamin",
+    "email": "bc3.ben@gmail.com",
+    "status": "invited",
+    "first_name": "Benjamin",
+    "last_name": "Digital"
+  },
+  {
+    "id": "gst-t4D7SVp2oCtm0Pm",
     "name": "Branner Andres Ramirez Zapata",
     "email": "branner360@gmail.com",
     "status": "approved",
@@ -96,87 +168,111 @@
     "last_name": "Andres Ramirez Zapata"
   },
   {
-    "id": "gst-Y6HeIE3jRR8MHIF",
+    "id": "gst-iKnMFxE0DLs5nE5",
     "name": "Camilo Guarnizo",
     "email": "camilognzca@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Camilo",
     "last_name": "Guarnizo"
   },
   {
-    "id": "gst-Xide5MS4D2AofoC",
+    "id": "gst-U1BsHOHCo4GXH9A",
     "name": "Camilo Jimenez",
     "email": "camilojim7@gmail.com",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Camilo",
     "last_name": "Jiménez"
   },
   {
-    "id": "gst-PHoBaClHSwQUGO8",
-    "name": "Carlos Augusto Duque",
-    "email": "tuto@katapix.com",
+    "id": "gst-1pXTonopxRN2WPS",
+    "name": "Carlos",
+    "email": "godfatheroftraffic@gmail.com",
     "status": "waitlist",
     "first_name": "Carlos",
-    "last_name": "Augusto Duque"
+    "last_name": "Garcia"
   },
   {
-    "id": "gst-hSobHHHSLoA44tH",
-    "name": "Caro Silva",
-    "email": "hola@felizsinazucar.com",
+    "id": "gst-PyJK7wBUbSHcqH3",
+    "name": "Carlos Beltran",
+    "email": "imthatcarlos@gmail.com",
     "status": "approved",
-    "first_name": "Caro",
-    "last_name": "sin azúcar"
+    "first_name": "Carlos",
+    "last_name": "Beltran"
   },
   {
-    "id": "gst-K7QJOZ7jOsXbrLG",
-    "name": "CAROLINA CELIS",
-    "email": "carolina.celis.espinosa@gmail.com",
+    "id": "gst-OCKpVr815FP2JCj",
+    "name": "Carolina Henao Casas",
+    "email": "carohcasas@gmail.com",
     "status": "approved",
-    "first_name": "Carolina",
-    "last_name": "Celis"
+    "first_name": "",
+    "last_name": ""
   },
   {
-    "id": "gst-AW0FkOTrTvfYsqJ",
-    "name": "Cripto Cafecito",
-    "email": "criptocafecito@gmail.com",
-    "status": "waitlist",
-    "first_name": "Cripto",
-    "last_name": "Cafecito"
+    "id": "gst-Q23kFLvFEqhJf4F",
+    "name": "Connor Griggs",
+    "email": "connor@regulatoryjobs.com",
+    "status": "approved",
+    "first_name": "Connor",
+    "last_name": "Griggs"
   },
   {
-    "id": "gst-MIAjssOtw6TONDm",
+    "id": "gst-4cFiDrmsgGciCX1",
     "name": "Cristian Florez",
     "email": "cristianflorez873@gmail.com",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Cristian",
     "last_name": "Florez"
   },
   {
-    "id": "gst-uETYJ3XbuLGM4jO",
-    "name": "Cristian Lozano",
-    "email": "cristiancamilolozanouribe@gmail.com",
-    "status": "invited",
-    "first_name": "Cristian",
-    "last_name": "Lozano"
+    "id": "gst-BHAMbxwpYQBWuOM",
+    "name": "Cristina Plata",
+    "email": "cristina@equilatera.com.co",
+    "status": "approved",
+    "first_name": "Cristina",
+    "last_name": "Plata"
   },
   {
-    "id": "gst-lwJZZRK1RHZHbyh",
+    "id": "gst-x8lBGX8wzvMtrAv",
     "name": "Cyber paisa",
     "email": "jquiceva@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Juan",
     "last_name": "Quiceno"
   },
   {
-    "id": "gst-3FeMzBjQkLsWCjA",
+    "id": "gst-66mah0RDr9xmgqw",
     "name": "Cynthia",
     "email": "cynthiagviria@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Cynthia",
     "last_name": "Gaviria"
   },
   {
-    "id": "gst-GgsYhi8ftjqljLU",
+    "id": "gst-XGIIL764jVzaLTY",
+    "name": "Dallion King",
+    "email": "dallionking@gmail.com",
+    "status": "approved",
+    "first_name": "Dallion",
+    "last_name": "King"
+  },
+  {
+    "id": "gst-qixdwGGtDkkR0gA",
+    "name": "Daniel Acosta",
+    "email": "comercial@ikkiapp.co",
+    "status": "approved",
+    "first_name": "Daniel",
+    "last_name": "Acosta"
+  },
+  {
+    "id": "gst-t99nTFGt16DWk7B",
+    "name": "Daniel Acosta",
+    "email": "comercialikkiapp@gmail.com",
+    "status": "approved",
+    "first_name": "Daniel",
+    "last_name": "Acosta"
+  },
+  {
+    "id": "gst-HDzXg6xgLlxzCCZ",
     "name": "Daniel Bernal",
     "email": "danielbernaldev@gmail.com",
     "status": "approved",
@@ -184,7 +280,7 @@
     "last_name": "Bernal"
   },
   {
-    "id": "gst-O6L0DYXxntgfLHh",
+    "id": "gst-PhKjefLaMHSzfHB",
     "name": "Daniel Correa Salinas",
     "email": "jfsgsdqm8m@privaterelay.appleid.com",
     "status": "approved",
@@ -192,7 +288,7 @@
     "last_name": "Correa Salinas"
   },
   {
-    "id": "gst-EZ4oIOxZyWd1xYM",
+    "id": "gst-YZxFlvkeMA3MdAw",
     "name": "Daniel Domínguez",
     "email": "danieldominguezgon@gmail.com",
     "status": "approved",
@@ -200,31 +296,23 @@
     "last_name": "Domínguez"
   },
   {
-    "id": "gst-DDwEJ6VWt1XmoVH",
-    "name": "Daniel Restrepo",
-    "email": "rpodaniel1@gmail.com",
-    "status": "approved",
-    "first_name": "Daniel",
-    "last_name": "Restrepo"
-  },
-  {
-    "id": "gst-1PKCHn3Pf5zBuOp",
+    "id": "gst-1veXaxKBelWQI4b",
     "name": "Daniela",
     "email": "danimonclou@protonmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Daniela",
     "last_name": ""
   },
   {
-    "id": "gst-lhdyJ2MjV0uxc6G",
-    "name": "Daniela Anaya Rojas",
-    "email": "da.anaya.ro@gmail.com",
+    "id": "gst-CQTRV8mKrdIwlFy",
+    "name": "Daniela Jaramillo",
+    "email": "daniela.jaramillo.rey@gmail.com",
     "status": "approved",
-    "first_name": "daniela",
-    "last_name": "anaya"
+    "first_name": "Daniela",
+    "last_name": "Jaramillo Rey"
   },
   {
-    "id": "gst-iQODkt2Oj5DA9Ip",
+    "id": "gst-cgbhpBGGSf9wyMA",
     "name": "Danna herrera",
     "email": "dannavl.herrera@gmail.com",
     "status": "approved",
@@ -232,63 +320,71 @@
     "last_name": "herrera"
   },
   {
-    "id": "gst-AjrG1D8kbizxk1F",
+    "id": "gst-r6Jm5esL0sShQlN",
     "name": "Darvar Marketing",
     "email": "darvarmarketing@gmail.com",
-    "status": "approved",
+    "status": "waitlist",
     "first_name": "David",
     "last_name": "Arroyave Vargas"
   },
   {
-    "id": "gst-B1Jd1FceECwI1EO",
+    "id": "gst-jNVKAhCh06W7UAt",
+    "name": "dave kim",
+    "email": "davehansungkim@gmail.com",
+    "status": "approved",
+    "first_name": "Dave",
+    "last_name": "Kim"
+  },
+  {
+    "id": "gst-wOAbIf5cUSBVx0U",
     "name": "Dave Menjura",
     "email": "davidm@cloudtask.com",
-    "status": "approved",
+    "status": "waitlist",
     "first_name": "Dave",
     "last_name": "Menjura"
   },
   {
-    "id": "gst-TTbhNaproZwQal4",
-    "name": "David Agudelo ocampo",
-    "email": "mm2r58dbyn@privaterelay.appleid.com",
+    "id": "gst-JIamosXd4HXExk5",
+    "name": "David",
+    "email": "samber3@me.com",
     "status": "approved",
     "first_name": "David",
-    "last_name": "Agudelo ocampo"
+    "last_name": ""
   },
   {
-    "id": "gst-w5n6Pp7Na56ntfy",
+    "id": "gst-KR7ehTyghGj6GBy",
     "name": "David Arocha",
     "email": "davidarocha@hotmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "David",
     "last_name": "Arocha"
   },
   {
-    "id": "gst-kZtVVEM6xyrrdzf",
-    "name": "DeLanee Collins",
-    "email": "delaneecollins@gmail.com",
+    "id": "gst-ncWLXvI2wQQkC1X",
+    "name": "David Bustos",
+    "email": "david.bustos@globalexchangeinternational.org",
     "status": "approved",
-    "first_name": "DeLanee",
-    "last_name": "Collins"
+    "first_name": "David",
+    "last_name": "Bustos"
   },
   {
-    "id": "gst-9p5agwBs3SDsAh0",
+    "id": "gst-YOjiswEbNe1dlXZ",
+    "name": "David Gutierrez",
+    "email": "david@davidgutierrez.ai",
+    "status": "approved",
+    "first_name": "David",
+    "last_name": "Gutierrez"
+  },
+  {
+    "id": "gst-yBxE8AWZpUBsHaO",
     "name": "Detx8",
     "email": "andruufp@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Andres",
     "last_name": "Perez"
   },
   {
-    "id": "gst-7dcUAJiKTJoWLFK",
-    "name": "Diego Andres Ramirez Mejia",
-    "email": "diego.rm.dev@gmail.com",
-    "status": "waitlist",
-    "first_name": "Diego",
-    "last_name": "Ramirez Mejia"
-  },
-  {
-    "id": "gst-IeEMCLTbMEARZ2H",
+    "id": "gst-ehrB6r1FRJGbkLv",
     "name": "Diego Pabón",
     "email": "dcpabon96@gmail.com",
     "status": "approved",
@@ -296,7 +392,7 @@
     "last_name": "Pabón"
   },
   {
-    "id": "gst-mRUsEQFLrEccSbJ",
+    "id": "gst-AaG5gJDCTQJgdac",
     "name": "edgar",
     "email": "edgarv.uribe@hotmail.com",
     "status": "approved",
@@ -304,15 +400,15 @@
     "last_name": "villamarin"
   },
   {
-    "id": "gst-kaZRdFeY026kAFP",
-    "name": "Edward",
-    "email": "edward@lealsystem.net",
-    "status": "waitlist",
-    "first_name": "Edward",
-    "last_name": "c"
+    "id": "gst-Xsn1PjlWtOHAFeX",
+    "name": "Eduardo",
+    "email": "eduaryepes@gmail.com",
+    "status": "approved",
+    "first_name": "Eduardo",
+    "last_name": ""
   },
   {
-    "id": "gst-sUD714mA0iPQNCo",
+    "id": "gst-IOCcuWlUVdWc47Z",
     "name": "Edward Gonzalez Higuita",
     "email": "lottus3d@gmail.com",
     "status": "approved",
@@ -320,15 +416,15 @@
     "last_name": ""
   },
   {
-    "id": "gst-bPaxhVig42vM4XW",
+    "id": "gst-Lj50UlR9iA0lcF1",
     "name": "Emanuel Colorado",
     "email": "emanuelcolorado2008@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Emanuel",
     "last_name": "Colorado"
   },
   {
-    "id": "gst-t9vFnMToynMbfBt",
+    "id": "gst-l45kz5ZdeSd0gXy",
     "name": "Emily Ruiz Testa",
     "email": "emilyalexandraruiztesta@gmail.com",
     "status": "approved",
@@ -336,71 +432,71 @@
     "last_name": "Ruiz Testa"
   },
   {
-    "id": "gst-uKU2dyHLaYPvpUv",
+    "id": "gst-ZAvX7aUxoZPTiXr",
     "name": "Eric Henry",
     "email": "eric@exfil.ai",
-    "status": "approved",
+    "status": "declined",
     "first_name": "Eric",
     "last_name": "Henry"
   },
   {
-    "id": "gst-4pyLxFrBFKIh1ge",
-    "name": "Evelyn R.",
-    "email": "evelynrodriguezc0@gmail.com",
-    "status": "waitlist",
-    "first_name": "Evelyn",
-    "last_name": "R."
-  },
-  {
-    "id": "gst-0nOTGicgC5NboHo",
-    "name": "Giuliana",
-    "email": "giulianalomelli98@gmail.com",
+    "id": "gst-g9gSHuiPPJI9Gtl",
+    "name": "Ever Torres",
+    "email": "cheo.torres@gmail.com",
     "status": "approved",
-    "first_name": "Giuliana",
-    "last_name": "Lomelli"
+    "first_name": "Ever",
+    "last_name": "Torres"
   },
   {
-    "id": "gst-k5rwtSAELE7yHN6",
-    "name": "Haissa Ferreira",
-    "email": "haissa.fealmeida@gmail.com",
-    "status": "approved",
-    "first_name": "Haissa",
-    "last_name": "Ferreira"
-  },
-  {
-    "id": "gst-S5NtnuF7d8DDQ40",
-    "name": "Héctor González",
-    "email": "hector_mauricio1999@hotmail.com",
+    "id": "gst-ChOk2ywuhb8U6Zp",
+    "name": "felipe pelaez",
+    "email": "felipepelaez7120@gmail.com",
     "status": "waitlist",
-    "first_name": "Héctor",
-    "last_name": "González"
+    "first_name": "felipe",
+    "last_name": "pelaez"
   },
   {
-    "id": "gst-SYhl4SHPUKROshm",
+    "id": "gst-LplG76q947MdV21",
+    "name": "Gabriel F. Gómez",
+    "email": "gabriel@ebisoft.xyz",
+    "status": "approved",
+    "first_name": "Gabriel F.",
+    "last_name": "Gómez"
+  },
+  {
+    "id": "gst-SeVDFiwqD3qnUmK",
+    "name": "Giuseppe Mascarella",
+    "email": "giuseppe@valueamplify.com",
+    "status": "approved",
+    "first_name": "Giuseppe",
+    "last_name": "Mascarella"
+  },
+  {
+    "id": "gst-32C9HW6FlCXjXzY",
+    "name": "Gustavo Gonzalez",
+    "email": "gustavo@pangealabs.space",
+    "status": "approved",
+    "first_name": "Gustavo",
+    "last_name": "Gonzalez"
+  },
+  {
+    "id": "gst-H6gDiE7ht35U13Z",
     "name": "Ils Fernandez",
     "email": "nycagal@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "",
     "last_name": ""
   },
   {
-    "id": "gst-ML3b3A2WIixUq0W",
-    "name": "Innovative Compass",
-    "email": "innovatecompass@gmail.com",
-    "status": "waitlist",
-    "first_name": "Innovative",
-    "last_name": "Compass"
-  },
-  {
-    "id": "gst-Q74MWCCWFly1w59",
+    "id": "gst-UWvozKYGHqAo59N",
     "name": "Isabel Cardona",
     "email": "isabel.cardona4410@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Isabel",
     "last_name": "Cardona"
   },
   {
-    "id": "gst-HQEFPIGnzfqMFNG",
+    "id": "gst-KyxH25r3udx0g7x",
     "name": "Jacobo Blandon",
     "email": "jacobobn@gmail.com",
     "status": "approved",
@@ -408,15 +504,47 @@
     "last_name": "Blandon"
   },
   {
-    "id": "gst-KtkMoPQagQv3j5R",
+    "id": "gst-RjNRAmHwjY7I4JT",
     "name": "Jaime Dorado",
     "email": "jaimedorado@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Jaime",
     "last_name": "Dorado"
   },
   {
-    "id": "gst-xSP3J9FsEn4VePI",
+    "id": "gst-BZ6Eyj0AFZPzaaO",
+    "name": "Javier Gallego Anaya",
+    "email": "javier@venntu.co",
+    "status": "approved",
+    "first_name": "Javier",
+    "last_name": "Gallego Anaya"
+  },
+  {
+    "id": "gst-3Mc6d2VVwpxgq9c",
+    "name": "Jeff Grassfed",
+    "email": "nm5bc5jm8h@privaterelay.appleid.com",
+    "status": "approved",
+    "first_name": "Jeff",
+    "last_name": "Hutson"
+  },
+  {
+    "id": "gst-IMIq6uBVWr53D6z",
+    "name": "Jeffery Hill",
+    "email": "jeff@thehillfinancialgroup.com",
+    "status": "approved",
+    "first_name": "Jeffery",
+    "last_name": "Hill"
+  },
+  {
+    "id": "gst-e5LsPQmY622H9dV",
+    "name": "Jeffrey Betancourt",
+    "email": "jbetancourt03@gmail.com",
+    "status": "approved",
+    "first_name": "Jeffrey",
+    "last_name": "Betancourt"
+  },
+  {
+    "id": "gst-dPOuwa9s9nfqMh1",
     "name": "Jennifer Del Risco",
     "email": "jen.delrisco@gmail.com",
     "status": "approved",
@@ -424,31 +552,15 @@
     "last_name": "Del Risco"
   },
   {
-    "id": "gst-gtVdf7SbfL6FDfR",
-    "name": "Jeronimo Taborda",
-    "email": "jeronimo.tabo.gav@gmail.com",
-    "status": "approved",
-    "first_name": "Jeronimo",
-    "last_name": "Taborda"
-  },
-  {
-    "id": "gst-mXY05z7MEzchPeY",
+    "id": "gst-ijDlgwE2PndHZDD",
     "name": "Joe Tufano",
     "email": "jtufano@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Joseph",
     "last_name": "Tufano"
   },
   {
-    "id": "gst-DuQ5Pb4WbVgtAdH",
-    "name": "Johana Morales",
-    "email": "johana.moraleu@gmail.com",
-    "status": "approved",
-    "first_name": "Johana",
-    "last_name": "Morales"
-  },
-  {
-    "id": "gst-xFUW971pIJn5gGf",
+    "id": "gst-ut4lF3yfr6dS4qG",
     "name": "John",
     "email": "biabuma@gmail.com",
     "status": "approved",
@@ -456,23 +568,23 @@
     "last_name": "Jiménez"
   },
   {
-    "id": "gst-Eq9LYaXv8auuWHJ",
-    "name": "Jordan marin",
-    "email": "jordanmarin9306@gmail.com",
+    "id": "gst-NCEo6kOFCJHoNqq",
+    "name": "Jonathan Torres",
+    "email": "torrse87@gmail.com",
     "status": "approved",
-    "first_name": "Jordan",
-    "last_name": "Marin"
+    "first_name": "Jonathan",
+    "last_name": "Torres"
   },
   {
-    "id": "gst-yacGBMupVJzexB9",
-    "name": "Jose Betancur",
-    "email": "betancur@me.com",
+    "id": "gst-sgHkzeMdiBWeThX",
+    "name": "Joseph",
+    "email": "jouseph04@gmail.com",
     "status": "approved",
-    "first_name": "Jose",
-    "last_name": "Betancur"
+    "first_name": "",
+    "last_name": ""
   },
   {
-    "id": "gst-GOhWJ9sWHJYyJm2",
+    "id": "gst-Qq6ZTz83o8G99Cs",
     "name": "Josh kriger",
     "email": "josh@edgeof.xyz",
     "status": "approved",
@@ -480,119 +592,95 @@
     "last_name": "Kriger"
   },
   {
-    "id": "gst-CTG8ashuB1QlzDK",
+    "id": "gst-MHhFGDFNvWDWqDe",
     "name": "Juan",
     "email": "suarezsalinasjuanmanuel@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Juan",
     "last_name": "Suarez"
   },
   {
-    "id": "gst-ZMVXxmRiu72GRuk",
-    "name": "Juan David Caicedo Aponte",
-    "email": "jucaicedoa@gmail.com",
-    "status": "approved",
-    "first_name": "Juan",
-    "last_name": "David Caicedo Aponte"
+    "id": "gst-tGCM0zfMIUNz6Vr",
+    "name": "Juan David",
+    "email": "juandagarciadev@gmail.com",
+    "status": "declined",
+    "first_name": "Juan David",
+    "last_name": "García Rincón"
   },
   {
-    "id": "gst-ELhskYTpDfeqUFY",
+    "id": "gst-OOuJntAWWVSiAXH",
     "name": "Juan Diego Calle Giraldo",
     "email": "juandcallegiraldo@gmail.com",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Juan",
     "last_name": "Calle Giraldo"
   },
   {
-    "id": "gst-oVUICn0QWLpfyR8",
+    "id": "gst-hOwQo0NMtWC90St",
     "name": "Juan Diego Hernandez",
     "email": "jdmotas@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Juan",
     "last_name": "Hernandez"
   },
   {
-    "id": "gst-iJpeT6DUuQFJDLM",
+    "id": "gst-tQjB7r9ObtQplFv",
     "name": "Juan Esteban Patiño Muñoz",
     "email": "juanesptm11@gmail.com",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Juan Esteban",
     "last_name": "Patiño Muñoz"
   },
   {
-    "id": "gst-XaTTBtcrAUdzRCJ",
-    "name": "Juan Esteban Zapata",
-    "email": "jzapata@interplay.tech",
-    "status": "waitlist",
-    "first_name": "Juan",
-    "last_name": "Esteban Zapata"
-  },
-  {
-    "id": "gst-2FGsdgnzkmHoZ7K",
-    "name": "Juan Pablo",
-    "email": "juanpgomez120595@gmail.com",
+    "id": "gst-U0aUfMlr3eGMZI2",
+    "name": "Juan Hincapie",
+    "email": "diegohincapie31@gmail.com",
     "status": "approved",
     "first_name": "Juan",
-    "last_name": "Pablo"
+    "last_name": "Hincapie"
   },
   {
-    "id": "gst-eDCOqvBin8W2Hgs",
-    "name": "Juan Zapata",
-    "email": "juan.esteban4410@gmail.com",
-    "status": "invited",
-    "first_name": "Juan",
-    "last_name": "Zapata"
+    "id": "gst-udsSx4DbIE4n3Qt",
+    "name": "Juan Pablo Egido Castellanos",
+    "email": "juanpabloegido@gmail.com",
+    "status": "approved",
+    "first_name": "Juan Pablo",
+    "last_name": "Egido Castellanos"
   },
   {
-    "id": "gst-sp99kFcmY9nsVg0",
+    "id": "gst-jf8ibxGgO1EsOqY",
     "name": "Julian Jaramillo",
     "email": "julianjllo@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Julian",
     "last_name": "Jaramillo"
   },
   {
-    "id": "gst-bKxxNpCqoMHEnyH",
-    "name": "Juliana O. Berrio",
-    "email": "julianaortizberrio@gmail.com",
-    "status": "waitlist",
-    "first_name": "Juliana",
-    "last_name": "O. Berrio"
-  },
-  {
-    "id": "gst-TKJtShHkDcyB4Tj",
-    "name": "Juliet Zea",
-    "email": "julietblandon@gmail.com",
+    "id": "gst-9WqCfUPzItjpmxh",
+    "name": "Julián Hernández",
+    "email": "julianheres@pm.me",
     "status": "approved",
-    "first_name": "Juliet",
-    "last_name": "Zea"
+    "first_name": "Julián",
+    "last_name": "Hernández"
   },
   {
-    "id": "gst-jiaVVkLaghnQctk",
-    "name": "Kendry Muñoz",
-    "email": "kendryjoseayala22@gmail.com",
+    "id": "gst-TSXCWJz8iDFRCmM",
+    "name": "Kelyn Joan",
+    "email": "kelyn@aliria.co",
     "status": "approved",
-    "first_name": "Kendry",
-    "last_name": "Muñoz"
+    "first_name": "Kelyn",
+    "last_name": "Joan"
   },
   {
-    "id": "gst-E1NVTRH904aRMpT",
+    "id": "gst-VZySlpjuYt5SgxA",
     "name": "Kevin yu",
     "email": "kevinyuluo3@gmail.com",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Kevin",
     "last_name": "Yu"
   },
   {
-    "id": "gst-4zmxsiw1uAiPSlk",
-    "name": "Laurent",
-    "email": "ldm.roy@gmail.com",
-    "status": "approved",
-    "first_name": "Laurent",
-    "last_name": ""
-  },
-  {
-    "id": "gst-uwrLODbjAFPhIzk",
+    "id": "gst-cbiCiPqVnJ7sBmm",
     "name": "Lei",
     "email": "leinieves21@gmail.com",
     "status": "approved",
@@ -600,23 +688,23 @@
     "last_name": "Nieves"
   },
   {
-    "id": "gst-DYerJnjTFTHFNg1",
-    "name": "Lina",
-    "email": "berlineth@hotmail.com",
-    "status": "waitlist",
-    "first_name": "Lina",
+    "id": "gst-uvllTg9wBzdvLEx",
+    "name": "Liliya Ivanova",
+    "email": "liliya.ivanova27@gmail.com",
+    "status": "approved",
+    "first_name": "",
     "last_name": ""
   },
   {
-    "id": "gst-r9Gfz1Ww4mrO9er",
+    "id": "gst-BV6Cj9U0QgCX4S6",
     "name": "Lizbeth",
     "email": "lizabanto93@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Lizbeth",
     "last_name": ""
   },
   {
-    "id": "gst-P0bVWQ7nmjGDZi1",
+    "id": "gst-1J0ZSGZC7Dd2QhC",
     "name": "Luis Eduardo Sanchez Parra",
     "email": "leluis1991@gmail.com",
     "status": "approved",
@@ -624,15 +712,15 @@
     "last_name": "Eduardo Sanchez Parra"
   },
   {
-    "id": "gst-U8SwlgBmgHw0xOY",
-    "name": "Luis Galea",
-    "email": "luisgalea31@gmail.com",
-    "status": "waitlist",
-    "first_name": "Luis",
-    "last_name": "Galea"
+    "id": "gst-lmuMA8DwCopOZdk",
+    "name": "Luis FernandoLuis Fernando Camacho Sepulveda",
+    "email": "luisfernandose@gmail.com",
+    "status": "approved",
+    "first_name": "luis",
+    "last_name": "camacho"
   },
   {
-    "id": "gst-PtWlKJRwk9l5hhH",
+    "id": "gst-abqCMI7jXbvgb6U",
     "name": "Luisa Bayona",
     "email": "labayonar@gmail.com",
     "status": "approved",
@@ -640,7 +728,7 @@
     "last_name": "Bayona"
   },
   {
-    "id": "gst-kj5IPvfr6pQl9AP",
+    "id": "gst-dCcICOHFO1VsViK",
     "name": "Maikol Diaz",
     "email": "diazhoyamaikol@gmail.com",
     "status": "approved",
@@ -648,79 +736,71 @@
     "last_name": "Diaz"
   },
   {
-    "id": "gst-02oiCyMLR0dMUpX",
-    "name": "Maria",
-    "email": "milhu.dan@gmail.com",
+    "id": "gst-pTDh3KRaiQIhHN0",
+    "name": "Marcus",
+    "email": "marcusbird@gmail.com",
     "status": "approved",
-    "first_name": "Maria",
-    "last_name": "Molina"
+    "first_name": "Marcus",
+    "last_name": ""
   },
   {
-    "id": "gst-vrAN6JJ61iNsjJy",
-    "name": "Maria Holzer Wegher",
-    "email": "mholzerw@hotmail.com",
-    "status": "approved",
-    "first_name": "Maria",
-    "last_name": "Holzer Wegher"
-  },
-  {
-    "id": "gst-BRgpZMmXCbvaeoE",
-    "name": "Maria Restrepo",
-    "email": "sorayarestrepo21@gmail.com",
-    "status": "declined",
-    "first_name": "Maria",
-    "last_name": "Restrepo"
-  },
-  {
-    "id": "gst-G4qBRnwhAVlsUjw",
+    "id": "gst-ziGRcyw69bYwcjo",
     "name": "Marta",
     "email": "sigmoid_casks.3h@icloud.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Marta",
     "last_name": ""
   },
   {
-    "id": "gst-BA8GnBZntULNf03",
-    "name": "Matthew Parent",
-    "email": "matthew@earthresolve.com",
+    "id": "gst-1cEItGdI7qWRzOU",
+    "name": "Mathias Salazar",
+    "email": "mathiassalazarjara@gmail.com",
     "status": "approved",
-    "first_name": "Matthew",
-    "last_name": "Parent"
+    "first_name": "Mathias",
+    "last_name": "Salazar"
   },
   {
-    "id": "gst-XHelDAC4N0WSKv1",
-    "name": "Michael",
-    "email": "michaelsgallucci@gmail.com",
+    "id": "gst-HZDqn6ZvJsrB8sm",
+    "name": "Mauricio Cardenal",
+    "email": "mcardenal99@gmail.com",
     "status": "approved",
-    "first_name": "Michael",
-    "last_name": "Gallucci"
+    "first_name": "Mauricio",
+    "last_name": "Cardenal"
   },
   {
-    "id": "gst-Hl5B2aMCLGwQ3Gn",
+    "id": "gst-kewMYYeFEh0Gs0s",
     "name": "Miguecastri93@gmail.com",
     "email": "miguecastri93@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "",
     "last_name": ""
   },
   {
-    "id": "gst-QpBD8Y17IeedFr5",
-    "name": "Miguel Bello",
-    "email": "miguedjba96@gmail.com",
-    "status": "waitlist",
+    "id": "gst-smvVh1CYNquhPj7",
+    "name": "Miguel Lopera",
+    "email": "miguelangellopera480@gmail.com",
+    "status": "approved",
     "first_name": "Miguel",
-    "last_name": "Bello"
+    "last_name": "Lopera"
   },
   {
-    "id": "gst-IkyDuOTlwEQ2QXQ",
+    "id": "gst-btw2lgPzFRcf5CW",
     "name": "Miguel Ángel Lopera Muñoz",
     "email": "miguerwi@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Miguel Ángel",
     "last_name": "Lopera Muñoz"
   },
   {
-    "id": "gst-vU0kBZ0xzX0RtB9",
+    "id": "gst-hbNuqcaQbfuuzlr",
+    "name": "Milena González",
+    "email": "milenagonzalezvergara@gmail.com",
+    "status": "approved",
+    "first_name": "Milena",
+    "last_name": "González"
+  },
+  {
+    "id": "gst-FIPxnrImGuOq0FJ",
     "name": "Moises Vargas",
     "email": "moisesweb@gmail.com",
     "status": "approved",
@@ -728,39 +808,47 @@
     "last_name": "Vargas"
   },
   {
-    "id": "gst-skAqnXBtC1x6hJP",
-    "name": "Nicolas Uribe",
-    "email": "nicolas.uribea01@gmail.com",
+    "id": "gst-vWsq0lzGVpEMXcH",
+    "name": "Nick",
+    "email": "nbaeverday@gmail.com",
+    "status": "approved",
+    "first_name": "Nick",
+    "last_name": ""
+  },
+  {
+    "id": "gst-dZvPH5HOE1966Lf",
+    "name": "Nicolas Gutierrez Arias",
+    "email": "ngutierreza@puygroup.com",
     "status": "approved",
     "first_name": "Nicolas",
-    "last_name": "Uribe"
+    "last_name": "Gutierrez Arias"
   },
   {
-    "id": "gst-rJH46ZMMDT8wi4d",
-    "name": "Nish",
-    "email": "nishantyp@gmail.com",
-    "status": "waitlist",
-    "first_name": "Nishant",
-    "last_name": "Patel"
-  },
-  {
-    "id": "gst-yEAKysv3fLFkgnI",
-    "name": "Oscar Barajas",
-    "email": "oscar@gndx.dev",
+    "id": "gst-z0XWwBssWibfW4p",
+    "name": "Oscar Bertron",
+    "email": "oscar.bertron.simpson@gmail.com",
     "status": "approved",
     "first_name": "Oscar",
-    "last_name": "Barajas"
+    "last_name": "Bertron"
   },
   {
-    "id": "gst-yIomCt3u9BvbayF",
-    "name": "Paul M",
-    "email": "paultman@gmail.com",
-    "status": "waitlist",
-    "first_name": "Paul",
-    "last_name": "M"
+    "id": "gst-FFhKWUkl4VuJSHB",
+    "name": "Osmarl.Eth",
+    "email": "osmarlpulidorodriguez@gmail.com",
+    "status": "approved",
+    "first_name": "Osmarl",
+    "last_name": "pulido rodriguez"
   },
   {
-    "id": "gst-govEFrvEOYYcKOQ",
+    "id": "gst-XGdqeOaTK3eSQtW",
+    "name": "Patricia Schild",
+    "email": "exitojuridico@gmail.com",
+    "status": "approved",
+    "first_name": "Patricia",
+    "last_name": "Schild"
+  },
+  {
+    "id": "gst-kDF27KcnVrDDNYy",
     "name": "Pedro José Pabon",
     "email": "pjpabonh@gmail.com",
     "status": "approved",
@@ -768,31 +856,39 @@
     "last_name": "Pabón"
   },
   {
-    "id": "gst-LFePjYLjSQVjH49",
+    "id": "gst-S4zQCxDsbDNSc8q",
+    "name": "Roman Leonelli",
+    "email": "roman@avanticonstruction.com",
+    "status": "approved",
+    "first_name": "Roman",
+    "last_name": "Leonelli"
+  },
+  {
+    "id": "gst-s534TtizJuqgNWK",
     "name": "Rossi Freytters",
     "email": "rossifreytters@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Rossi",
     "last_name": "Freytters"
   },
   {
-    "id": "gst-JAHyBkpn4pIDhRQ",
-    "name": "Roxana Rendon",
-    "email": "rrendon700@gmail.com",
+    "id": "gst-5zfjy3JBVQnCldR",
+    "name": "Rozalie Hernandez",
+    "email": "rozoliehernandez@gmail.com",
     "status": "approved",
-    "first_name": "Roxana",
-    "last_name": "Rendon"
+    "first_name": "Rozalie",
+    "last_name": "Hernandez"
   },
   {
-    "id": "gst-vzgB0Ywh9OoBszj",
+    "id": "gst-8oKmFgwWnwCFtRH",
     "name": "Salome Arboleda",
     "email": "salomearboledaxd@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Salomé",
     "last_name": "Arboleda"
   },
   {
-    "id": "gst-mEtssbOra46Xr38",
+    "id": "gst-IhqIhJolMhuMxDA",
     "name": "Samuel Murillo Cortes",
     "email": "samuel.murillo.corte@gmail.com",
     "status": "approved",
@@ -800,131 +896,139 @@
     "last_name": "Murillo Cortes"
   },
   {
-    "id": "gst-pLBjozvk0q7Kxbh",
+    "id": "gst-rmwg2htmrxU90PA",
+    "name": "Samuel Rodríguez",
+    "email": "samjaramillod95@gmail.com",
+    "status": "approved",
+    "first_name": "Samuel",
+    "last_name": "Rodríguez"
+  },
+  {
+    "id": "gst-W0LiyDFYVq4FJ9e",
+    "name": "Sander Vega",
+    "email": "infosandervega@gmail.com",
+    "status": "approved",
+    "first_name": "Sander",
+    "last_name": "Vega"
+  },
+  {
+    "id": "gst-AGZQkSxVRYS0zN1",
     "name": "Santiago Arcila",
     "email": "arcila007@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Santiago",
     "last_name": "Arcila"
   },
   {
-    "id": "gst-AJF9xD2eVehhS9D",
+    "id": "gst-IVOgaS1dnnkq4v2",
+    "name": "Santiago Gomez",
+    "email": "sgomez@alternun.io",
+    "status": "approved",
+    "first_name": "Santiago",
+    "last_name": "Gomez"
+  },
+  {
+    "id": "gst-iXKe1iCTdS4ZFGW",
+    "name": "Santiago Hernandez",
+    "email": "santiago@menuo.com.co",
+    "status": "approved",
+    "first_name": "Santiago",
+    "last_name": "Hernandez"
+  },
+  {
+    "id": "gst-xxsrCZ66xzm0icC",
+    "name": "Sebastian Giraldo Peña",
+    "email": "ceo@ikkiapp.co",
+    "status": "approved",
+    "first_name": "Sebastian",
+    "last_name": "Giraldo Peña"
+  },
+  {
+    "id": "gst-MAalquxnFtewMIN",
+    "name": "Sebastian Martínez",
+    "email": "sebas.mc.10@gmail.com",
+    "status": "approved",
+    "first_name": "Sebastian",
+    "last_name": "Martínez"
+  },
+  {
+    "id": "gst-ZVsZg7VMy13e0D6",
     "name": "Sebastian Quinto",
     "email": "ng47db44c5@privaterelay.appleid.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Sebastian",
     "last_name": "Quinto"
   },
   {
-    "id": "gst-BXkYh4nKxLhBYNx",
+    "id": "gst-8JKkybbHJDLEOjv",
     "name": "Sergio Martinez Marin",
     "email": "sergiotechx@yahoo.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Sergio",
     "last_name": "Martinez Marin"
   },
   {
-    "id": "gst-FPs0MWbGKTqDnIE",
+    "id": "gst-38mF3k0zdFQs5GJ",
     "name": "SHAKE HAPPENINGS",
     "email": "contact@shakeapp.today",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Leonel",
     "last_name": "Meneses"
   },
   {
-    "id": "gst-Ppzy3YVSYpvI1mi",
-    "name": "Stephen",
-    "email": "stephenm@ringlatino.net",
+    "id": "gst-gPlOtfNMtm8tLyy",
+    "name": "Sharey Martínez",
+    "email": "shareymartinez18@gmail.com",
     "status": "approved",
-    "first_name": "Stephen",
-    "last_name": ""
+    "first_name": "Sharey",
+    "last_name": "Martínez"
   },
   {
-    "id": "gst-GILRycn4OafG7RE",
-    "name": "Steve zhu",
-    "email": "istevezhu3123@gmail.com",
-    "status": "approved",
-    "first_name": "Xiaolang",
-    "last_name": "Zhu"
-  },
-  {
-    "id": "gst-NurO9drJZkeuNmn",
+    "id": "gst-LUrgCg6wBTJELp8",
     "name": "steven vallejo",
     "email": "stevenvallejo780@gmail.com",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Steven",
     "last_name": "Vallejo"
   },
   {
-    "id": "gst-EYKvGUpX56qavxD",
-    "name": "Stewart Grisales",
-    "email": "stwrtgrisales@gmail.com",
-    "status": "waitlist",
-    "first_name": "Stewart",
-    "last_name": "Grisales"
-  },
-  {
-    "id": "gst-56SMjbS2SnPldAa",
+    "id": "gst-GNgtFI8aIXRJMyY",
     "name": "Sönke Venjacob",
     "email": "soenke@platinumagency.io",
-    "status": "waitlist",
+    "status": "approved",
     "first_name": "Sönke",
     "last_name": "Venjacob"
   },
   {
-    "id": "gst-NSpUUJAr7bK5Y0m",
+    "id": "gst-nalArCdBgCk1FjQ",
     "name": "Valentina Quintero",
     "email": "valennncita@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Valentina",
     "last_name": "Quintero"
   },
   {
-    "id": "gst-9HX13FFetnc4sp8",
+    "id": "gst-vZzdTKjB2yFQwPt",
     "name": "Valeria Aguilar",
     "email": "lvaleria.aguilar97@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Valeria",
     "last_name": "Aguilar"
   },
   {
-    "id": "gst-V33oTsXiEzBFInE",
+    "id": "gst-5D6jik1xnvXw9C7",
     "name": "Vanessa Z",
     "email": "vanezafra5@gmail.com",
-    "status": "approved",
+    "status": "invited",
     "first_name": "Vanessa",
     "last_name": "Z"
   },
   {
-    "id": "gst-9Rlk5907190M1KR",
-    "name": "Wilson Andrés Camargo",
-    "email": "wilsonanca@icloud.com",
-    "status": "waitlist",
-    "first_name": "Wilson Andrés",
-    "last_name": "Camargo"
-  },
-  {
-    "id": "gst-vFd7h8nz7hiL4Qb",
-    "name": "YEIMAR LEMUS",
-    "email": "yeimar112003@gmail.com",
-    "status": "waitlist",
-    "first_name": "Yeimar",
-    "last_name": "Lemus"
-  },
-  {
-    "id": "gst-xMid6wu5Ncr3APM",
-    "name": "Zach Monroe",
-    "email": "2tvvkghb5b@privaterelay.appleid.com",
+    "id": "gst-GTYF8ln8FFJAG0O",
+    "name": "Xiomara Garcia",
+    "email": "xiomg1570@gmail.com",
     "status": "approved",
-    "first_name": "Zach",
-    "last_name": "Monroe"
-  },
-  {
-    "id": "gst-B62v0Xf2GMCzF7K",
-    "name": "Álvaro Orozco",
-    "email": "aoz363@gmail.com",
-    "status": "waitlist",
-    "first_name": "Álvaro",
-    "last_name": "Orozco"
+    "first_name": "Xiomara",
+    "last_name": "Garcia"
   }
 ]

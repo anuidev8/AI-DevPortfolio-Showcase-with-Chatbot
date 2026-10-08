@@ -93,17 +93,19 @@ type MissionFaceProps = {
   xp: number;
   scene: string;
   aside?: ReactNode;
+  corner?: ReactNode;
   className?: string;
 };
 
 /** Mission-style card face: kind, two-tone title, hint, mascot scene, XP footer. */
-export function MissionFace({ kind, title, split, hint, xp, scene, aside, className }: MissionFaceProps) {
+export function MissionFace({ kind, title, split, hint, xp, scene, aside, corner, className }: MissionFaceProps) {
   const Icon = KIND_ICON[kind] ?? Users;
   const words = title.split(" ");
   return (
     <article className={`noshy-card noshy-card-mission${className ? ` ${className}` : ""}`}>
       <span className="noshy-card-glow" aria-hidden="true" />
       <BrandMark />
+      {corner ? <span className="noshy-card-corner">{corner}</span> : null}
       <p className="noshy-card-kind"><Icon size={15} />{kind}</p>
       <h3>
         {words.slice(0, split).join(" ")} <em>{words.slice(split).join(" ")}</em>

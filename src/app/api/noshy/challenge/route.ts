@@ -18,7 +18,18 @@ async function ensureSchema() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
-  await query(`ALTER TABLE noshy_challenge_draws ADD COLUMN IF NOT EXISTS code TEXT`);
+  await query(`
+    ALTER TABLE noshy_challenge_draws
+      ADD COLUMN IF NOT EXISTS code TEXT,
+      ADD COLUMN IF NOT EXISTS name TEXT,
+      ADD COLUMN IF NOT EXISTS role TEXT
+  `);
+}
+
+function cleanText(value: unknown, max: number) {
+  if (typeof value !== "string") return null;
+  const clean = value.replace(/\s+/g, " ").trim().slice(0, max);
+  return clean || null;
 }
 
 async function readBody<T>(request: Request): Promise<T | null> {
@@ -31,12 +42,14 @@ async function readBody<T>(request: Request): Promise<T | null> {
 
 /** Generate a card: random challenge plus a random card ID, logged per visitor. */
 export async function POST(request: Request) {
-  const body = await readBody<{ visitorId?: string; source?: string }>(request);
+  const body = await readBody<{ visitorId?: string; source?: string; name?: string; role?: string }>(request);
   const visitorId = String(body?.visitorId ?? "");
   if (!VISITOR_ID.test(visitorId)) {
     return NextResponse.json({ error: "visitorId is required" }, { status: 400 });
   }
-  const source = typeof body?.source === "string" ? body.source.slice(0, 32) : null;
+  const source = cleanText(body?.source, 32);
+  const name = cleanText(body?.name, 40);
+  const role = cleanText(body?.role, 48);
   const code = cardCode();
 
   try {
@@ -47,8 +60,9 @@ export async function POST(request: Request) {
     );
     const challenge = pickChallenge(seen.rows.map((row) => row.challenge_id));
     const inserted = await query<{ id: number }>(
-      `INSERT INTO noshy_challenge_draws (code, visitor_id, challenge_id, source) VALUES ($1, $2, $3, $4) RETURNING id`,
-      [code, visitorId, challenge.id, source]
+      `INSERT INTO noshy_challenge_draws (code, visitor_id, challenge_id, source, name, role)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [code, visitorId, challenge.id, source, name, role]
     );
     return NextResponse.json({ challengeId: challenge.id, drawId: inserted.rows[0].id, code });
   } catch (error) {
