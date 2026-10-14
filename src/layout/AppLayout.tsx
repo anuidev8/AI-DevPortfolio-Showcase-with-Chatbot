@@ -27,27 +27,30 @@ const useMediaQuery = (query: string) => {
   return mounted ? matches : false;
 };
 
-export const AppLayout = ({ children }: { children: React.ReactNode }) => {
+// `bare` lets a page bring its own header, background and width instead of the shared chrome.
+export const AppLayout = ({ children, bare = false }: { children: React.ReactNode; bare?: boolean }) => {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   return (
-    <div className="relative bg-[#0a192f]">
+    <div className={`relative ${bare ? 'bg-[#0B1020]' : 'bg-[#0a192f]'}`}>
       {/* Header */}
-      <motion.div
-        animate={{
-          width: isAssistantOpen && !isMobile ? 'calc(100% - 400px)' : '100%',
-          opacity: isAssistantOpen && isMobile ? 0 : 1,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 100,
-          damping: 20
-        }}
-        className="fixed top-0 left-0 right-0 z-50"
-      >
-        <Header />
-      </motion.div>
+      {!bare && (
+        <motion.div
+          animate={{
+            width: isAssistantOpen && !isMobile ? 'calc(100% - 400px)' : '100%',
+            opacity: isAssistantOpen && isMobile ? 0 : 1,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 100,
+            damping: 20
+          }}
+          className="fixed top-0 left-0 right-0 z-50"
+        >
+          <Header />
+        </motion.div>
+      )}
 
       {/* Main Content Container */}
       <motion.div
@@ -63,9 +66,11 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
         }}
         className="min-h-screen relative z-10"
       >
-        <div className="max-w-screen-xl mx-auto">
-          {children}
-        </div>
+        {bare ? children : (
+          <div className="max-w-screen-xl mx-auto">
+            {children}
+          </div>
+        )}
       </motion.div>
 
       <AnimatePresence>
@@ -129,13 +134,15 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
       </AnimatePresence>
 
       {/* Background lines effect */}
-      <div 
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.1) 1px, transparent 1px)',
-          backgroundSize: '100% 4px'
-        }}
-      />
+      {!bare && (
+        <div 
+          className="fixed inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.1) 1px, transparent 1px)',
+            backgroundSize: '100% 4px'
+          }}
+        />
+      )}
     </div>
   );
 };
