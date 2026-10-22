@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight, Camera, CalendarCheck, Check, ChevronRight, Clock, Compass, Gift, Handshake,
-  MessageCircle, Mic, Sparkles, Trophy, Users,
+  MessageCircle, Mic, Shuffle, Sparkles, Trophy, Users, Zap,
 } from "lucide-react";
 import type { CommunityProfile } from "@/lib/community-data";
 import {
   CONNECTION_XP, MISSIONS, getMission, parseNoshyCode,
   type ConnectionStatus, type GameProgress, type LeaderboardRow, type NoshyCode,
 } from "@/lib/noshy-game";
+import { icebreakerAt, icebreakersFor } from "@/lib/noshy-icebreaker";
 import type { MatchPair } from "@/lib/noshy-match";
 import { CardScanner } from "./CardScanner";
 import { NoshyCard } from "./NoshyCard";
@@ -61,7 +63,7 @@ export function ScanScreen({ notice, onCode, onExplore, onBack }: {
   const submitCode = (event: FormEvent) => {
     event.preventDefault();
     const code = parseTypedCode(typed);
-    if (!code) { setTypedError("That doesn't look like a NoShy card code."); return; }
+    if (!code) { setTypedError("That doesn't look like a NoShy number."); return; }
     setTypedError("");
     onCode(code);
   };
@@ -78,13 +80,13 @@ export function ScanScreen({ notice, onCode, onExplore, onBack }: {
               <span className="noshy-scanner-frame" aria-hidden="true" />
               <Camera size={30} />
               <strong>Tap to open camera</strong>
-              <span>Align the card in the frame</span>
+              <span>Align their profile QR in the frame</span>
             </button>
           )
         ) : (
           <form className="noshy-scan-code" onSubmit={submitCode}>
-            <h3>Enter card code</h3>
-            <p>Type the number on their NoShy card, or paste their link.</p>
+            <h3>Enter NoShy number</h3>
+            <p>Type the number on their profile QR, or paste their link.</p>
             <input value={typed} onChange={(e) => setTyped(e.target.value)} placeholder="e.g. 12" inputMode="numeric" autoFocus aria-label="Card code" />
             {typedError && <p className="noshy-error">{typedError}</p>}
             <button type="submit" className="noshy-btn noshy-btn-primary noshy-btn-full" disabled={!typed.trim()}>
@@ -96,8 +98,8 @@ export function ScanScreen({ notice, onCode, onExplore, onBack }: {
       <div className="noshy-scan-foot">
         {notice && <p className="noshy-error">{notice}</p>}
         <div className="noshy-segment" role="tablist">
-          <button type="button" role="tab" aria-selected={mode === "camera"} className={mode === "camera" ? "active" : ""} onClick={() => setMode("camera")}>Scan card</button>
-          <button type="button" role="tab" aria-selected={mode === "code"} className={mode === "code" ? "active" : ""} onClick={() => setMode("code")}>Enter code</button>
+          <button type="button" role="tab" aria-selected={mode === "camera"} className={mode === "camera" ? "active" : ""} onClick={() => setMode("camera")}>Scan QR</button>
+          <button type="button" role="tab" aria-selected={mode === "code"} className={mode === "code" ? "active" : ""} onClick={() => setMode("code")}>Enter number</button>
         </div>
         <button type="button" className="noshy-text-btn" onClick={onExplore}>
           <Users size={15} />Explore people instead
@@ -109,7 +111,46 @@ export function ScanScreen({ notice, onCode, onExplore, onBack }: {
 
 /* ── Scan result / person ── */
 
-export function PersonScreen({ pair, aiLoading, status, theyLoggedYou, card, voiceHref, busy, error, onConnect, onBack }: {
+/** Animated +XP burst shown the moment a connection is claimed. */
+function PointsBurst({ status }: { status: ConnectionStatus }) {
+  const confirmed = status === "confirmed";
+  return (
+    <motion.div
+      className="noshy-reward"
+      role="status"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <div className="noshy-reward-burst" aria-hidden="true">
+        {Array.from({ length: 14 }, (_, i) => {
+          const angle = (i / 14) * Math.PI * 2;
+          const dist = 74 + (i % 3) * 26;
+          return (
+            <motion.span
+              key={i}
+              initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+              animate={{ x: Math.cos(angle) * dist, y: Math.sin(angle) * dist, opacity: 0, scale: 0.4 }}
+              transition={{ duration: 0.9, delay: 0.15, ease: "easeOut" }}
+            />
+          );
+        })}
+      </div>
+      <motion.strong
+        initial={{ scale: 0.5, y: 14 }}
+        animate={{ scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 320, damping: 17 }}
+      >
+        <Zap size={22} /> +{CONNECTION_XP} XP
+      </motion.strong>
+      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
+        {confirmed ? "Connection confirmed — you both earned it!" : "Almost there — points unlock when they scan your QR back."}
+      </motion.span>
+    </motion.div>
+  );
+}
+
+export function PersonScreen({ pair, aiLoading, status, theyLoggedYou, card, voiceHref, busy, error, onConnect, onBack, scanned }: {
   pair: MatchPair;
   aiLoading: boolean;
   status?: ConnectionStatus;
@@ -120,32 +161,95 @@ export function PersonScreen({ pair, aiLoading, status, theyLoggedYou, card, voi
   error?: string;
   onConnect: (note: string) => void;
   onBack: () => void;
+  /** Opened by scanning their profile QR: reveal the icebreaker card + points immediately. */
+  scanned?: boolean;
 }) {
   const [note, setNote] = useState("");
+  const [iceOffset, setIceOffset] = useState(0);
+  const [claimed, setClaimed] = useState(false);
+  const [showReward, setShowReward] = useState(false);
   const them = pair.right;
   const name = first(them.name);
-  const [opener, ...topics] = pair.brief.topics;
+  const [, ...topics] = pair.brief.topics;
+  const iceCount = useMemo(() => icebreakersFor(pair.left, pair.right).length, [pair.left, pair.right]);
+  const icebreaker = icebreakerAt(pair.left, pair.right, iceOffset % Math.max(iceCount, 1));
+
+  // Points animation fires once the claim lands (waiting = pending, confirmed = paid out).
+  useEffect(() => {
+    if (!claimed || !status) return;
+    setShowReward(true);
+    const timer = window.setTimeout(() => setShowReward(false), 3400);
+    return () => window.clearTimeout(timer);
+  }, [claimed, status]);
+
+  const claim = () => {
+    setClaimed(true);
+    onConnect(note);
+  };
 
   return (
     <>
       <TopBar onBack={onBack} />
-      <div className="noshy-profile-hero">
-        <PersonAvatar animalId={them.animalId} name={them.name} size={116} shape="circle" />
+      <AnimatePresence>{showReward && status ? <PointsBurst key="reward" status={status} /> : null}</AnimatePresence>
+
+      {scanned && (
+        <motion.p
+          className="noshy-scan-unlocked"
+          initial={{ opacity: 0, y: -8, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
+          <Sparkles size={15} /> QR match unlocked · +{CONNECTION_XP} XP up for grabs
+        </motion.p>
+      )}
+
+      <motion.div
+        className="noshy-profile-hero"
+        initial={scanned ? { opacity: 0, scale: 0.9, y: 16 } : false}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 240, damping: 20 }}
+      >
+        <div className="noshy-duo">
+          <PersonAvatar animalId={pair.left.animalId} name={pair.left.name} size={72} shape="circle" />
+          <PersonAvatar animalId={them.animalId} name={them.name} size={92} shape="circle" />
+        </div>
         <MatchPill score={pair.brief.score} />
         <h2>{them.name}</h2>
         <p>{them.role}</p>
         <Tags items={animalTags(them.animalId)} />
-      </div>
+      </motion.div>
+
+      <motion.article
+        className="noshy-icebreaker"
+        initial={scanned ? { opacity: 0, y: 24, rotate: -1.2 } : false}
+        animate={{ opacity: 1, y: 0, rotate: 0 }}
+        transition={{ delay: scanned ? 0.18 : 0, type: "spring", stiffness: 220, damping: 21 }}
+      >
+        <header>
+          <span>🧊 Icebreaker — ask {name} this</span>
+          <button type="button" onClick={() => setIceOffset((n) => n + 1)} aria-label="Another icebreaker question">
+            <Shuffle size={14} /> New question
+          </button>
+        </header>
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={icebreaker}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22 }}
+          >
+            {icebreaker}
+          </motion.p>
+        </AnimatePresence>
+        <footer>Talk first · then claim your points below ↓</footer>
+      </motion.article>
 
       <article className="noshy-why">
         <h3>Why you should talk</h3>
         {aiLoading ? <div className="noshy-skeleton-stack"><i /><i /><i className="short" /></div> : <p>{pair.brief.why}</p>}
       </article>
 
-      <div className="noshy-start">
-        <h3>Start with</h3>
-        {aiLoading ? <div className="noshy-skeleton-stack"><i /><i className="short" /></div> : <p>“{opener}”</p>}
-      </div>
       {!aiLoading && topics.length > 0 && (
         <ol className="noshy-numbered">{topics.map((t) => <li key={t}>{t}</li>)}</ol>
       )}
@@ -157,8 +261,8 @@ export function PersonScreen({ pair, aiLoading, status, theyLoggedYou, card, voi
         </div>
       ) : status === "waiting" ? (
         <div className="noshy-waiting">
-          <strong><Clock size={15} />Ask {name} to scan your card</strong>
-          <p>The connection counts when you both confirm. +{CONNECTION_XP} XP each.</p>
+          <strong><Clock size={15} />Ask {name} to scan your profile QR</strong>
+          <p>Your +{CONNECTION_XP} XP unlocks when they scan you back and confirm.</p>
           {card && <NoshyCard {...card} />}
         </div>
       ) : (
@@ -171,11 +275,11 @@ export function PersonScreen({ pair, aiLoading, status, theyLoggedYou, card, voi
           {error && <p className="noshy-error">{error}</p>}
           <div className="noshy-btn-row">
             <a className="noshy-btn noshy-btn-secondary" href={voiceHref}><Mic size={16} />Ask NoShy</a>
-            <button type="button" className="noshy-btn noshy-btn-primary" disabled={busy} onClick={() => onConnect(note)}>
-              {busy ? "Saving…" : theyLoggedYou ? "Confirm" : "Connect"}
+            <button type="button" className="noshy-btn noshy-btn-primary" disabled={busy} onClick={claim}>
+              {busy ? "Saving…" : theyLoggedYou ? `Confirm · +${CONNECTION_XP} XP` : `We talked · +${CONNECTION_XP} XP`}
             </button>
           </div>
-          <p className="noshy-away">Now put the phone away and go say hi.</p>
+          <p className="noshy-away">Ask the icebreaker, have a real chat, then tap “We talked”.</p>
         </>
       )}
     </>
@@ -282,7 +386,7 @@ export function ConnectionsScreen({ progress, people, onOpen, onBack }: {
       <ScreenTitle title="Connections" subtitle="People you actually met tonight." />
       <div className="noshy-list">
         {empty && (
-          <div className="noshy-empty compact"><Handshake size={28} /><h3>No connections yet</h3><p>Talk to someone, then scan their card. It counts when you both confirm.</p></div>
+          <div className="noshy-empty compact"><Handshake size={28} /><h3>No connections yet</h3><p>Scan someone's profile QR, ask the icebreaker, then tap “We talked”. It counts when you both confirm.</p></div>
         )}
         {progress.incoming.length > 0 && <p className="noshy-section-label">Waiting for you</p>}
         {progress.incoming.map((id) => row(id, "Confirm to get XP", "incoming"))}
@@ -360,7 +464,7 @@ export function CardScreen({ card, onBack, children }: { card: CardInfo; onBack?
   return (
     <>
       <TopBar onBack={onBack} />
-      <ScreenTitle title="Your NoShy card" subtitle="Show this when you meet someone. They scan it, you scan theirs, and the connection is confirmed." />
+      <ScreenTitle title="Your profile QR" subtitle="Show this QR when you meet someone. They scan it and instantly get your match + icebreaker card — you scan theirs back to confirm." />
       <NoshyCard {...card} />
       {children}
     </>

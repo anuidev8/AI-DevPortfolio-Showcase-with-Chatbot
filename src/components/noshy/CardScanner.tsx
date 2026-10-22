@@ -92,7 +92,7 @@ export function CardScanner({ onCode, className }: CardScannerProps) {
           <video ref={videoRef} muted playsInline aria-label="Camera preview" />
           <span className="noshy-scanner-frame" aria-hidden="true" />
           <p className="noshy-scanner-hint" role="status">
-            {foreign ? "That's not a NoShy card. Try another one." : "Align the card in the frame"}
+            {foreign ? "That's not a NoShy QR. Try another one." : "Align their profile QR in the frame"}
           </p>
         </>
       )}

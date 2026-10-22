@@ -288,10 +288,13 @@ export default function NoshyPage() {
     return yourMatches.find((pair) => confirmed.has(pair.right.id)) ?? null;
   }, [progress.connections, yourMatches]);
 
-  const openPerson = (person: DeskPerson) => {
+  const [personScanned, setPersonScanned] = useState(false);
+
+  const openPerson = (person: DeskPerson, viaScan = false) => {
     const pair = matchesFor(youProfile, [person])[0];
     if (!pair) return;
     setGameError("");
+    setPersonScanned(viaScan);
     openPair(pair, "person");
   };
 
@@ -301,11 +304,11 @@ export default function NoshyPage() {
       setMissionEarned(null); setGameError(""); setActiveMission(code.missionId); setScreen("missions");
       return;
     }
-    if (code.memberId === memberId) { setScanNotice("That's your own card. Scan someone else's."); setScreen("scan"); return; }
+    if (code.memberId === memberId) { setScanNotice("That's your own profile QR. Scan someone else's."); setScreen("scan"); return; }
     const person = peopleById.get(code.memberId)
       ?? (await loadMembers())?.find((p) => p.memberId === code.memberId);
-    if (!person) { setScanNotice("That card isn't registered at this event yet."); setScreen("scan"); return; }
-    openPerson(person);
+    if (!person) { setScanNotice("That profile QR isn't registered at this event yet."); setScreen("scan"); return; }
+    openPerson(person, true);
   };
 
   useEffect(() => {
@@ -638,7 +641,7 @@ export default function NoshyPage() {
                   </div>
                 )}
                 <div className="noshy-welcome-actions">
-                  {pendingCode && <div className="noshy-note"><Sparkles size={15} />{pendingCode.kind === "meet" ? "You scanned a NoShy card. Register and we'll show your match with them." : "You scanned a mission card. Register to complete it."}</div>}
+                  {pendingCode && <div className="noshy-note"><Sparkles size={15} />{pendingCode.kind === "meet" ? "You scanned a profile QR. Register and we'll instantly show your match + icebreaker card with them." : "You scanned a mission. Register to complete it."}</div>}
                   <button type="button" className="noshy-btn noshy-btn-white noshy-btn-full" onClick={() => setScreen("mode")}>
                     Get started<ArrowRight size={18} />
                   </button>
@@ -972,6 +975,7 @@ export default function NoshyPage() {
               <motion.section key={`person-${personId}`} className="noshy-panel" {...motionProps}>
                 <PersonScreen
                   pair={matchPair}
+                  scanned={personScanned}
                   aiLoading={aiLoading}
                   status={progress.connections.find((c) => c.memberId === personId)?.status}
                   theyLoggedYou={progress.incoming.includes(personId)}

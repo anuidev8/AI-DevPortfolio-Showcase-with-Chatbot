@@ -505,6 +505,46 @@ body {
 .noshy-status.waiting, .noshy-status.incoming { color: #ffd60a; background: rgba(255,214,10,0.1); }
 .noshy-sticky { position: sticky; bottom: 1rem; }
 
+/* Scan → icebreaker question card + points */
+.noshy-scan-unlocked {
+  display: flex; align-items: center; justify-content: center; gap: 0.45rem; margin: 0;
+  padding: 0.6rem 0.9rem; border-radius: 999px; text-align: center;
+  font-size: 0.85rem; font-weight: 600; color: #ffd60a;
+  background: rgba(255,214,10,0.08); border: 1px solid rgba(255,214,10,0.35);
+}
+.noshy-scan-unlocked svg { color: var(--nb-blue-hi); flex-shrink: 0; }
+.noshy-icebreaker {
+  position: relative; overflow: hidden; padding: 1.1rem 1.1rem 0.95rem; border-radius: 18px;
+  background: linear-gradient(160deg, rgba(31,95,255,0.28), rgba(138,61,255,0.14) 55%, rgba(31,95,255,0.05));
+  border: 1px solid rgba(91,140,255,0.55);
+  box-shadow: 0 16px 44px rgba(31,95,255,0.22);
+}
+.noshy-icebreaker header { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.noshy-icebreaker header span { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--nb-blue-hi); }
+.noshy-icebreaker header button {
+  display: inline-flex; align-items: center; gap: 0.35rem; flex-shrink: 0; padding: 0.4rem 0.7rem;
+  border-radius: 999px; border: 1px solid rgba(255,255,255,0.22); background: rgba(0,0,0,0.35);
+  color: #fff; font-size: 0.76rem; font-weight: 600; cursor: pointer;
+}
+.noshy-icebreaker header button:active { transform: scale(0.96); }
+.noshy-icebreaker > p { margin: 0.75rem 0 0; font-size: 1.28rem; font-weight: 650; line-height: 1.35; letter-spacing: -0.01em; color: #fff; }
+.noshy-icebreaker footer { margin-top: 0.8rem; font-size: 0.78rem; color: var(--nb-soft); }
+.noshy-reward {
+  position: sticky; top: 0.5rem; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  padding: 1rem 1rem 0.9rem; border-radius: 18px; text-align: center;
+  background: linear-gradient(180deg, rgba(255,214,10,0.2), rgba(31,95,255,0.16));
+  border: 1px solid rgba(255,214,10,0.55); backdrop-filter: blur(8px);
+}
+.noshy-reward strong { display: flex; align-items: center; gap: 0.4rem; font-size: 1.5rem; font-weight: 800; color: #ffd60a; }
+.noshy-reward span { font-size: 0.85rem; color: var(--nb-soft); }
+.noshy-reward-burst { position: absolute; left: 50%; top: 38%; width: 0; height: 0; pointer-events: none; }
+.noshy-reward-burst span {
+  position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: #ffd60a; box-shadow: 0 0 10px rgba(255,214,10,0.8);
+}
+.noshy-reward-burst span:nth-child(even) { background: #5b8cff; box-shadow: 0 0 10px rgba(91,140,255,0.8); }
+
 /* Scan */
 .noshy-scan { position: relative; flex: 1; display: flex; flex-direction: column; }
 .noshy-scan-view { position: relative; flex: 1; min-height: 560px; display: flex; overflow: hidden; background: radial-gradient(ellipse at 50% 40%, #1a1a1d 0%, #050505 75%); }
