@@ -7,7 +7,7 @@ export const SLIDE_SUMMARIES: Record<SlideId, string> = {
   purpose:
     'Why we gather: Real Talks, Real Experiences, New Connections for Medellín AI builders.',
   talks:
-    'Speakers: Daniel Domínguez (Founder @ Braina IA) on how an AI company works from the inside, with a live audit; Emily Ruiz Testa (Growth @wallib.app) on the AI tools she built to organize her finances; Carlos Garcia (The Godfather of Traffic) on digital marketing, paid media and business growth.',
+    'Speakers: Marylin Alarcon (Lead R&D Engineer) — “AI Lowered The Floor, Our Work Is Now The Ceiling”; Salome Arboleda (Software Developer & Tech Enthusiast) — “Build real-time quantum apps with AI — use cases”; Jacobo Blandón (XR / Blockchain & Digital Product Builder) — “Turn complex ideas into digital products that actually work.” Thu Oct 22, 7:00 PM, Rooftop La Rock, El Poblado, Medellín.',
   benefits:
     'Benefits: Community & Connections, Networking, Grow. Testimonials: a friend got a job at a hotel here; David Elias got a new client.',
   community:

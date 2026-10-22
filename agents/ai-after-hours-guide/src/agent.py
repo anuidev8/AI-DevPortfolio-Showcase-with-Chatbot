@@ -77,10 +77,9 @@ TOUR_LINES: dict[str, str] = {
     ),
     "talks": (
         "Y en el escenario <break time=\"300ms\"/> van a estar "
-        "Daniel Domínguez, fundador de Braina IA, mostrándonos cómo funciona una empresa de IA por dentro… "
-        "y auditando una en vivo, "
-        "Emily Ruiz Testa con las herramientas que construyó con IA para organizar sus finanzas, "
-        "y Carlos Garcia… <break time=\"250ms\"/> el Padrino del Tráfico, con estrategias de marketing digital, pauta y crecimiento de negocio."
+        "Marylin Alarcon, Lead R&D Engineer, con «AI Lowered The Floor, Our Work Is Now The Ceiling»… "
+        "Salome Arboleda, Software Developer, construyendo apps cuánticas en tiempo real con IA, "
+        "y Jacobo Blandón… <break time=\"250ms\"/> XR, Blockchain y productos digitales que sí funcionan."
     ),
     "benefits": (
         "¿Y qué te llevas de venir? <break time=\"300ms\"/> "
@@ -108,10 +107,10 @@ EVENT_FACTS = textwrap.dedent(
     2. Real Experiences — no paneles; historias en vivo, demos y charlas que te llevas al siguiente build.
     3. New Connections — conocer solo builders de IA, creators y la tribu Visible Builders en Medellín.
 
-    SPEAKERS:
-    - Daniel Domínguez (Founder @ Braina IA): cómo funciona una empresa de IA por dentro (y auditamos una en vivo).
-    - Emily Ruiz Testa (Growth @wallib.app): herramientas que construyó con IA para organizar sus finanzas.
-    - Carlos Garcia (The Godfather of Traffic): estrategias de marketing digital, pauta (paid media) y crecimiento de negocio.
+    SPEAKERS (Thu Oct 22, 7:00 PM, Rooftop La Rock, El Poblado, Medellín):
+    - Marylin Alarcon (Lead R&D Engineer): AI Lowered The Floor, Our Work Is Now The Ceiling.
+    - Salome Arboleda (Software Developer & Tech Enthusiast): Build real-time quantum apps with AI — use cases.
+    - Jacobo Blandón (XR / Blockchain & Digital Product Builder): Turn complex ideas into digital products that actually work.
 
     BENEFICIOS: Community & Connections, Networking, Grow.
     TESTIMONIOS: un amigo consiguió trabajo en un hotel aquí; David Elias consiguió un cliente nuevo.
