@@ -78,8 +78,9 @@ TOUR_LINES: dict[str, str] = {
     "talks": (
         "Y en el escenario <break time=\"300ms\"/> van a estar "
         "Marylin Alarcon, Lead R&D Engineer, con «AI Lowered The Floor, Our Work Is Now The Ceiling»… "
-        "Salome Arboleda, Software Developer, construyendo apps cuánticas en tiempo real con IA, "
-        "y Jacobo Blandón… <break time=\"250ms\"/> XR, Blockchain y productos digitales que sí funcionan."
+        "Salome Arboleda, Software Developer and Tech Enthusiast, con «Build real-time quantum apps with AI», casos de uso en vivo, "
+        "y Jacobo Blandón… <break time=\"250ms\"/> XR, Blockchain y Digital Product Builder, "
+        "convirtiendo ideas complejas en productos digitales que sí funcionan."
     ),
     "benefits": (
         "¿Y qué te llevas de venir? <break time=\"300ms\"/> "
@@ -95,6 +96,9 @@ TOUR_LINES: dict[str, str] = {
     ),
 }
 
+# Speaker lineup is the single source of truth in src/lib/speakers.ts
+# (FALLBACK_SPEAKERS — same names, roles and talk titles shown on the talks slide).
+# Keep TOUR_LINES["talks"] and SPEAKERS below in sync with it.
 EVENT_FACTS = textwrap.dedent(
     """\
     EVENTO: AI After Hours de Visible Builders (Medellín).
@@ -111,6 +115,11 @@ EVENT_FACTS = textwrap.dedent(
     - Marylin Alarcon (Lead R&D Engineer): AI Lowered The Floor, Our Work Is Now The Ceiling.
     - Salome Arboleda (Software Developer & Tech Enthusiast): Build real-time quantum apps with AI — use cases.
     - Jacobo Blandón (XR / Blockchain & Digital Product Builder): Turn complex ideas into digital products that actually work.
+
+    GUÍA — A QUIÉN RECOMENDAR CADA CHARLA:
+    - Carrera en IA, R&D, calidad de ingeniería o subir de nivel como builder -> Marylin Alarcon.
+    - Quantum computing, apps en tiempo real o programar con IA -> Salome Arboleda.
+    - XR, blockchain/Web3, startups o convertir una idea en producto -> Jacobo Blandón.
 
     BENEFICIOS: Community & Connections, Networking, Grow.
     TESTIMONIOS: un amigo consiguió trabajo en un hotel aquí; David Elias consiguió un cliente nuevo.
@@ -137,10 +146,21 @@ INSTRUCTIONS = textwrap.dedent(
 
     {EVENT_FACTS}
 
+    # Guía de speakers (alineada con la slide de talks)
+    - Estos tres son el lineup oficial de esta noche. Si preguntan quién habla, qué charla
+      les conviene, o de qué trata una charla, responde SOLO desde SPEAKERS y GUÍA arriba:
+      nombra al speaker, su rol y el título de su charla, en 1–2 oraciones, y para.
+    - Si el invitado cuenta qué construye o qué busca, recomienda UNA sola charla según la GUÍA.
+      No recomiendes las tres. No inventes horarios, orden de charlas ni temas que no estén arriba.
+    - Si piden ver a los speakers, ve a la slide talks con go_to_slide (una sola llamada).
+
     SLIDES (ids): intro → purpose → talks → benefits → community
 
     # Navegación (crítico — ritmo suave)
     - El tour de apertura ya corre en código. NO lo reinicies ni pases todas las slides de golpe.
+    - Si el invitado te interrumpe, el tour se detiene solo: escúchalo, responde a lo que
+      preguntó en 2–4 oraciones, y NO retomes el tour ni repitas la slide que ibas diciendo,
+      salvo que te lo pida. Su pregunta manda, no el guion.
     - Cuando el invitado pida otra slide: UNA sola llamada a go_to_slide, narras ESA slide, y PARAS.
     - NUNCA encadenes intro→purpose→talks→benefits→community en el mismo turno.
     - Si no sabes qué hay en pantalla, llama get_slide_state una vez.
@@ -228,14 +248,26 @@ async def _go_to_slide(slide: str) -> None:
         logger.warning("[tour] go_to_slide %s failed: %s", slide, exc)
 
 
-async def _speak_line(session: AgentSession, text: str) -> None:
-    """Speak one line and wait until audio finishes — no interruptions mid-opening."""
-    handle = session.say(text, allow_interruptions=False)
+async def _speak_line(session: AgentSession, text: str) -> bool:
+    """Speak one line and wait for playout. Returns True if the guest interrupted.
+
+    A *little* interruption is allowed: real speech (adaptive detection,
+    >= INTERRUPTION_MIN_WORDS words) cuts the line off, but crowd noise and
+    short backchannels don't — see _build_session.
+    """
+    handle = session.say(
+        text, allow_interruptions=_env_bool("ALLOW_INTERRUPTIONS", True)
+    )
     await handle.wait_for_playout()
+    return handle.interrupted
 
 
 async def run_smooth_opening_tour(session: AgentSession) -> None:
-    """Paced deck tour: slide → speak → wait → soft pause → next."""
+    """Paced deck tour: slide → speak → wait → soft pause → next.
+
+    If the guest interrupts, the tour stops and hands them the floor —
+    it never talks over them or restarts from the top.
+    """
     await wait_for_frontend_participant()
     # Soft beat so the UI finishes mounting before the first change.
     await asyncio.sleep(0.6)
@@ -245,7 +277,9 @@ async def run_smooth_opening_tour(session: AgentSession) -> None:
         await _go_to_slide(slide)
         # Let the slide transition animate before voice starts.
         await asyncio.sleep(0.45)
-        await _speak_line(session, line)
+        if await _speak_line(session, line):
+            logger.info("[tour] interrupted by guest on slide %s — stopping tour", slide)
+            return
         await asyncio.sleep(TOUR_PAUSE_S)
 
     await _speak_line(
@@ -306,7 +340,21 @@ def _build_session() -> AgentSession:
         use_tts_aligned_transcript=True,
         turn_handling=TurnHandlingOptions(
             turn_detection=inference.TurnDetector(),
-            interruption={"resume_false_interruption": False},
+            # A little interruption: guests CAN cut in with real speech, but a
+            # loud room can't. Adaptive mode ignores backchannels ("ajá", "ok"),
+            # it takes >=1 real word / 0.5s of speech to interrupt, and if the
+            # "interruption" turns out to be noise (no transcript within 1.5s)
+            # the agent resumes where it left off.
+            interruption={
+                "mode": "adaptive",
+                "min_duration": _env_float("INTERRUPTION_MIN_DURATION", 0.5),
+                "min_words": int(_env_float("INTERRUPTION_MIN_WORDS", 1)),
+                "resume_false_interruption": True,
+                "false_interruption_timeout": _env_float(
+                    "FALSE_INTERRUPTION_TIMEOUT", 1.5
+                ),
+                "discard_audio_if_uninterruptible": False,
+            },
             preemptive_generation={"enabled": False},
         ),
         max_tool_steps=4,

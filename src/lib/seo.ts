@@ -54,7 +54,7 @@ export const personJsonLd = {
   image: `${siteUrl}/angel-arrieta.jpg`,
   jobTitle: "AI & Full-Stack Engineer",
   description: siteDescription,
-  email: "mailto:angelarrieta34@gmail.com",
+  email: "mailto:contact@angelmateus.com",
   address: { "@type": "PostalAddress", addressLocality: "Medellín", addressCountry: "CO" },
   knowsAbout: ["AI voice agents", "LiveKit", "LangGraph", "Next.js", "Generative UI", "AI engineering", "Tech events"],
   knowsLanguage: ["en", "es"],

@@ -12,7 +12,7 @@ export const links = {
   github: "https://github.com/anuidev8",
   linkedin: "https://linkedin.com/in/angel-mateus-arrieta-morelo-739623123",
   youtube: "https://youtube.com/@anuidev",
-  email: "angelarrieta34@gmail.com",
+  email: "contact@angelmateus.com",
   booking: whatsapp("Hi Angel, I'd like to book a 20-min call about an AI product."),
   cv: "/Angel_Arrieta_CV.pdf",
 };
@@ -317,7 +317,7 @@ export const community = {
   name: "Visible Builders",
   site: "https://visiblebuilders.io",
   speakInvite:
-    "mailto:angelarrieta34@gmail.com?subject=Speaking%20invitation%20%E2%80%94%20Visible%20Builders",
+    "mailto:contact@angelmateus.com?subject=Speaking%20invitation%20%E2%80%94%20Visible%20Builders",
   stats: [
     { value: "129", label: "builders registered for AI After Hours" },
     { value: "12", label: "speakers and demos on stage" },

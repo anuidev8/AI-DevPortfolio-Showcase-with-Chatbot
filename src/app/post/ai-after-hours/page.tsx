@@ -1,11 +1,11 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { VoiceGuide } from '@/components/ai-after-hours/VoiceGuide';
-import { SLIDE_IDS, type SlideId } from '@/lib/ai-after-hours/slides';
+import { SLIDE_IDS, TALK_SPEAKERS, type SlideId } from '@/lib/ai-after-hours/slides';
 
 // VisibleBuilders brand palette — cyber neon from visiblebuilders.io
 const VB = {
@@ -57,16 +57,6 @@ const testimonials = [
   { quote: 'My friend got a job at a hotel here.', author: 'Community member', accent: VB.cyan },
   { quote: 'Got a new client.', author: 'David Elias', accent: VB.magenta },
 ];
-
-type SlideSpeaker = {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-  initials: string;
-  accent: string;
-  imageFit?: 'cover' | 'contain';
-};
 
 /* ── Grid + purple ambience like visiblebuilders.io ── */
 function BrandAtmosphere() {
@@ -308,7 +298,7 @@ function SpeakerAvatar({
   const isLogo = imageFit === 'contain';
   return (
     <div
-      className="mx-auto h-64 w-64 overflow-hidden rounded-full sm:h-80 sm:w-80 md:h-[26rem] md:w-[26rem]"
+      className="mx-auto h-40 w-40 overflow-hidden rounded-full sm:h-48 sm:w-48 md:h-60 md:w-60 lg:h-72 lg:w-72"
       style={{
         border: `4px solid ${accent}`,
         boxShadow: `0 0 56px ${accent}88`,
@@ -332,6 +322,11 @@ function SpeakerAvatar({
 }
 
 /* ── Slide 1: Intro ── */
+const INTRO_SPONSORS = [
+  { name: 'The AI Hub', tagline: 'Iron Sharpens Iron' },
+  { name: 'La Rock Medellín', tagline: null },
+] as const;
+
 function SlideIntro() {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden" style={{ background: VB.bg }}>
@@ -365,8 +360,31 @@ function SlideIntro() {
         </h1>
       </div>
 
-      <div className="relative z-10 border-t px-8 py-4 text-center" style={{ borderColor: VB.border }}>
-        <p className="font-mono text-xs font-bold uppercase tracking-[0.28em]" style={{ color: VB.muted }}>
+      <div className="relative z-10 border-t px-6 py-5 md:px-8" style={{ borderColor: VB.border }}>
+        <p className="mb-4 text-center font-mono text-[10px] font-bold uppercase tracking-[0.32em]" style={{ color: VB.muted }}>
+          Sponsors
+        </p>
+        <div className="mx-auto flex max-w-2xl flex-wrap items-baseline justify-center gap-x-8 gap-y-3 sm:gap-x-12">
+          {INTRO_SPONSORS.map((sponsor) => (
+            <div key={sponsor.name} className="text-center">
+              <p
+                className="font-sans text-sm font-bold uppercase tracking-[0.18em] sm:text-base"
+                style={{ color: VB.white }}
+              >
+                {sponsor.name}
+              </p>
+              {sponsor.tagline ? (
+                <p
+                  className="mt-1 font-mono text-[9px] font-bold uppercase tracking-[0.28em]"
+                  style={{ color: '#e8c547' }}
+                >
+                  {sponsor.tagline}
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-center font-mono text-xs font-bold uppercase tracking-[0.28em]" style={{ color: VB.muted }}>
           <span style={{ color: VB.cyan }}>{'>'}</span> VISIBLEBUILDERS.IO
         </p>
       </div>
@@ -441,50 +459,9 @@ function SlidePurpose() {
   );
 }
 
-/* ── Slide 3: Talks ── */
+/* ── Slide 3: Talks — local lineup for tonight, no DB fetch ── */
 function SlideTalks() {
-  const [speakers, setSpeakers] = useState<SlideSpeaker[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch('/api/speakers', { cache: 'no-store' });
-        if (!res.ok) return;
-        const data = (await res.json()) as {
-          speakers?: Array<{
-            id: number;
-            name: string;
-            role: string;
-            imageUrl: string;
-            accent: string;
-            initials: string;
-            imageFit?: 'cover' | 'contain';
-          }>;
-        };
-        if (cancelled || !data.speakers?.length) return;
-        setSpeakers(
-          data.speakers.map((s) => ({
-            id: s.id,
-            name: s.name,
-            role: s.role,
-            image: s.imageUrl,
-            initials: s.initials,
-            accent: s.accent || VB.cyan,
-            imageFit: s.imageFit === 'contain' ? 'contain' : 'cover',
-          }))
-        );
-      } catch {
-        // empty state
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const speakers = TALK_SPEAKERS;
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden" style={{ background: VB.bg }}>
@@ -512,40 +489,30 @@ function SlideTalks() {
           </p>
         </div>
 
-        <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center gap-8 sm:flex-row sm:flex-nowrap sm:items-center sm:justify-center sm:gap-10 md:gap-14">
-          {loading ? (
-            <p className="font-mono text-sm uppercase tracking-widest" style={{ color: VB.muted }}>
-              Loading speakers…
-            </p>
-          ) : speakers.length === 0 ? (
-            <p className="font-mono text-sm uppercase tracking-widest" style={{ color: VB.muted }}>
-              Speakers coming soon
-            </p>
-          ) : (
-            speakers.map((speaker) => (
-              <div key={speaker.id} className="flex w-full max-w-[420px] flex-col items-center text-center">
-                <SpeakerAvatar
-                  image={speaker.image}
-                  name={speaker.name}
-                  initials={speaker.initials}
-                  accent={speaker.accent}
-                  imageFit={speaker.imageFit}
-                />
-                <span
-                  className="mt-6 inline-block px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]"
-                  style={{ border: `1px solid ${speaker.accent}66`, color: speaker.accent }}
-                >
-                  Speaker
-                </span>
-                <p className="mt-3 font-sans text-xl font-black uppercase leading-tight tracking-wide sm:text-2xl" style={{ color: VB.white }}>
-                  {speaker.name}
-                </p>
-                <p className="mt-2 max-w-sm font-mono text-sm leading-relaxed sm:text-base" style={{ color: VB.muted }}>
-                  {speaker.role}
-                </p>
-              </div>
-            ))
-          )}
+        <div className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 items-center justify-items-center gap-6 sm:grid-cols-3 sm:gap-6 md:gap-10">
+          {speakers.map((speaker) => (
+            <div key={speaker.id} className="flex w-full min-w-0 max-w-[320px] flex-col items-center text-center">
+              <SpeakerAvatar
+                image={speaker.image}
+                name={speaker.name}
+                initials={speaker.initials}
+                accent={speaker.accent}
+                imageFit={speaker.imageFit}
+              />
+              <span
+                className="mt-4 inline-block px-3 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.2em]"
+                style={{ border: `1px solid ${speaker.accent}66`, color: speaker.accent }}
+              >
+                Speaker
+              </span>
+              <p className="mt-3 font-sans text-lg font-black uppercase leading-tight tracking-wide sm:text-xl md:text-2xl" style={{ color: VB.white }}>
+                {speaker.name}
+              </p>
+              <p className="mt-2 max-w-[280px] font-mono text-xs leading-relaxed sm:text-sm" style={{ color: VB.muted }}>
+                {speaker.role}
+              </p>
+            </div>
+          ))}
         </div>
 
         <div className="mt-4 shrink-0 text-center sm:mt-6">

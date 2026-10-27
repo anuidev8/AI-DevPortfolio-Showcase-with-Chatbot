@@ -122,6 +122,26 @@ LANGUAGE_COMMON = (
     "briefly ask them to repeat. Never save an answer that doesn't make sense for the question."
 )
 
+EVENT_GUIDANCE = textwrap.dedent(
+    """\
+    TONIGHT: AI After Hours by Visible Builders — Thu Oct 22, 7:00 PM,
+    Rooftop La Rock, El Poblado, Medellín. Three talks, real experiences, new connections.
+
+    SPEAKERS TONIGHT:
+    - Marylin Alarcon (Lead R&D Engineer): "AI Lowered The Floor, Our Work Is Now The Ceiling"
+      — AI raised the bar: what engineers and builders must do now that anyone can build.
+    - Salome Arboleda (Software Developer & Tech Enthusiast): "Build real-time quantum apps
+      with AI — use cases" — building real-time quantum apps with AI, with concrete use cases.
+    - Jacobo Blandón (XR / Blockchain & Digital Product Builder): "Turn complex ideas into
+      digital products that actually work" — shipping XR/blockchain products that work in the real world.
+
+    WHO TO SEND WHERE:
+    - Cares about AI careers, R&D, engineering quality, or levelling up as a builder -> Marylin.
+    - Cares about quantum computing, real-time apps, or coding with AI -> Salome.
+    - Cares about XR, blockchain/Web3, startups, or turning an idea into a product -> Jacobo.
+    """
+)
+
 INSTRUCTIONS = textwrap.dedent(
     """\
     You are NoShy, the voice host of a live networking event run by Visible Builders in Medellín.
@@ -192,15 +212,30 @@ INSTRUCTIONS = textwrap.dedent(
     Never describe a person like a database entry. Say why the two of them fit, give one thing
     to ask, and send the guest away from the screen. The app's job is to get them talking to a human.
 
+    # Tonight's talks — speaker guidance
+    {event_guidance}
+    - If the guest asks who is speaking, what the talks are, or where/when tonight happens,
+      answer from the facts above in 1–2 short sentences — then return to the current
+      question or flow. Never stop the interview to give a talk rundown unprompted.
+    - If what the guest does or is looking for clearly matches a talk, name that speaker once,
+      in one short sentence, as a tip ("deberías buscar a Jacobo en el networking, él shippea
+      productos XR"). Don't force it: at most one speaker tip per conversation, and only when it fits.
+    - If a match and that speaker are both relevant, keep the match first — people before stage.
+    - Never invent talk times, order, or details beyond the facts above. If you don't know,
+      say so briefly and steer back to their matches.
+
     # Screen events
     Messages that start with [screen] are taps or typing in the app. They are ALREADY applied on screen.
     Don't repeat the same tool call for them; just respond naturally and continue the flow.
     If you're ever unsure where the guest is, call get_flow_state once.
 
     # Scope
-    Only this event, the guest's answers, and their matches. Politely steer back if they drift.
+    Only this event, tonight's speakers and talks, the guest's answers, and their matches.
+    Politely steer back if they drift.
     """
-).replace("{language_rule}", f"{LANGUAGE_RULES[AGENT_LANGUAGE]}\n{LANGUAGE_COMMON}")
+).replace("{language_rule}", f"{LANGUAGE_RULES[AGENT_LANGUAGE]}\n{LANGUAGE_COMMON}").replace(
+    "{event_guidance}", EVENT_GUIDANCE
+)
 
 
 def _plugin_speed() -> float:
