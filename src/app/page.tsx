@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { AppLayout } from "@/layout/AppLayout";
+import { siteDescription, siteName } from "@/lib/seo";
 import { PortfolioHome } from "@/components/portfolio/PortfolioHome";
+import { SitePage } from "@/components/portfolio/SiteChrome";
 
 export const metadata: Metadata = {
-  title: "Angel Arrieta — AI & Full-Stack Engineer",
-  description:
-    "I build AI products people actually talk to: real-time voice agents, agentic web apps and AI-powered storefronts with Next.js, LiveKit, LangGraph and AWS. 7+ years from first prototype to real users.",
+  title: { absolute: "Angel Mateus — AI Voice Agents, Software, Mentorship & Events" },
+  description: siteDescription,
+  alternates: { canonical: "/" },
+  openGraph: { url: "/", siteName, type: "website", locale: "en_US" },
 };
 
 export default function Home() {
   return (
-    <AppLayout bare>
+    <SitePage>
       <PortfolioHome />
-    </AppLayout>
+    </SitePage>
   );
 }

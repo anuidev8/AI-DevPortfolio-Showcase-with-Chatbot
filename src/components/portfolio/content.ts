@@ -1,19 +1,29 @@
+export const brand = {
+  name: "Angel Mateus",
+  positioning:
+    "I build AI voice agents and enterprise software, mentor developers into AI engineers, and host Medellín’s tech community.",
+};
+
+const whatsappNumber = "573206456179";
+
+export const whatsapp = (text: string) => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+
 export const links = {
   github: "https://github.com/anuidev8",
   linkedin: "https://linkedin.com/in/angel-mateus-arrieta-morelo-739623123",
   youtube: "https://youtube.com/@anuidev",
   email: "angelarrieta34@gmail.com",
-  booking:
-    "https://wa.me/573206456179?text=Hi%20Angel%2C%20I%27d%20like%20to%20book%20a%2020-min%20call%20about%20an%20AI%20product.",
+  booking: whatsapp("Hi Angel, I'd like to book a 20-min call about an AI product."),
   cv: "/Angel_Arrieta_CV.pdf",
 };
 
 export const navItems = [
-  { href: "#work", label: "Work" },
-  { href: "#services", label: "Services" },
-  { href: "#experience", label: "Experience" },
-  { href: "#community", label: "Community" },
-  { href: "#contact", label: "Contact" },
+  { href: "/software", label: "Software" },
+  { href: "/voice-ai", label: "Voice AI" },
+  { href: "/mentorship", label: "Mentorship" },
+  { href: "/events", label: "Events" },
+  { href: "/work", label: "Work" },
+  { href: "/post", label: "Articles" },
 ];
 
 export const stats = [
@@ -32,9 +42,17 @@ export const clients = [
   "ISA Company",
 ];
 
-export type CaseCategory = "Voice AI" | "E-commerce" | "Platforms";
+export const sponsors = [
+  { name: "The AI Hub", logo: "/sponsors/the-ai-hub.png", width: 790, height: 228 },
+  { name: "La Rock Medellín", logo: "/sponsors/la-rock-medellin.png", width: 432, height: 114 },
+  { name: "The School of Breath", logo: "/sponsors/the schoolofbretah.png", width: 394, height: 308 },
+  { name: "The Credle Group", logo: "/sponsors/thecredlegroup.png", width: 220, height: 170 },
+  { name: "GOAT", logo: "/sponsors/goat.png", width: 194, height: 162 },
+];
 
-export const caseCategories: CaseCategory[] = ["Voice AI", "E-commerce", "Platforms"];
+export type CaseCategory = "Voice AI" | "E-commerce" | "Platforms" | "Events";
+
+export const caseCategories: CaseCategory[] = ["Voice AI", "E-commerce", "Platforms", "Events"];
 
 export type CaseMedia =
   | { type: "image"; src: string; alt: string; fit: "cover" | "contain"; caption?: string }
@@ -152,10 +170,46 @@ export const cases: CaseStudy[] = [
     stack: ["Next.js", "NestJS", "Geoportal"],
     link: { href: "https://palenke.org", label: "Visit palenke.org →" },
   },
+  {
+    tag: "EVENTS · COMMUNITY",
+    client: "Visible Builders · Medellín",
+    title: "AI After Hours, with an AI host in the room",
+    category: "Events",
+    media: [
+      {
+        type: "image",
+        src: "/social/ai-after-hours/ai-after-hours-oct-22-poster.jpg",
+        alt: "AI After Hours event poster for October 22",
+        fit: "contain",
+        caption: "AI AFTER HOURS",
+      },
+      {
+        type: "image",
+        src: "/community/visible-builders-2.jpg",
+        alt: "A speaker on the mic during a Visible Builders talk",
+        fit: "cover",
+        caption: "ON STAGE",
+      },
+    ],
+    built:
+      "A monthly AI talk night plus the tech behind it: QR check-in, Noshy (a voice host that matches attendees by answering three questions out loud) and icebreaker challenge cards.",
+    result: "129 builders registered and 12 speakers and demos on stage.",
+    stack: ["LiveKit", "Next.js", "PostgreSQL", "Voice AI"],
+    link: { href: "/post/ai-after-hours", label: "See the event →" },
+  },
+];
+
+const caseByTitle = (title: string) => cases.find((c) => c.title === title)!;
+
+export const featuredCases: CaseStudy[] = [
+  caseByTitle("Huella Digital"),
+  caseByTitle("A real-time voice agent that guides breathwork"),
+  caseByTitle("AI After Hours, with an AI host in the room"),
 ];
 
 export type Service = {
   num: string;
+  href: string;
   title: string;
   desc: string;
   idealFor: string;
@@ -166,21 +220,39 @@ export type Service = {
 export const services: Service[] = [
   {
     num: "01",
-    title: "Voice AI agents",
-    desc: "Real-time voice assistants that coach, guide or support your users, from prototype to production.",
-    idealFor: "wellness apps, coaching, customer support",
+    href: "/software",
+    title: "Enterprise software",
+    desc: "Custom AI platforms, internal tools and agents connected to your own data, from roadmap to production.",
+    idealFor: "mid-size and enterprise teams in LatAm and the US",
+    timeline: "Discovery in 2 weeks",
+    price: "Projects from USD 15k",
   },
   {
     num: "02",
-    title: "AI-powered e-commerce",
-    desc: "A custom Shopify storefront with an AI assistant that answers questions and helps shoppers decide.",
-    idealFor: "D2C brands launching or relaunching",
+    href: "/voice-ai",
+    title: "AI voice agents",
+    desc: "An AI receptionist that answers calls and WhatsApp 24/7 in English and Spanish and books appointments.",
+    idealFor: "clinics, real estate, hotels, restaurants",
+    timeline: "Live in 14 days",
+    price: "Results guaranteed",
   },
   {
     num: "03",
-    title: "Product frontends & platforms",
-    desc: "Next.js apps, dashboards and agentic interfaces with clean UX, analytics and solid performance.",
-    idealFor: "startups, agencies, organizations",
+    href: "/mentorship",
+    title: "AI Engineer mentorship",
+    desc: "An 8-week program to build and sell AI agents, plus hands-on AI workshops for company teams.",
+    idealFor: "LatAm developers and company teams",
+    timeline: "8-week cohorts",
+    price: "1:1 or group",
+  },
+  {
+    num: "04",
+    href: "/events",
+    title: "Events & community",
+    desc: "Tech events designed and hosted end to end, with interactive tech no other host brings: voice host, QR check-in, challenge cards.",
+    idealFor: "companies, coworkings, universities, brands",
+    timeline: "Meetups to hackathons",
+    price: "Sponsorships open",
   },
 ];
 

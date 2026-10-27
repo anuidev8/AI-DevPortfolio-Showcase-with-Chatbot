@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Bricolage_Grotesque, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
+import { JsonLd } from "@/components/JsonLd";
+import { personJsonLd, siteDescription, siteName, siteUrl } from "@/lib/seo";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,9 +32,65 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Angel Arrieta",
-  description: "I’m a skilled web UI developer with a Computer Science degree and over 6 years of experience delivering interactive, accessible, and visually compelling web applications. With expertise in JavaScript frameworks like React.js, Next.js, Vue.js, and Nuxt.js, I create seamless animations and engaging user experiences. My strong foundation in HTML, CSS, and SVG ensures every application is designed for both beauty and functionality. Let’s work together to build something remarkable!",
-  keywords:['JavaScript Developer Medellín', "Full Stack Web Developer", "React developer", "Next.js Developer", "Vue.js Developer", "SVG Animation" , "HTML5/CSS3 Development", "Medellín Tech Community", "WebRTC", "Microsoft Entra ID", "Lottie Animation"]
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Angel Mateus — AI Voice Agents, Software, Mentorship & Events",
+    template: `%s · ${siteName}`,
+  },
+  description: siteDescription,
+  applicationName: siteName,
+  authors: [{ name: siteName, url: siteUrl }],
+  creator: siteName,
+  keywords: [
+    "Angel Mateus",
+    "AI voice agents",
+    "AI receptionist",
+    "Enterprise AI software",
+    "AI Engineer mentorship",
+    "AI developer Medellín",
+    "Tech events Medellín",
+    "AI After Hours",
+    "LiveKit developer",
+    "Next.js developer",
+  ],
+  openGraph: {
+    type: "website",
+    siteName,
+    locale: "en_US",
+    title: "Angel Mateus — AI Voice Agents, Software, Mentorship & Events",
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Angel Mateus — AI Voice Agents, Software, Mentorship & Events",
+    description: siteDescription,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0B1020",
+};
+
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    personJsonLd,
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: siteName,
+      description: siteDescription,
+      inLanguage: "en",
+      publisher: { "@id": `${siteUrl}/#person` },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -45,6 +103,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} ${plexSans.variable} ${plexMono.variable} antialiased`}
       >
+        <JsonLd data={siteJsonLd} />
         {children}
       </body>
     </html>

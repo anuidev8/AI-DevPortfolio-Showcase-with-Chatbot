@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { caseCategories, cases, type CaseCategory, type CaseStudy } from "./content";
 import { MediaCarousel } from "./MediaCarousel";
-import { container, eyebrow, sectionTitle } from "./styles";
+import { container } from "./styles";
 
 type Filter = "All" | CaseCategory;
 
@@ -16,39 +16,37 @@ export const WorkSection = () => {
   const visible = filter === "All" ? cases : cases.filter((c) => c.category === filter);
 
   return (
-    <section id="work" className={`${container} scroll-mt-6 pt-24`}>
-      <div className="flex flex-wrap items-end justify-between gap-5">
-        <div>
-          <div className={eyebrow}>SELECTED WORK</div>
-          <h2 className={`${sectionTitle} mt-2.5 text-[clamp(36px,5vw,48px)]`}>Shipped, used, measured.</h2>
-        </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter case studies">
-          {filters.map((f) => (
-            <button
-              key={f}
-              type="button"
-              aria-pressed={filter === f}
-              onClick={() => setFilter(f)}
-              className={`min-h-[44px] rounded-full px-4 py-2.5 text-sm transition-colors ${
-                filter === f
-                  ? "bg-pf-text text-pf-bg"
-                  : "border border-pf-chip text-pf-soft hover:border-pf-strong hover:text-pf-text"
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-10 flex flex-wrap gap-7">
-        {visible.map((c) => (
-          <CaseCard key={c.title} study={c} />
+    <section id="work" className={`${container} scroll-mt-6`}>
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filter case studies">
+        {filters.map((f) => (
+          <button
+            key={f}
+            type="button"
+            aria-pressed={filter === f}
+            onClick={() => setFilter(f)}
+            className={`min-h-[44px] rounded-full px-4 py-2.5 text-sm transition-colors ${
+              filter === f
+                ? "bg-pf-text text-pf-bg"
+                : "border border-pf-chip text-pf-soft hover:border-pf-strong hover:text-pf-text"
+            }`}
+          >
+            {f}
+          </button>
         ))}
       </div>
+
+      <CaseGrid studies={visible} />
     </section>
   );
 };
+
+export const CaseGrid = ({ studies }: { studies: CaseStudy[] }) => (
+  <div className="mt-10 flex flex-wrap gap-7">
+    {studies.map((c) => (
+      <CaseCard key={c.title} study={c} />
+    ))}
+  </div>
+);
 
 const CaseCard = ({ study }: { study: CaseStudy }) => {
   const external = study.link?.href.startsWith("http");
