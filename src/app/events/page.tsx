@@ -11,18 +11,41 @@ import { SponsorStrip, external } from "@/components/portfolio/SiteChrome";
 import { container, eyebrow, outlineButton, primaryButton, sectionTitle } from "@/components/portfolio/styles";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Tech Events, Hackathons & AI After Hours",
+  title: "Community Host, Connector & Tech Events in Medellín",
   description:
-    "Tech events, AI nights and hackathons designed and hosted end to end in Medellín, with a voice AI host, QR check-in and challenge cards. Sponsor AI After Hours.",
+    "Angel Mateus connects people: tech events, AI nights, hackathons and strategic introductions in Medellín, hosted by an engineer, MC and community builder. Sponsor AI After Hours.",
   path: "/events",
 });
 
 const jsonLd = serviceJsonLd({
-  name: "Tech event hosting",
+  name: "Community hosting, introductions and tech events",
   description: metadata.description!,
   path: "/events",
   serviceType: "Event planning and hosting",
 });
+
+const strengths = [
+  {
+    tag: "CONNECTOR",
+    title: "The right people",
+    desc: "Founders, engineers, creators, companies and speakers across Medellín’s tech scene. I make intros that lead to clients, partners and hires.",
+  },
+  {
+    tag: "HOST",
+    title: "A room that talks",
+    desc: "On stage and off, in English and Spanish: I warm people up, keep the energy high and make sure nobody leaves without meeting someone new.",
+  },
+  {
+    tag: "ENGINEER",
+    title: "Tech no other host has",
+    desc: "I build AI voice agents for a living, so your event gets a voice AI host, QR check-in and matchmaking built in.",
+  },
+  {
+    tag: "RESULTS",
+    title: "Proof, not just photos",
+    desc: "Check-in and matchmaking show who came and who met whom, so sponsors see qualified conversations, not impressions.",
+  },
+];
 
 export default function EventsPage() {
   return (
@@ -36,6 +59,23 @@ export default function EventsPage() {
           </div>
         }
       >
+        <section className={`${container} pt-24`}>
+          <div className={eyebrow}>WHY ME</div>
+          <h2 className={`${sectionTitle} mt-2.5 max-w-[860px] text-[clamp(32px,4.5vw,44px)]`}>
+            Most hosts can run a room. I also <span className="text-pf-accent">know who should meet whom</span>, and
+            build the tech to make it happen.
+          </h2>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {strengths.map((st) => (
+              <div key={st.title} className="rounded-[20px] border border-pf-border bg-pf-surface p-6">
+                <div className="font-plex-mono text-[13px] text-pf-live">{st.tag}</div>
+                <div className="mt-1.5 font-display text-[22px] font-bold">{st.title}</div>
+                <p className="mt-1.5 text-[15px] text-pf-body">{st.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className={`${container} pt-24`}>
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-[760px]">

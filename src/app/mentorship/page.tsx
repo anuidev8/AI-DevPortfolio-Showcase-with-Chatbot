@@ -5,9 +5,9 @@ import { ServicePage } from "@/components/portfolio/ServicePage";
 import { mentorshipPage } from "@/components/portfolio/service-pages";
 
 export const metadata: Metadata = pageMetadata({
-  title: "AI Engineer Mentorship for Developers",
+  title: "AI Engineer Mentorship: Skills, Leadership & Network",
   description:
-    "An 8-week program for LatAm developers to build and sell AI agents: LLMs, RAG, LiveKit voice agents, production, pricing and international clients. Plus AI workshops for companies.",
+    "An 8-week mentorship for LatAm developers: build AI agents (LLMs, RAG, LiveKit voice agents), grow as a leader, build a builder mindset and get warm intros to Medellín’s AI network.",
   path: "/mentorship",
 });
 

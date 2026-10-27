@@ -240,7 +240,7 @@ export const services: Service[] = [
     num: "03",
     href: "/mentorship",
     title: "AI Engineer mentorship",
-    desc: "An 8-week program to build and sell AI agents, plus hands-on AI workshops for company teams.",
+    desc: "An 8-week program to build AI agents, grow as a leader and connect with the right people, plus AI workshops for teams.",
     idealFor: "LatAm developers and company teams",
     timeline: "8-week cohorts",
     price: "1:1 or group",
@@ -248,10 +248,10 @@ export const services: Service[] = [
   {
     num: "04",
     href: "/events",
-    title: "Events & community",
-    desc: "Tech events designed and hosted end to end, with interactive tech no other host brings: voice host, QR check-in, challenge cards.",
-    idealFor: "companies, coworkings, universities, brands",
-    timeline: "Meetups to hackathons",
+    title: "Community host & connector",
+    desc: "Events that put the right people in one room, strategic introductions, and a host and MC who makes sure they meet.",
+    idealFor: "companies, brands, startups, coworkings, universities",
+    timeline: "Events, intros, communities",
     price: "Sponsorships open",
   },
 ];
