@@ -1,19 +1,29 @@
 'use client'
 
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
-import { caseCategories, cases, type CaseCategory, type CaseStudy } from "./content";
+import { useEffect, useState } from "react";
+import { allCases, caseCategories, type CaseCategory, type CaseStudy } from "./content";
 import { MediaCarousel } from "./MediaCarousel";
 import { container } from "./styles";
 
 type Filter = "All" | CaseCategory;
 
 const filters: Filter[] = ["All", ...caseCategories];
+const PAGE_SIZE = 6;
 
 export const WorkSection = () => {
   const [filter, setFilter] = useState<Filter>("All");
-  const visible = filter === "All" ? cases : cases.filter((c) => c.category === filter);
+  const [page, setPage] = useState(1);
+
+  const visible = filter === "All" ? allCases : allCases.filter((c) => c.category === filter);
+  const totalPages = Math.max(1, Math.ceil(visible.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageItems = visible.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
 
   return (
     <section id="work" className={`${container} scroll-mt-6`}>
@@ -35,7 +45,45 @@ export const WorkSection = () => {
         ))}
       </div>
 
-      <CaseGrid studies={visible} />
+      <CaseGrid studies={pageItems} />
+
+      {totalPages > 1 && (
+        <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Work pagination">
+          <button
+            type="button"
+            disabled={currentPage <= 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-pf-chip text-pf-soft transition-colors hover:border-pf-strong hover:text-pf-text disabled:pointer-events-none disabled:opacity-40"
+            aria-label="Previous page"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+            <button
+              key={n}
+              type="button"
+              aria-current={n === currentPage ? "page" : undefined}
+              onClick={() => setPage(n)}
+              className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full font-plex-mono text-sm transition-colors ${
+                n === currentPage
+                  ? "bg-pf-text text-pf-bg"
+                  : "border border-pf-chip text-pf-soft hover:border-pf-strong hover:text-pf-text"
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+          <button
+            type="button"
+            disabled={currentPage >= totalPages}
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-pf-chip text-pf-soft transition-colors hover:border-pf-strong hover:text-pf-text disabled:pointer-events-none disabled:opacity-40"
+            aria-label="Next page"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </nav>
+      )}
     </section>
   );
 };

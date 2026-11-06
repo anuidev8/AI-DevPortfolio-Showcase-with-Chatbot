@@ -11,6 +11,7 @@ const pages: { path: string; priority: number; changeFrequency: MetadataRoute.Si
   { path: "/contact", priority: 0.7, changeFrequency: "yearly" },
   { path: "/post", priority: 0.7, changeFrequency: "weekly" },
   { path: "/post/ai-after-hours", priority: 0.7, changeFrequency: "weekly" },
+  { path: "/post/devfest-medellin-2026-agente-comercial-voz", priority: 0.7, changeFrequency: "yearly" },
   { path: "/post/voice-agents-generative-ui-enterprise", priority: 0.6, changeFrequency: "yearly" },
   { path: "/post/google-a2ui-in-action-copilotkit", priority: 0.6, changeFrequency: "yearly" },
   { path: "/post/how-i-desing-from-static-uis-to-agentic-uis-my-real-world-workflow", priority: 0.6, changeFrequency: "yearly" },

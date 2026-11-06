@@ -62,7 +62,9 @@ export const MediaCarousel = ({ media, label, className = "aspect-video border-b
           >
             {m.type === "video" ? (
               <>
-                <Image src={m.poster} alt="" fill sizes="560px" className="scale-110 object-cover opacity-40 blur-2xl" />
+                {m.poster ? (
+                  <Image src={m.poster} alt="" fill sizes="560px" className="scale-110 object-cover opacity-40 blur-2xl" />
+                ) : null}
                 <video
                   ref={(el) => {
                     videoRefs.current[i] = el;

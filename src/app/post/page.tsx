@@ -16,6 +16,11 @@ const jsonLd = { "@context": "https://schema.org", ...breadcrumbJsonLd([{ name: 
 
 const posts = [
   {
+    href: "/post/devfest-medellin-2026-agente-comercial-voz",
+    tag: "DEVFEST 2026 · ES",
+    title: "A sales agent that listens, understands and acts",
+  },
+  {
     href: "/post/voice-agents-generative-ui-enterprise",
     tag: "VOICE AI · ES",
     title: "Voice agents and generative UI for the enterprise",

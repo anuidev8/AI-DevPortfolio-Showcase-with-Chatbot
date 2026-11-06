@@ -56,7 +56,7 @@ export const caseCategories: CaseCategory[] = ["Voice AI", "E-commerce", "Platfo
 
 export type CaseMedia =
   | { type: "image"; src: string; alt: string; fit: "cover" | "contain"; caption?: string }
-  | { type: "video"; src: string; poster: string; alt: string; caption?: string };
+  | { type: "video"; src: string; poster?: string; alt: string; caption?: string };
 
 export type CaseStudy = {
   tag: string;
@@ -198,6 +198,194 @@ export const cases: CaseStudy[] = [
     link: { href: "/post/ai-after-hours", label: "See the event →" },
   },
 ];
+
+/** Older portfolio projects shown after the curated cases, with pagination on /work. */
+export const archiveCases: CaseStudy[] = [
+  {
+    tag: "VOICE AI · FITNESS",
+    client: "Personal build",
+    title: "Fitness AI Dashboard",
+    category: "Voice AI",
+    media: [
+      {
+        type: "video",
+        src: "https://res.cloudinary.com/dnmjmjdsj/video/upload/v1772649648/videos%20anuidev/V%C3%ADdeo_sin_t%C3%ADtulo_Hecho_con_Clipchamp-2_djxir7.mp4",
+        alt: "Fitness AI dashboard with voice-powered health and progress tracking",
+      },
+    ],
+    built:
+      "AI fitness dashboard that tracks workouts, goals and nutrition, with a voice assistant and real-time analytics for personalized training plans.",
+    stack: ["Next.js", "OpenAI", "Voice Interface", "Data Visualization"],
+  },
+  {
+    tag: "VOICE AI · HIRING",
+    client: "Personal build",
+    title: "Marketing AI talent matching",
+    category: "Voice AI",
+    media: [
+      {
+        type: "video",
+        src: "https://res.cloudinary.com/dnmjmjdsj/video/upload/v1772649393/videos%20anuidev/video-2_il1cdn.mp4",
+        alt: "Voice-driven marketing talent matching platform demo",
+      },
+    ],
+    built:
+      "Voice-driven hiring assistant where business owners speak their needs and AI matches and ranks digital marketing freelancers by intent, budget and channels.",
+    stack: ["Next.js", "OpenAI", "WebRTC", "Vercel AI SDK"],
+    link: {
+      href: "https://github.com/anuidev8/conversational-event-flow.git",
+      label: "View on GitHub →",
+    },
+  },
+  {
+    tag: "VOICE AI · MOBILE",
+    client: "Personal build",
+    title: "Real-time voice AI on React Native",
+    category: "Voice AI",
+    media: [
+      {
+        type: "video",
+        src: "https://res.cloudinary.com/dnmjmjdsj/video/upload/v1758061704/videos%20anuidev/Copia_de_video_example_Hecho_con_Clipchamp_wefai9.mp4",
+        alt: "Real-time voice AI mobile app demo with OpenAI Realtime",
+      },
+    ],
+    built:
+      "Mobile demo streaming live audio with OpenAI Realtime, WebRTC and Expo — the same protocol pattern works with Google and ElevenLabs.",
+    stack: ["React Native", "Expo", "OpenAI Realtime", "WebRTC"],
+  },
+  {
+    tag: "AI AGENT",
+    client: "Colombia · Public tenders",
+    title: "SECOP AI Agent",
+    category: "Platforms",
+    media: [
+      {
+        type: "video",
+        src: "https://res.cloudinary.com/dnmjmjdsj/video/upload/v1758061155/videos%20anuidev/secop_Hecho_con_Clipchamp_etzgrp.mp4",
+        alt: "SECOP AI agent helping find and win public tenders in Colombia",
+      },
+    ],
+    built:
+      "Agentic chat that helps find and win Colombian public tenders, with Next.js + CopilotKit on the frontend and a CrewAI Flask backend on datos.gov.co.",
+    stack: ["Next.js", "CopilotKit", "CrewAI", "Python", "OpenAI"],
+  },
+  {
+    tag: "VOICE AI · DEMO",
+    client: "Tribu IA",
+    title: "Real-time meditation demo",
+    category: "Voice AI",
+    media: [
+      {
+        type: "video",
+        src: "https://res.cloudinary.com/dnmjmjdsj/video/upload/v1758059434/videos%20anuidev/Copia_de_video-media-ai-protocl_Hecho_con_Clipchamp_vvfpkp.mp4",
+        alt: "Real-time meditation demo presented at Tribu IA",
+      },
+    ],
+    built:
+      "Live meditation demo combining Google Live voice and camera, exploring WebSocket vs WebRTC for real-time multimodal agents.",
+    stack: ["Google Live API", "WebSocket", "WebRTC"],
+  },
+  {
+    tag: "AI INTERFACES",
+    client: "Exploration",
+    title: "Google Voice & Camera Vision Live",
+    category: "Voice AI",
+    media: [
+      {
+        type: "video",
+        src: "https://res.cloudinary.com/dnmjmjdsj/video/upload/v1758059335/videos%20anuidev/V%C3%ADdeo_sin_t%C3%ADtulo_Hecho_con_Clipchamp_1_ziopjg.mp4",
+        alt: "Google Voice and Camera Vision Live API exploration",
+      },
+    ],
+    built:
+      "Small use case integrating Google Voice and Camera Vision Live with Next.js, exploring how AI reshapes frontend interfaces.",
+    stack: ["Next.js", "Google Voice API", "Camera Vision", "Vercel"],
+  },
+  {
+    tag: "AUTOMATION",
+    client: "Marketing ops",
+    title: "n8n data analysis & automation",
+    category: "Platforms",
+    media: [
+      {
+        type: "video",
+        src: "https://res.cloudinary.com/dnmjmjdsj/video/upload/v1758057664/videos%20anuidev/n8n-ads_wyekk0.mp4",
+        alt: "n8n data analysis and marketing automation workflows",
+      },
+    ],
+    built:
+      "Interactive n8n workflows for digital marketing automation — turning complex process data into clear, actionable insights.",
+    stack: ["n8n", "Data Analysis", "Automation"],
+  },
+  {
+    tag: "WELLNESS · WEB",
+    client: "Meditate With Abhi",
+    title: "Sleep music web app",
+    category: "Platforms",
+    built: "Web app with expertly designed tools and resources for sleep and well-being.",
+    stack: ["React", "React Query", "TypeScript", "Tailwind"],
+    link: { href: "https://www.meditatewithabhi.com/app", label: "Visit the app →" },
+  },
+  {
+    tag: "FRONTEND",
+    client: "UI experiment",
+    title: "SONY DualSense wireless control UI",
+    category: "Platforms",
+    built: "Interactive DualSense controller UI built with React, CSS and SVG.",
+    stack: ["React", "CSS", "SVG"],
+    link: { href: "https://sony-wireless-control-ui.vercel.app", label: "See live →" },
+  },
+  {
+    tag: "FRONTEND",
+    client: "Podcast site",
+    title: "At The Cusp Of Freedom",
+    category: "Platforms",
+    built: "Podcast site for At The Cusp Of Freedom, built with Next.js.",
+    stack: ["Next.js", "CSS"],
+    link: { href: "https://at-the-cusp-of-freedom-podcast.vercel.app/", label: "Visit site →" },
+  },
+  {
+    tag: "FRONTEND",
+    client: "Personal",
+    title: "Briefcase",
+    category: "Platforms",
+    built: "Personal web briefcase to share knowledge, projects and people I’ve worked with.",
+    stack: ["Next.js", "GSAP"],
+    link: { href: "https://briefcase-lilac.vercel.app", label: "See live →" },
+  },
+  {
+    tag: "ANIMATION",
+    client: "Education",
+    title: "Anatomy of a Neuron",
+    category: "Platforms",
+    built: "SVG animation that explains how a neuron works, built with GSAP.",
+    stack: ["SVG", "GSAP"],
+    link: { href: "https://neuron-anatomy-animation.vercel.app", label: "See animation →" },
+  },
+  {
+    tag: "FRONTEND",
+    client: "Retail",
+    title: "Vista Verde Mall",
+    category: "Platforms",
+    built:
+      "Mall landing page with 360° store imagery, events and featured shops, built with Next.js and Three.js.",
+    stack: ["Next.js", "React", "Three.js", "Tailwind"],
+    link: { href: "https://mall-landing-page.vercel.app/", label: "Visit site →" },
+  },
+  {
+    tag: "PLATFORM",
+    client: "Medellín",
+    title: "Events Medellín",
+    category: "Events",
+    built:
+      "Language-exchange and culture platform for Medellín — unlock languages, culture and rewards while exploring the city.",
+    stack: ["WordPress"],
+    link: { href: "https://www.events-medellin.com", label: "Visit site →" },
+  },
+];
+
+/** Curated case studies first, then the older archive — used by /work pagination. */
+export const allCases: CaseStudy[] = [...cases, ...archiveCases];
 
 const caseByTitle = (title: string) => cases.find((c) => c.title === title)!;
 
