@@ -30,3 +30,6 @@ videos/**/.npm-cache/
 
 # local DB backups
 backups/
+
+# Lead finder output (contains business contact data)
+scripts/leads/output/

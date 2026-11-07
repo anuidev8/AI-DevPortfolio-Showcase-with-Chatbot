@@ -9,6 +9,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { HookAvatar } from '@/components/devfest-avatar/HookAvatar';
+import { IntroSequence, INTRO_HANDOFF_EVENT } from '@/components/devfest-intro/IntroSequence';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { AnimatePresence, motion, type PanInfo } from 'framer-motion';
@@ -17,9 +18,9 @@ import {
   ArrowLeft,
   ArrowRight,
   AudioLines,
-  Baby,
   Bot,
   Brain,
+  Calendar,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -34,9 +35,10 @@ import {
   Layers,
   MessageSquare,
   Mic,
+  Phone,
   Radio,
+  ShoppingBag,
   Sparkles,
-  Users,
   X,
   Lock,
   ShieldCheck,
@@ -293,7 +295,7 @@ function ConceptList({ items, tone = 'signal' }: { items: { term: string; body: 
 /* 01 · Hook                                                           */
 /* ------------------------------------------------------------------ */
 
-function HookSlide() {
+function HookSlide({ onReplayIntro }: { onReplayIntro?: () => void } = {}) {
   return (
     <div className="grid h-full items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
       <div>
@@ -327,6 +329,11 @@ function HookSlide() {
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="btn btn-quiet">
               <Github className="h-4 w-4" /> Código
             </a>
+            {onReplayIntro && (
+              <button type="button" onClick={onReplayIntro} className="btn btn-quiet" title="Atajo: I">
+                <AudioLines className="h-4 w-4" /> Replay intro
+              </button>
+            )}
           </div>
         </Reveal>
         <Reveal delay={0.35}>
@@ -347,51 +354,24 @@ function HookSlide() {
 
 const PEOPLE = [
   {
-    icon: Baby,
-    who: 'Un niño',
-    quote: '“¿Por qué el cielo es azul?”',
-    body: 'Todavía no sabe leer ni escribir bien, pero ya pregunta. La voz es su primera interfaz.',
+    icon: Calendar,
+    who: 'Un recordatorio',
+    quote: '“Recuérdame la cita a las tres.”',
+    body: 'Lo de todos los días: agendar, recordar, no olvidar. Se pide hablando, sin abrir el calendario.',
   },
   {
-    icon: Heart,
-    who: 'Una mamá',
-    quote: '“Recuérdame la cita del pediatra el jueves.”',
-    body: 'Manos ocupadas, mil cosas a la vez. Hablar es más rápido que abrir una app y tocar tres menús.',
+    icon: Phone,
+    who: 'Una llamada',
+    quote: '“Llama a mamá.”',
+    body: 'Contactar a alguien no debería ser buscar contactos y tocar tres pantallas. Es una frase.',
   },
   {
-    icon: Users,
-    who: 'Un abuelo',
-    quote: '“Llama a mi nieta.”',
-    body: 'Los menús y la letra pequeña lo excluyen. La voz no le pide aprender nada nuevo.',
+    icon: ShoppingBag,
+    who: 'Un pedido',
+    quote: '“Pide el domicilio de siempre.”',
+    body: 'Compras, citas, preguntas del día a día. La voz deja hacer lo básico sin aprender menús.',
   },
 ];
-
-function PeopleSlide() {
-  return (
-    <div className="flex h-full flex-col justify-center">
-      <SlideHead
-        eyebrow="01 · Para quién"
-        title="Todos sabemos hablar."
-        accent="No todos sabemos usar menús."
-        lead="Antes de hablar de tecnología: la voz es la interfaz que no hay que aprender."
-      />
-      <div className="mt-10 grid gap-3 md:grid-cols-3">
-        {PEOPLE.map((p, i) => (
-          <Reveal key={p.who} delay={0.2 + i * 0.08}>
-            <div className="tile flex h-full flex-col gap-5 p-6">
-              <IconTile icon={p.icon} tone={i === 0 ? 'glow' : i === 1 ? 'signal' : 'good'} />
-              <div>
-                <p className="eyebrow">{p.who}</p>
-                <p className="mt-3 text-2xl leading-snug text-[var(--text)]">{p.quote}</p>
-              </div>
-              <p className="mt-auto text-sm leading-relaxed text-[var(--dim)]">{p.body}</p>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /* 03 · Evolución de las interfaces                                    */
@@ -431,8 +411,9 @@ function Media({ media, className = '' }: { media: MediaSrc; className?: string 
 }
 
 /** Thumbnail that opens the same picture or video in a full-screen lightbox. */
-function ExpandableMedia({ media }: { media: MediaSrc }) {
+function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; aspect?: string }) {
   const [open, setOpen] = useState(false);
+  const lightboxVideoRef = useRef<HTMLVideoElement>(null);
 
   const close = useCallback(() => {
     delete document.body.dataset.mediaLightbox;
@@ -451,6 +432,22 @@ function ExpandableMedia({ media }: { media: MediaSrc }) {
     return () => window.removeEventListener('close-media-lightbox', onClose);
   }, [open, close]);
 
+  // Fullscreen playback with sound (thumbnail stays muted/looping).
+  useEffect(() => {
+    if (!open || media.kind !== 'video') return;
+    const video = lightboxVideoRef.current;
+    if (!video) return;
+    video.muted = false;
+    video.volume = 1;
+    const play = () => {
+      void video.play().catch(() => {
+        // Autoplay-with-sound blocked: controls stay available so the viewer can unmute.
+      });
+    };
+    if (video.readyState >= 2) play();
+    else video.addEventListener('loadeddata', play, { once: true });
+  }, [open, media.kind]);
+
   useEffect(() => () => {
     delete document.body.dataset.mediaLightbox;
   }, []);
@@ -463,7 +460,7 @@ function ExpandableMedia({ media }: { media: MediaSrc }) {
         className="group relative block w-full cursor-zoom-in text-left"
         aria-label={`Ver en pantalla completa: ${media.alt}`}
       >
-        <Media media={media} className="pointer-events-none aspect-[4/3]" />
+        <Media media={media} className={`pointer-events-none ${aspect}`} />
         <span className="pointer-events-none absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[11px] text-white backdrop-blur">
           <Expand className="h-3.5 w-3.5" aria-hidden />
           Pantalla completa
@@ -489,11 +486,11 @@ function ExpandableMedia({ media }: { media: MediaSrc }) {
             </button>
             {media.kind === 'video' ? (
               <video
+                ref={lightboxVideoRef}
                 src={media.src}
                 poster={media.poster}
                 controls
                 autoPlay
-                muted
                 loop
                 playsInline
                 className="max-h-[90svh] max-w-full rounded-2xl bg-black"
@@ -522,6 +519,48 @@ function Credits({ text, delay = 0.8 }: { text: string; delay?: number }) {
   );
 }
 
+const PEOPLE_MEDIA: MediaSrc = {
+  kind: 'video',
+  src: '/devfest-2026/voice-daily.mp4',
+  poster: '/devfest-2026/voice-daily-poster.jpg',
+  bg: '#070a14',
+  alt: 'Persona usando la voz para hacer tareas cotidianas',
+};
+
+function PeopleSlide() {
+  return (
+    <div className="flex h-full flex-col justify-center">
+      <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(220px,32%)] lg:gap-10">
+        <div>
+          <SlideHead
+            eyebrow="01 · Para quién"
+            title="La voz deja hacer"
+            accent="lo de todos los días."
+            lead="Recordatorios, llamadas, pedidos, preguntas. Lo básico de la vida diaria, con la interfaz que ya sabemos usar: hablar."
+          />
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {PEOPLE.map((p, i) => (
+              <Reveal key={p.who} delay={0.2 + i * 0.08}>
+                <div className="tile flex h-full flex-col gap-4 p-5">
+                  <IconTile icon={p.icon} tone={i === 0 ? 'glow' : i === 1 ? 'signal' : 'good'} />
+                  <div>
+                    <p className="eyebrow">{p.who}</p>
+                    <p className="mt-2 text-xl leading-snug text-[var(--text)]">{p.quote}</p>
+                  </div>
+                  <p className="mt-auto text-sm leading-relaxed text-[var(--dim)]">{p.body}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+        <Reveal delay={0.28} className="mx-auto w-full max-w-[260px] lg:mx-0 lg:max-w-[min(100%,320px)]">
+          <ExpandableMedia media={PEOPLE_MEDIA} aspect="aspect-[9/16]" />
+        </Reveal>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* 03.5 · Quién habla — perfil (frontend, no comunidad)                */
 /* ------------------------------------------------------------------ */
@@ -532,19 +571,21 @@ function WhoSlide() {
 
   return (
     <div className="flex min-h-[calc(100svh-14rem)] flex-col justify-center lg:ml-[calc(50%-50vw)] lg:w-screen lg:pl-10 lg:pr-[min(42vw,900px)]">
-      <SlideHead
-        eyebrow="02.5 · Quién habla"
-        title="Soy Angel."
-        accent="Frontend."
-        lead="Desarrollador de software hace casi 7 años, especializado en frontend. Con mi propia agencia construyo productos con interfaz de voz, y he liderado el trabajo con negocios de wellness. Fundador de Visible Builders y organizador de The AI Hub, bilingüe, en Medellín."
-      />
-      <div className="mt-8 flex flex-wrap gap-3">
+      <div className="w-full max-w-xl lg:ml-auto lg:max-w-[min(100%,34rem)] lg:pr-6">
+        <SlideHead
+          eyebrow="02.5 · Quién habla"
+          title="Soy Angel."
+          accent="Frontend."
+          lead="Desarrollador de software hace casi 7 años, especializado en frontend. Con mi propia agencia construyo productos con interfaz de voz, y he liderado el trabajo con negocios de wellness. Fundador de Visible Builders y organizador de The AI Hub, bilingüe, en Medellín."
+        />
+        <div className="mt-8 flex flex-wrap gap-3">
           <Reveal delay={0.4}>
             <QrCard value={SITE_URL} label="angelmateus.com" size={104} className="!gap-2 !p-3" />
           </Reveal>
           <Reveal delay={0.48}>
             <QrCard value={`${SITE_URL}/work`} label="El trabajo" sub="angelmateus.com/work" size={104} className="!gap-2 !p-3" />
           </Reveal>
+        </div>
       </div>
       <img
         src="/devfest-2026/avatar-yoga.png"
@@ -1573,6 +1614,37 @@ def build_session() -> AgentSession:
         llm=inference.RealtimeModel(model=MODEL, voice="Puck"),
     )`,
   },
+  {
+    id: 'instructions',
+    term: 'Instructions',
+    body: 'Identity → output → flow → tools → guardrails → user info. Markdown, como en ADK.',
+    file: 'packages/livekit/tools.py',
+    doc: 'https://docs.livekit.io/agents/start/prompting/',
+    docLabel: 'LiveKit · Prompting guide',
+    note: 'Misma lógica que ADK instruction.ts, con el vocabulario de LiveKit. Los detalles de cada tool viven en su definición; el prompt solo dice cuándo y cómo hablar el resultado. Datos del usuario al final.',
+    code: `
+# Identity
+Eres NoShy Concierge, la voz del compañero comercial…
+
+# Output rules
+Español. Texto plano. 1–3 frases. Una pregunta al final.
+(Realtime: no hace falta deletrear números ni SSML.)
+
+# Goals / Conversational flow
+1. Presentación (una sola vez)
+2. Contexto → Discovery → Resumen → Plan → Cierre
+   En cualquier momento: comunidad  ← bucle marcado
+
+# Tools
+Recoge inputs → llama → resume el resultado en voz.
+No leas IDs ni JSON.
+
+# Guardrails
+Nunca inventes personas, precios ni enlaces Meet.
+
+# User information
+{{ user_name }} · {{ persona }} · {{ lookingFor }}`,
+  },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -1756,6 +1828,7 @@ function LiveKitSlide() {
           { label: 'LiveKit · Overview', url: 'https://docs.livekit.io/intro/overview/' },
           { label: 'AgentSession', url: 'https://docs.livekit.io/agents/logic/sessions/' },
           { label: 'Jobs', url: 'https://docs.livekit.io/agents/server/job/' },
+          { label: 'Prompting guide', url: 'https://docs.livekit.io/agents/start/prompting/' },
           { label: 'ADK + LiveKit', url: 'https://adk.dev/integrations/livekit/' },
         ]}
       />
@@ -1764,7 +1837,8 @@ function LiveKitSlide() {
 }
 
 /* ------------------------------------------------------------------ */
-/* 10.1 · ¿Cuánto cuesta una conversación? (precios LiveKit Cloud, nov 2026) */
+/* 10.1 · ¿Cuánto cuesta una conversación? (precios LiveKit Cloud docs) */
+/* Source: livekit.com/pricing + docs.livekit.io/deploy/admin/billing */
 /* ------------------------------------------------------------------ */
 
 // One NoShy session timed against the app's real flow (see "Concierge Voice Costs").
@@ -1780,8 +1854,34 @@ const SESSION_STEPS = [
   { t: 'Aprobación', s: 40 },
   { t: 'Cierre', s: 40 },
 ];
-const SESSION_SECONDS = SESSION_STEPS.reduce((a, b) => a + b.s, 0);
+const SESSION_SECONDS = SESSION_STEPS.reduce((a, b) => a + b.s, 0); // 470s ≈ 7:50
+const SESSION_MINUTES = SESSION_SECONDS / 60; // ≈ 7.833
 
+// LiveKit Cloud metering (after included minutes on Ship/Scale).
+// Agent session starts when the agent connects to the room; stops on room end / disconnect.
+// WebRTC = user joining the room. Min billable unit: 1s, 10s minimum per session.
+const METERING = [
+  {
+    label: 'Sesión de agente',
+    rate: '$0.01 / min',
+    session: `≈ $${(0.01 * SESSION_MINUTES).toFixed(2)}`,
+    note: 'Agente conectado al room',
+  },
+  {
+    label: 'Room · WebRTC',
+    rate: '$0.0005 / min',
+    session: `≈ $${(0.0005 * SESSION_MINUTES).toFixed(3)}`,
+    note: 'Usuario entra al room (Ship)',
+  },
+  {
+    label: 'Join → agente',
+    rate: '~$0.011 / min',
+    session: `≈ $${(0.011 * SESSION_MINUTES).toFixed(2)}`,
+    note: 'Agente + WebRTC (sin modelo)',
+  },
+];
+
+// Total ≈ agent + WebRTC + inference (Gemini Live ~$0.0182/min) + data ≈ $0.029/min
 const COST_OPTIONS = [
   {
     name: 'Gemini Live',
@@ -1789,7 +1889,7 @@ const COST_OPTIONS = [
     perSession: '$0.23',
     perMin: '$0.029 / min',
     hundred: '$23',
-    bills: '1 factura · LiveKit',
+    bills: '1 factura · LiveKit (agente + room + Inference)',
     tone: 'var(--glow)',
   },
   {
@@ -1801,6 +1901,14 @@ const COST_OPTIONS = [
     bills: '2 facturas · LiveKit + ElevenLabs',
     tone: 'var(--amber)',
   },
+];
+
+// Membership plans — LiveKit Cloud (short)
+const CLOUD_PLANS = [
+  { name: 'Build', price: '$0/mo', mins: '1k min agente · 5k WebRTC', note: '~127 sesiones NoShy' },
+  { name: 'Ship', price: '$50/mo', mins: '5k min → $0.01/min', note: 'Equipos · email support' },
+  { name: 'Scale', price: '$500/mo', mins: '50k min → $0.01/min', note: 'HIPAA · region pin' },
+  { name: 'Enterprise', price: 'Custom', mins: 'Volumen · SLA', note: 'SSO · Slack' },
 ];
 
 function LiveKitCostSlide() {
@@ -1815,14 +1923,29 @@ function LiveKitCostSlide() {
         </h2>
       </Reveal>
 
-      {/* The session, step by step */}
+      {/* Timing · ~7:50 — big session totals on top */}
       <Reveal delay={0.14}>
-        <div className="mt-6">
-          <div className="flex items-baseline justify-between">
+        <div className="mt-5">
+          <div className="flex items-baseline justify-between gap-3">
             <p className="eyebrow">Una sesión de NoShy · ~7:50 min</p>
-            <p className="mono text-[11px] text-[var(--dim)]">se cobra por minuto conectado</p>
+            <p className="mono text-[11px] text-[var(--dim)]">mín. 10s · se cobra por segundo conectado</p>
           </div>
-          <div className="mt-2 flex h-14 w-full gap-1 overflow-hidden rounded-2xl">
+
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {COST_OPTIONS.map((o) => (
+              <div key={o.name} className="flex items-end gap-4">
+                <p className="text-[clamp(2.6rem,6vw,4.2rem)] leading-none tracking-tight" style={{ color: o.tone }}>
+                  {o.perSession}
+                </p>
+                <div className="pb-1">
+                  <p className="text-[15px] leading-tight text-[var(--text)]">{o.name}</p>
+                  <p className="mono text-[11px] text-[var(--dim)]">por sesión · ~7:50</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex h-12 w-full gap-1 overflow-hidden rounded-2xl">
             {SESSION_STEPS.map((st, i) => (
               <motion.div
                 key={st.t}
@@ -1845,40 +1968,75 @@ function LiveKitCostSlide() {
         </div>
       </Reveal>
 
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
+      {/* LiveKit metering: session · room · join */}
+      <Reveal delay={0.28}>
+        <div className="mt-4 grid gap-2 sm:grid-cols-3">
+          {METERING.map((m) => (
+            <div key={m.label} className="rounded-2xl bg-[var(--raise)] px-4 py-3">
+              <p className="mono text-[10px] uppercase tracking-wide text-[var(--dim)]">{m.label}</p>
+              <p className="mt-1 text-lg leading-none text-[var(--text)]">{m.rate}</p>
+              <p className="mt-1.5 mono text-[12px] text-[var(--glow)]">{m.session} / sesión</p>
+              <p className="mt-1 text-[11px] text-[var(--dim)]">{m.note}</p>
+            </div>
+          ))}
+        </div>
+      </Reveal>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
         {COST_OPTIONS.map((o, i) => (
-          <Reveal key={o.name} delay={0.35 + i * 0.1}>
-            <div className="tile h-full p-5">
+          <Reveal key={o.name} delay={0.4 + i * 0.08}>
+            <div className="tile h-full p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xl text-[var(--text)]">{o.name}</p>
+                  <p className="text-lg text-[var(--text)]">{o.name}</p>
                   <p className="mono text-[11px] text-[var(--dim)]">{o.kind}</p>
                 </div>
                 <span className="mono rounded-full bg-[var(--raise)] px-2.5 py-1 text-[11px]" style={{ color: o.tone }}>
                   {o.perMin}
                 </span>
               </div>
-              <div className="mt-4 flex items-end gap-6">
+              <div className="mt-3 flex items-end gap-6">
                 <div>
-                  <p className="text-[clamp(2.5rem,5vw,3.75rem)] leading-none" style={{ color: o.tone }}>
+                  <p className="text-xl leading-none" style={{ color: o.tone }}>
                     {o.perSession}
                   </p>
-                  <p className="mt-1 text-[13px] text-[var(--dim)]">por sesión</p>
+                  <p className="mt-1 text-[12px] text-[var(--dim)]">por sesión (todo incluido)</p>
                 </div>
                 <div>
-                  <p className="text-2xl leading-none text-[var(--text)]">{o.hundred}</p>
-                  <p className="mt-1 text-[13px] text-[var(--dim)]">× 100 sesiones</p>
+                  <p className="text-xl leading-none text-[var(--text)]">{o.hundred}</p>
+                  <p className="mt-1 text-[12px] text-[var(--dim)]">× 100 sesiones</p>
                 </div>
               </div>
-              <p className="mt-4 text-[12.5px] text-[var(--dim)]">{o.bills}</p>
+              <p className="mt-3 text-[12px] text-[var(--dim)]">{o.bills}</p>
             </div>
           </Reveal>
         ))}
       </div>
 
-      <Reveal delay={0.6}>
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="pill !text-[var(--text)]"><span className="dot bg-[var(--good)]" /> Gratis: ~127 sesiones</span>
+      {/* Membership plans — short */}
+      <Reveal delay={0.58}>
+        <div className="mt-4">
+          <p className="eyebrow mb-2">Planes LiveKit Cloud</p>
+          <div className="grid gap-2 sm:grid-cols-4">
+            {CLOUD_PLANS.map((p) => (
+              <div key={p.name} className="rounded-2xl border border-[var(--line)] px-3 py-2.5">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-[13px] text-[var(--text)]">{p.name}</p>
+                  <p className="mono text-[12px] text-[var(--glow)]">{p.price}</p>
+                </div>
+                <p className="mt-1 mono text-[10px] text-[var(--dim)]">{p.mins}</p>
+                <p className="mt-0.5 text-[11px] text-[var(--dim)]">{p.note}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Reveal>
+
+      <Reveal delay={0.68}>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="pill !text-[var(--text)]">
+            <span className="dot bg-[var(--good)]" /> Build gratis: 1.000 min agente ≈ 127 sesiones
+          </span>
           <a href="https://livekit.com/pricing" target="_blank" rel="noopener noreferrer" className="pill">
             Precios LiveKit Cloud <ExternalLink className="h-3 w-3" />
           </a>
@@ -2703,31 +2861,38 @@ function AudienceSlide() {
 /* Presentación                                                        */
 /* ------------------------------------------------------------------ */
 
-const SLIDES = [
+type SlideComponent = (props: { onReplayIntro?: () => void }) => ReactNode;
+
+const SLIDES: { id: string; label: string; Component: SlideComponent }[] = [
   { id: 'inicio', label: 'Inicio', Component: HookSlide },
-  { id: 'voz-para-todos', label: 'Voz para todos', Component: PeopleSlide },
-  { id: 'quien-soy', label: 'Quién soy', Component: WhoSlide },
-  { id: 'futuro', label: 'El futuro', Component: FutureSlide },
-  { id: 'hoy', label: 'Así se ven hoy', Component: TodaySlide },
-  { id: 'problema', label: 'El problema', Component: ProblemSlide },
-  { id: 'casos', label: 'Casos reales', Component: CasesSlide },
-  { id: 'arquitectura', label: 'Arquitectura', Component: ArchitectureSlide },
-  { id: 'adk', label: 'Google ADK', Component: AdkSlide },
-  { id: 'que-es-livekit', label: '¿Qué es LiveKit?', Component: LiveKitIntroSlide },
-  { id: 'livekit', label: 'LiveKit', Component: LiveKitSlide },
-  { id: 'livekit-costos', label: 'Costos', Component: LiveKitCostSlide },
-  { id: 'livekit-seguridad', label: 'Seguridad', Component: LiveKitSecuritySlide },
-  { id: 'emocion', label: 'Voz y emoción', Component: EmotionSlide },
-  { id: 'que-es-copilotkit', label: '¿Qué es CopilotKit?', Component: CopilotKitIntroSlide },
-  { id: 'copilotkit', label: 'CopilotKit', Component: CopilotKitSlide },
-  { id: 'tecnologias', label: 'Tecnologías', Component: StackSlide },
-  { id: 'ai-design-framework', label: 'Mi skill de diseño', Component: SkillSlide },
-  { id: 'paso-a-paso', label: 'Paso a paso', Component: StepsSlide },
-  { id: 'audiencia', label: 'Audiencia', Component: AudienceSlide },
+  { id: 'voz-para-todos', label: 'Voz para todos', Component: PeopleSlide as SlideComponent },
+  { id: 'quien-soy', label: 'Quién soy', Component: WhoSlide as SlideComponent },
+  { id: 'futuro', label: 'El futuro', Component: FutureSlide as SlideComponent },
+  { id: 'hoy', label: 'Así se ven hoy', Component: TodaySlide as SlideComponent },
+  { id: 'problema', label: 'El problema', Component: ProblemSlide as SlideComponent },
+  { id: 'casos', label: 'Casos reales', Component: CasesSlide as SlideComponent },
+  { id: 'arquitectura', label: 'Arquitectura', Component: ArchitectureSlide as SlideComponent },
+  { id: 'adk', label: 'Google ADK', Component: AdkSlide as SlideComponent },
+  { id: 'que-es-livekit', label: '¿Qué es LiveKit?', Component: LiveKitIntroSlide as SlideComponent },
+  { id: 'livekit', label: 'LiveKit', Component: LiveKitSlide as SlideComponent },
+  { id: 'livekit-costos', label: 'Costos', Component: LiveKitCostSlide as SlideComponent },
+  { id: 'livekit-seguridad', label: 'Seguridad', Component: LiveKitSecuritySlide as SlideComponent },
+  { id: 'emocion', label: 'Voz y emoción', Component: EmotionSlide as SlideComponent },
+  { id: 'que-es-copilotkit', label: '¿Qué es CopilotKit?', Component: CopilotKitIntroSlide as SlideComponent },
+  { id: 'copilotkit', label: 'CopilotKit', Component: CopilotKitSlide as SlideComponent },
+  { id: 'tecnologias', label: 'Tecnologías', Component: StackSlide as SlideComponent },
+  { id: 'ai-design-framework', label: 'Mi skill de diseño', Component: SkillSlide as SlideComponent },
+  { id: 'paso-a-paso', label: 'Paso a paso', Component: StepsSlide as SlideComponent },
+  { id: 'audiencia', label: 'Audiencia', Component: AudienceSlide as SlideComponent },
 ];
 
 export default function DevFestVoiceAgentDeck() {
   const [[index, direction], setPage] = useState<[number, number]>([0, 0]);
+  /** Product intro + ElevenLabs narration — plays once on first open of Inicio (skipped on deep-links). */
+  const [introOpen, setIntroOpen] = useState(true);
+  /** Deck chrome stays hidden until the intro handoff (or skip), so slide 1 never flashes first. */
+  const [deckVisible, setDeckVisible] = useState(false);
+  const introPlayed = useRef(false);
 
   const go = useCallback((next: number) => {
     setPage(([current]) => {
@@ -2736,11 +2901,45 @@ export default function DevFestVoiceAgentDeck() {
     });
   }, []);
 
+  const closeIntro = useCallback(() => {
+    document.documentElement.removeAttribute('data-intro');
+    setIntroOpen(false);
+    setDeckVisible(true);
+    introPlayed.current = true;
+  }, []);
+
+  const replayIntro = useCallback(() => {
+    setPage([0, 0]);
+    introPlayed.current = false;
+    setDeckVisible(false);
+    document.documentElement.setAttribute('data-intro', '1');
+    setIntroOpen(true);
+  }, []);
+
   // Deep-link: #arquitectura opens that slide (handy while presenting / sharing).
   useEffect(() => {
     const fromHash = SLIDES.findIndex((s) => s.id === window.location.hash.slice(1));
-    if (fromHash > 0) setPage([fromHash, 0]);
+    if (fromHash > 0) {
+      setPage([fromHash, 0]);
+      introPlayed.current = true;
+      setIntroOpen(false);
+      setDeckVisible(true);
+      document.documentElement.removeAttribute('data-intro');
+      return;
+    }
+    document.documentElement.setAttribute('data-intro', '1');
   }, []);
+
+  // Reveal the deck when the intro hole opens (handoff), not before.
+  useEffect(() => {
+    if (!introOpen) {
+      setDeckVisible(true);
+      return;
+    }
+    const onHandoff = () => setDeckVisible(true);
+    window.addEventListener(INTRO_HANDOFF_EVENT, onHandoff);
+    return () => window.removeEventListener(INTRO_HANDOFF_EVENT, onHandoff);
+  }, [introOpen]);
 
   useEffect(() => {
     window.history.replaceState(null, '', index === 0 ? window.location.pathname : `#${SLIDES[index].id}`);
@@ -2750,6 +2949,8 @@ export default function DevFestVoiceAgentDeck() {
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target?.closest('input, textarea, [contenteditable="true"]')) return;
+      // While the cinematic intro plays, only Escape/Enter (handled inside IntroSequence) matter.
+      if (introOpen) return;
       if (document.body.dataset.mediaLightbox === 'open') {
         const onVideo = Boolean(target?.closest('video'));
         if (!onVideo && (event.key === ' ' || event.key === 'ArrowRight' || event.key === 'ArrowLeft' || event.key === 'PageDown' || event.key === 'PageUp')) {
@@ -2771,6 +2972,9 @@ export default function DevFestVoiceAgentDeck() {
         setPage(([current]) => [0, current === 0 ? 0 : -1]);
       } else if (event.key === 'End') {
         setPage(([current]) => [SLIDES.length - 1, current === SLIDES.length - 1 ? 0 : 1]);
+      } else if (event.key === 'i' || event.key === 'I') {
+        event.preventDefault();
+        replayIntro();
       } else if (event.key === 'f' || event.key === 'F') {
         if (document.fullscreenElement) document.exitFullscreen?.();
         else document.documentElement.requestFullscreen?.().catch(() => {});
@@ -2778,9 +2982,10 @@ export default function DevFestVoiceAgentDeck() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [introOpen, replayIntro]);
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
+    if (introOpen) return;
     if (info.offset.x < -80 || info.velocity.x < -500) go(index + 1);
     else if (info.offset.x > 80 || info.velocity.x > 500) go(index - 1);
   };
@@ -2791,93 +2996,104 @@ export default function DevFestVoiceAgentDeck() {
     <main lang="es" className="cva relative flex h-[100svh] flex-col overflow-hidden selection:bg-[#2f6bff]/40">
       <style dangerouslySetInnerHTML={{ __html: KIT_CSS }} />
 
+      {/* Solid cover from first paint — kills the hook-slide flash before the intro portal mounts. */}
+      {introOpen && <div className="fixed inset-0 z-[79] bg-[#02040c]" aria-hidden="true" />}
+      {introOpen && <IntroSequence onDone={closeIntro} />}
+
       {/* Moving print border, same as the product */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="edge-wake-mesh" />
         <div className="edge-wake-wash" />
       </div>
 
-      <header className="relative z-20">
-        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-5 py-4 md:px-10">
-          <Link href="/post" className="pill !text-[var(--text)]">
-            <ArrowLeft className="h-4 w-4" /> Posts
-          </Link>
-          <p className="hidden truncate text-sm text-[var(--dim)] md:block">
-            DevFest Medellín 2026 · Agente comercial de voz
-          </p>
-          <p className="mono pill tabular-nums">
-            {String(index + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
-          </p>
-        </div>
-        <div className="mx-auto h-[2px] max-w-[1400px] px-5 md:px-10">
-          <div className="h-full rounded-full bg-[var(--line)]">
-            <motion.div
-              className="h-full rounded-full bg-[var(--signal)]"
-              animate={{ width: `${((index + 1) / SLIDES.length) * 100}%` }}
-              transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-            />
+      <div
+        className={`relative z-10 flex min-h-0 flex-1 flex-col transition-[opacity,filter] duration-700 ease-out ${
+          deckVisible ? 'opacity-100' : 'pointer-events-none opacity-0 blur-sm'
+        }`}
+        aria-hidden={!deckVisible}
+      >
+        <header className="relative z-20">
+          <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-5 py-4 md:px-10">
+            <Link href="/post" className="pill !text-[var(--text)]">
+              <ArrowLeft className="h-4 w-4" /> Posts
+            </Link>
+            <p className="hidden truncate text-sm text-[var(--dim)] md:block">
+              DevFest Medellín 2026 · Agente comercial de voz
+            </p>
+            <p className="mono pill tabular-nums">
+              {String(index + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
+            </p>
           </div>
-        </div>
-      </header>
-
-      <div className="relative z-10 flex-1 overflow-hidden">
-        <AnimatePresence initial={false} custom={direction} mode="wait">
-          <motion.section
-            key={SLIDES[index].id}
-            custom={direction}
-            variants={{
-              enter: (dir: number) => ({ opacity: 0, x: dir * 60, filter: 'blur(6px)' }),
-              center: { opacity: 1, x: 0, filter: 'blur(0px)' },
-              exit: (dir: number) => ({ opacity: 0, x: dir * -60, filter: 'blur(6px)' }),
-            }}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.15}
-            onDragEnd={onDragEnd}
-            className="absolute inset-0 overflow-y-auto"
-            aria-roledescription="diapositiva"
-            aria-label={`${index + 1} de ${SLIDES.length}: ${SLIDES[index].label}`}
-          >
-            <div className="mx-auto min-h-full max-w-[1400px] px-5 pb-32 pt-8 md:px-10 md:pt-12">
-              <Component />
-            </div>
-          </motion.section>
-        </AnimatePresence>
-      </div>
-
-      <nav className="dock absolute bottom-5 left-1/2 z-20 -translate-x-1/2" aria-label="Diapositivas">
-        <button onClick={() => go(index - 1)} disabled={index === 0} aria-label="Diapositiva anterior" className="cbtn">
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <div className="hidden items-center gap-1.5 px-2 sm:flex">
-          {SLIDES.map((slide, i) => (
-            <button
-              key={slide.id}
-              onClick={() => go(i)}
-              aria-label={`Ir a ${slide.label}`}
-              aria-current={i === index ? 'step' : undefined}
-              className="group relative py-2"
-            >
-              <motion.span
-                className="block h-1.5 rounded-full"
-                animate={{ width: i === index ? 22 : 6, backgroundColor: i === index ? '#2f6bff' : 'rgba(242,244,248,0.3)' }}
-                transition={{ duration: 0.35 }}
+          <div className="mx-auto h-[2px] max-w-[1400px] px-5 md:px-10">
+            <div className="h-full rounded-full bg-[var(--line)]">
+              <motion.div
+                className="h-full rounded-full bg-[var(--signal)]"
+                animate={{ width: `${((index + 1) / SLIDES.length) * 100}%` }}
+                transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
               />
-              <span className="pointer-events-none absolute -top-8 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded-full bg-[var(--raise)] px-2.5 py-1 text-xs text-[var(--text)] group-hover:block">
-                {slide.label}
-              </span>
-            </button>
-          ))}
+            </div>
+          </div>
+        </header>
+
+        <div className="relative z-10 flex-1 overflow-hidden">
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.section
+              key={SLIDES[index].id}
+              custom={direction}
+              variants={{
+                enter: (dir: number) => ({ opacity: 0, x: dir * 60, filter: 'blur(6px)' }),
+                center: { opacity: 1, x: 0, filter: 'blur(0px)' },
+                exit: (dir: number) => ({ opacity: 0, x: dir * -60, filter: 'blur(6px)' }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.15}
+              onDragEnd={onDragEnd}
+              className="absolute inset-0 overflow-y-auto"
+              aria-roledescription="diapositiva"
+              aria-label={`${index + 1} de ${SLIDES.length}: ${SLIDES[index].label}`}
+            >
+              <div className="mx-auto min-h-full max-w-[1400px] px-5 pb-32 pt-8 md:px-10 md:pt-12">
+                <Component onReplayIntro={replayIntro} />
+              </div>
+            </motion.section>
+          </AnimatePresence>
         </div>
-        <p className="whitespace-nowrap px-3 text-sm text-[var(--dim)] sm:hidden">{SLIDES[index].label}</p>
-        <button onClick={() => go(index + 1)} disabled={index === SLIDES.length - 1} aria-label="Siguiente diapositiva" className="cbtn">
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </nav>
+
+        <nav className="dock absolute bottom-5 left-1/2 z-20 -translate-x-1/2" aria-label="Diapositivas">
+          <button onClick={() => go(index - 1)} disabled={index === 0} aria-label="Diapositiva anterior" className="cbtn">
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <div className="hidden items-center gap-1.5 px-2 sm:flex">
+            {SLIDES.map((slide, i) => (
+              <button
+                key={slide.id}
+                onClick={() => go(i)}
+                aria-label={`Ir a ${slide.label}`}
+                aria-current={i === index ? 'step' : undefined}
+                className="group relative py-2"
+              >
+                <motion.span
+                  className="block h-1.5 rounded-full"
+                  animate={{ width: i === index ? 22 : 6, backgroundColor: i === index ? '#2f6bff' : 'rgba(242,244,248,0.3)' }}
+                  transition={{ duration: 0.35 }}
+                />
+                <span className="pointer-events-none absolute -top-8 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded-full bg-[var(--raise)] px-2.5 py-1 text-xs text-[var(--text)] group-hover:block">
+                  {slide.label}
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="whitespace-nowrap px-3 text-sm text-[var(--dim)] sm:hidden">{SLIDES[index].label}</p>
+          <button onClick={() => go(index + 1)} disabled={index === SLIDES.length - 1} aria-label="Siguiente diapositiva" className="cbtn">
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </nav>
+      </div>
     </main>
   );
 }

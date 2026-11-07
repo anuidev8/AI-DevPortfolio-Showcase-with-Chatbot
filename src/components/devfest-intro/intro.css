@@ -1,0 +1,419 @@
+/* DevFest deck cinematic intro — ported from commercial-voice-agent globals.css */
+.cva {
+  --ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* One avatar layer: big over the intro, then glides into the arch (same as the product). */
+.avatar-layer {
+  position: fixed;
+  z-index: 1;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  mix-blend-mode: plus-lighter;
+}
+.avatar-layer:is([data-mode="1"], [data-mode="handoff"], [data-mode="landed"]) { z-index: 81; }
+.avatar-layer[data-mode="handoff"] { transition: transform 1.35s cubic-bezier(0.65, 0, 0.35, 1); }
+
+/* Projector light only appears once she has landed on the arch. */
+html:is([data-intro="1"], [data-intro="handoff"]) .arch-avatar { opacity: 0 !important; }
+html[data-intro="landed"] .arch-avatar { opacity: 1 !important; transition: none !important; }
+html[data-intro="landed"] .holo-base { animation: holo-in 1.1s var(--ease-out-soft, cubic-bezier(0.2, 0.8, 0.2, 1)) backwards; }
+html[data-intro="landed"] .holo-beam { animation: holo-in 1.4s ease backwards; }
+@keyframes holo-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+
+.seti-texture {
+  background-image:
+    radial-gradient(60% 55% at 50% 42%, rgb(47 107 255 / 0.18), transparent 70%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45  0 0 0 0 0.65  0 0 0 0 1  0 0 0 0.2 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 100% 100%, 180px 180px;
+  mask: radial-gradient(70% 65% at 50% 45%, rgb(0 0 0 / 0.35) 20%, #000 80%);
+}
+.light .seti-texture { display: none; }
+.intro {
+  background-color: #02040c;
+  transition: background-color 1.2s ease;
+}
+.intro-bg {
+  background: radial-gradient(65% 65% at 50% 50%, #2a6bff 0%, #1240d6 30%, #08227a 62%, #02040c 100%);
+  /* "backwards" (not "forwards"): after the bloom the animation lets go, so the handoff fade can run. */
+  animation: intro-bloom 1.4s ease backwards;
+  transition: opacity 1.2s ease;
+}
+@keyframes intro-bloom {
+  from { opacity: 0; transform: scale(1.15); }
+  to { opacity: 1; transform: scale(1); }
+}
+.intro-rays {
+  background: repeating-conic-gradient(from 0deg, rgb(255 255 255 / 0.07) 0deg 1.5deg, transparent 1.5deg 12deg);
+  mask: radial-gradient(closest-side, #000 0%, transparent 75%);
+  animation: intro-spin 80s linear infinite;
+}
+@keyframes intro-spin {
+  to { transform: rotate(360deg); }
+}
+.intro-ribbons {
+  opacity: 0;
+  transition: opacity 1.4s ease, transform 1.8s var(--ease-out-soft);
+}
+.intro-ribbon {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: intro-spin linear infinite;
+}
+.intro-sphere {
+  background: radial-gradient(circle at 32% 28%, #ffffff 0%, #c8eaff 10%, #66b6ff 34%, #2160ff 64%, #0b2a9a 100%);
+  box-shadow: inset -0.8vmin -1.2vmin 2.4vmin rgb(0 20 90 / 0.45), 0 0 5vmin rgb(80 160 255 / 0.35);
+  translate: -50% -50%;
+  opacity: 0;
+  scale: 0.6;
+  animation:
+    intro-sphere-in 1.6s var(--delay) cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+    intro-sphere-drift var(--drift) ease-in-out infinite alternate;
+  transition: transform 1.7s cubic-bezier(0.55, 0, 0.3, 1), filter 1.7s ease;
+}
+@keyframes intro-sphere-in {
+  to { opacity: 1; scale: 1; }
+}
+@keyframes intro-sphere-drift {
+  from { translate: -50% -50%; }
+  to { translate: -50% calc(-50% - 2.5vmin); }
+}
+.intro-canvas {
+  transform-origin: 50% 50%;
+  transition: transform 1.2s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.intro-letter {
+  opacity: 0;
+  filter: blur(16px);
+  transform: translateY(0.18em);
+  transition: opacity 0.9s ease, filter 0.9s ease, transform 0.9s var(--ease-out-soft);
+  transition-delay: calc(var(--i) * var(--step, 70ms));
+}
+.intro-kicker,
+.intro-sub {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.8s ease 0.9s, transform 0.8s var(--ease-out-soft) 0.9s;
+}
+.intro-title > div {
+  transition: transform 1.6s var(--ease-out-soft), opacity 0.8s ease;
+}
+.intro-skip {
+  transition: opacity 0.4s ease;
+}
+
+/* Phase groups */
+/* JOURNEY = context | community | focus        AWAY = spheres out (journey + spread..handoff)
+   TITLE1 = "Bienvenidos" only                  EVENT = "DevFest Medellín 2026 · GDG" only
+   TITLE2 = rewelcome (then rises during spread/formed) */
+
+/* Ribbons + sphere glow arrive with the opening titles and come back for the second welcome. */
+.intro:is([data-phase="title"], [data-phase="event"], [data-phase="rewelcome"]) .intro-ribbons { opacity: 0.85; }
+
+/* Spheres fly outward for the journey and for the final spread; they return for the second welcome. */
+.intro:is([data-phase="context"], [data-phase="community"], [data-phase="focus"], [data-phase="spread"], [data-phase="formed"], [data-phase="handoff"], [data-phase="landed"]) .intro-sphere {
+  transform: translate(var(--out-x), var(--out-y)) scale(2.2);
+  filter: blur(14px);
+}
+.intro:is([data-phase="context"], [data-phase="community"], [data-phase="focus"], [data-phase="spread"], [data-phase="formed"], [data-phase="handoff"], [data-phase="landed"]) .intro-ribbons {
+  opacity: 0;
+  transform: scale(1.9);
+}
+
+/* Titles: hidden by default, letters build in on their phase. */
+.intro-title > div { opacity: 0; }
+.intro[data-phase="title"] .intro-title-1 > div,
+.intro[data-phase="event"] .intro-title-event > div,
+.intro:is([data-phase="rewelcome"], [data-phase="spread"], [data-phase="formed"]) .intro-title-2 > div { opacity: 1; }
+.intro[data-phase="title"] .intro-title-1 .intro-letter,
+.intro[data-phase="event"] .intro-title-event .intro-letter,
+.intro:is([data-phase="rewelcome"], [data-phase="spread"], [data-phase="formed"], [data-phase="handoff"], [data-phase="landed"]) .intro-title-2 .intro-letter { opacity: 1; filter: none; transform: none; }
+.intro[data-phase="title"] .intro-title-1 :is(.intro-kicker, .intro-sub),
+.intro[data-phase="rewelcome"] .intro-title-2 :is(.intro-kicker, .intro-sub) { opacity: 1; transform: none; }
+/* Each opening line leaves upward once its own view is over. */
+.intro:not([data-phase="bloom"], [data-phase="title"]) .intro-title-1 > div,
+.intro:is([data-phase="context"], [data-phase="community"], [data-phase="focus"], [data-phase="rewelcome"], [data-phase="spread"], [data-phase="formed"], [data-phase="handoff"], [data-phase="landed"]) .intro-title-event > div {
+  transform: translateY(-8vh) scale(0.96);
+  filter: blur(10px);
+}
+/* Second welcome rises above the forming avatar. */
+.intro:is([data-phase="spread"], [data-phase="formed"], [data-phase="handoff"], [data-phase="landed"]) .intro-title-2 > div {
+  transform: translateY(-34vh) scale(0.42);
+}
+.intro:is([data-phase="spread"], [data-phase="formed"], [data-phase="handoff"], [data-phase="landed"]) .intro-title-2 .intro-sub {
+  opacity: 0;
+  transition-delay: 0s;
+}
+.intro-title > div { transition: transform 1.6s var(--ease-out-soft), opacity 0.8s ease, filter 0.8s ease; }
+
+/* ---------- Journey ---------- */
+.journey { opacity: 0; transition: opacity 0.9s ease, transform 1.2s var(--ease-out-soft), filter 1.2s ease; }
+.intro:is([data-phase="context"], [data-phase="community"], [data-phase="focus"]) .journey { opacity: 1; }
+.intro[data-phase="rewelcome"] .journey { opacity: 0; transform: scale(1.12); filter: blur(12px); }
+
+/* Shared glass material: frosted fill, bright top edge, soft inner rim, blue bloom. */
+.j-glass,
+.j-card {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.22) 0%, rgb(255 255 255 / 0.04) 38%, rgb(255 255 255 / 0) 60%),
+    linear-gradient(160deg, rgb(46 104 235 / 0.62), rgb(9 26 96 / 0.86));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.65),
+    inset 0 0 0 1px rgb(160 210 255 / 0.42),
+    inset 0 -12px 24px rgb(0 10 60 / 0.35),
+    0 0 28px rgb(70 150 255 / 0.5),
+    0 18px 40px rgb(0 6 40 / 0.55);
+}
+.j-glass { backdrop-filter: blur(10px) saturate(140%); }
+.j-card { overflow: hidden; }
+/* Moving glossy sheen across each card. */
+.j-card::before {
+  content: "";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(105deg, transparent 42%, rgb(255 255 255 / 0.28) 50%, transparent 58%);
+  transform: translateX(-60%);
+  animation: j-sheen 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes j-sheen { 0%, 55% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
+
+.j-avatar {
+  background: radial-gradient(circle at 30% 25%, hsl(var(--h, 210) 90% 80%), hsl(var(--h, 210) 75% 45%) 70%);
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 0.85), 0 0 14px hsl(var(--h, 210) 90% 60% / 0.8);
+}
+.j-kind { background: rgb(255 255 255 / 0.92); color: #1d4fe0; box-shadow: 0 0 12px rgb(140 200 255 / 0.9); }
+.j-tag { background: linear-gradient(90deg, #3b7bff, #1d4fe0); color: #fff; box-shadow: 0 0 10px rgb(60 130 255 / 0.7); }
+.j-metric { color: #7dffc4; text-shadow: 0 0 10px rgb(80 255 180 / 0.6); }
+
+/* Glass dashboard floating behind the stream. */
+.j-dash {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.02));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4), inset 0 0 0 1px rgb(160 210 255 / 0.25), 0 30px 80px rgb(0 6 40 / 0.5);
+  backdrop-filter: blur(6px);
+  mask: linear-gradient(to bottom, #000 30%, transparent 95%);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s ease, transform 1.2s var(--ease-out-soft);
+}
+.intro:is([data-phase="community"], [data-phase="focus"]) .j-dash { opacity: 0.55; transform: none; }
+.j-kpi { background: rgb(255 255 255 / 0.07); box-shadow: inset 0 0 0 1px rgb(160 210 255 / 0.2); }
+
+/* Conveyor floor: a 3D plane tilted away from the viewer; cards ride it from the hub toward the camera. */
+.j-stream {
+  perspective: 760px;
+  perspective-origin: 50% 0%;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+.intro:is([data-phase="community"], [data-phase="focus"]) .j-stream { opacity: 1; }
+.j-plane {
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(-1500px) rotateX(74deg);
+}
+.j-grid {
+  left: -1800px;
+  width: 3600px;
+  top: 0;
+  height: 2400px;
+  overflow: hidden;
+  /* Static mask on the wrapper; the lines inside move with a GPU transform (no per-frame repaint). */
+  mask: radial-gradient(55% 80% at 50% 0%, #000 25%, transparent 78%);
+}
+.j-grid::before {
+  content: "";
+  position: absolute;
+  inset: -160px 0 0 0;
+  background:
+    repeating-linear-gradient(90deg, rgb(140 200 255 / 0.4) 0 2px, transparent 2px 240px),
+    repeating-linear-gradient(0deg, rgb(140 200 255 / 0.3) 0 2px, transparent 2px 160px);
+  background-position: 120px 0, 0 0;
+  will-change: transform;
+  animation: j-grid-run 1.6s linear infinite;
+}
+@keyframes j-grid-run { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, 160px, 0); } }
+/* Bright light rays fanning out over the floor from the vanishing point. */
+.j-rays {
+  left: -1800px;
+  width: 3600px;
+  top: 0;
+  height: 2400px;
+  background: conic-gradient(from 0deg at 50% 0%,
+    transparent 0deg 150deg,
+    rgb(120 190 255 / 0.25) 156deg, transparent 160deg 168deg,
+    rgb(150 210 255 / 0.35) 172deg, transparent 175deg 185deg,
+    rgb(150 210 255 / 0.35) 188deg, transparent 192deg 200deg,
+    rgb(120 190 255 / 0.25) 204deg, transparent 210deg 360deg);
+  mask: linear-gradient(to bottom, #000, transparent 80%);
+}
+.j-lightpath {
+  left: -170px;
+  width: 340px;
+  top: 0;
+  height: 2400px;
+  background: linear-gradient(90deg, transparent, rgb(90 170 255 / 0.5) 30%, #e8f5ff 50%, rgb(90 170 255 / 0.5) 70%, transparent);
+  mask: linear-gradient(to bottom, #000, transparent 85%);
+  animation: j-pulse 1.4s ease-in-out infinite alternate;
+}
+@keyframes j-pulse { from { opacity: 0.6; } to { opacity: 1; } }
+
+/* Sparks rising along the central light path. */
+.j-sparks { opacity: 0; transition: opacity 0.8s ease; }
+.intro:is([data-phase="community"], [data-phase="focus"]) .j-sparks { opacity: 1; }
+.j-spark {
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  box-shadow: 0 0 8px 2px rgb(150 210 255 / 0.9);
+  opacity: 0;
+  animation: j-rise var(--ss) var(--sd) linear infinite;
+}
+@keyframes j-rise {
+  0% { transform: translateY(0) scale(1.4); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateY(-48vh) scale(0.3); opacity: 0; }
+}
+
+/* Each card travels the whole floor: far & tiny at the hub → big & close at the bottom → off screen. */
+.j-flow {
+  left: 0;
+  top: 0;
+  transform-origin: 50% 100%;
+  backface-visibility: hidden;
+  animation-name: j-ride;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+@keyframes j-ride {
+  0% { transform: translate(-50%, -100%) translate3d(var(--lane), 40px, 0) rotateX(-58deg); opacity: 0; }
+  10% { opacity: 1; }
+  84% { opacity: 1; }
+  100% { transform: translate(-50%, -100%) translate3d(var(--lane), 2000px, 0) rotateX(-58deg); opacity: 0; }
+}
+.intro[data-phase="focus"] .j-flow { animation-play-state: paused; }
+.j-dim { background: radial-gradient(70% 90% at 50% 20%, rgb(2 6 30 / 0.55), rgb(2 6 30 / 0.8)); opacity: 0; transition: opacity 0.7s ease; pointer-events: none; }
+.intro[data-phase="focus"] .j-dim { opacity: 1; }
+.intro[data-phase="focus"] .j-dash { opacity: 0.2; }
+
+/* Proposal: rises from the floor, lands centre stage, checklist ticks in. */
+.j-focus {
+  color: #0b1a5c;
+  background: linear-gradient(180deg, #ffffff, #eef5ff);
+  box-shadow: 0 0 0 2px #fff, 0 0 90px rgb(140 200 255 / 0.9), 0 30px 60px rgb(0 6 40 / 0.5);
+  backdrop-filter: none;
+  transform: translate(-50%, 60vh) scale(0.6) rotateX(50deg);
+  opacity: 0;
+  transition: transform 1s cubic-bezier(0.2, 0.9, 0.25, 1.15), opacity 0.5s ease;
+  z-index: 3;
+  overflow: visible;
+}
+.j-focus::before { display: none; }
+.intro[data-phase="focus"] .j-focus { transform: translate(-50%, -30%) scale(1.05); opacity: 1; }
+.j-check { opacity: 0; translate: -8px 0; transition: opacity 0.35s ease, translate 0.35s ease; transition-delay: calc(0.55s + var(--ci) * 0.22s); }
+.intro[data-phase="focus"] .j-check { opacity: 1; translate: 0 0; }
+.j-badge { background: linear-gradient(90deg, #10b981, #059669); color: #fff; box-shadow: 0 0 16px rgb(16 185 129 / 0.6); opacity: 0; transition: opacity 0.4s ease 1.4s; }
+.intro[data-phase="focus"] .j-badge { opacity: 1; }
+
+/* Captions */
+.journey-caption { display: grid; text-shadow: 0 2px 20px rgb(0 10 60 / 0.6); }
+.j-cap { grid-area: 1 / 1; opacity: 0; transform: translateY(12px); filter: blur(6px); transition: opacity 0.7s ease, transform 0.7s var(--ease-out-soft), filter 0.7s ease; }
+.intro[data-phase="context"] .j-cap-1,
+.intro[data-phase="community"] .j-cap-2,
+.intro[data-phase="focus"] .j-cap-3 { opacity: 1; transform: none; filter: none; }
+
+/* Sources stream into the hub */
+.j-source { opacity: 0; transform: translateY(-14px); transition: opacity 0.6s ease var(--d), transform 0.8s var(--ease-out-soft) var(--d); }
+.intro:is([data-phase="context"], [data-phase="community"], [data-phase="focus"]) .j-source { opacity: 1; transform: none; }
+.intro[data-phase="focus"] .j-source { opacity: 0.4; }
+.journey-beams path { opacity: 0; transition: opacity 0.6s ease; }
+.j-beam-in { stroke-dasharray: 6 60; animation: j-flow 1.1s linear infinite; }
+@keyframes j-flow { to { stroke-dashoffset: -66; } }
+.intro:is([data-phase="context"], [data-phase="community"]) .j-beam-in { opacity: 1; }
+.intro:is([data-phase="context"], [data-phase="community"]) .j-beam-core { opacity: 0.9; }
+.intro:is([data-phase="context"], [data-phase="community"]) .j-beam-glow { opacity: 0.6; }
+
+.journey-hub { opacity: 0; scale: 0.9; transition: opacity 0.7s ease 0.45s, scale 0.8s var(--ease-out-soft) 0.45s, box-shadow 0.6s ease; z-index: 2; }
+.intro:is([data-phase="context"], [data-phase="community"], [data-phase="focus"]) .journey-hub { opacity: 1; scale: 1; }
+.intro[data-phase="community"] .journey-hub { box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.65), inset 0 0 0 1px rgb(200 230 255 / 0.7), 0 0 80px rgb(120 190 255 / 0.8); }
+.intro[data-phase="focus"] .journey-hub { opacity: 0.4; }
+.j-line { width: 0; transition: width 1.2s var(--ease-out-soft) 0.9s; }
+.intro:is([data-phase="context"], [data-phase="community"], [data-phase="focus"]) .j-line { width: var(--w); }
+
+/* Hub switches from the sales profile to a live resource counter while the cards flow. */
+@property --n { syntax: "<integer>"; inherits: false; initial-value: 0; }
+.j-hub-a, .j-hub-b { transition: opacity 0.5s ease; }
+.j-hub-b { opacity: 0; }
+.intro:is([data-phase="community"], [data-phase="focus"]) .j-hub-a { opacity: 0; }
+.intro:is([data-phase="community"], [data-phase="focus"]) .j-hub-b { opacity: 1; }
+.j-count { counter-reset: n var(--n); }
+.j-count::after { content: counter(n); }
+.intro:is([data-phase="community"], [data-phase="focus"]) .j-count { animation: j-count 1.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; }
+@keyframes j-count { from { --n: 0; } to { --n: 576; } }
+.intro[data-phase="focus"] .j-count { animation: none; --n: 576; }
+
+@media (max-width: 640px) {
+  .journey-sources { padding-inline: 3vw; gap: 6px; }
+  .j-source { padding: 8px; gap: 8px; }
+  .j-source > span { display: none; }
+  .j-dash { display: none; }
+  .j-stream { perspective: 600px; }
+}
+
+/* SETI-style blue digital grid + halftone dots: arrives as the cards leave and the avatar forms. */
+.intro-grid {
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+.intro:is([data-phase="spread"], [data-phase="formed"], [data-phase="handoff"], [data-phase="landed"]) .intro-grid { opacity: 1; }
+
+/* handoff: the blue doesn't fade — it spreads. A hole opens from the centre and pushes the blue
+   (and its texture) out past the screen edges, where the app's moving print border takes over. */
+@property --hole { syntax: "<length>"; inherits: false; initial-value: 0px; }
+.intro-bg,
+.intro-grid {
+  --hole: 0px;
+}
+.intro:is([data-phase="handoff"], [data-phase="landed"]) {
+  background-color: transparent;
+  pointer-events: none;
+}
+.intro:is([data-phase="handoff"], [data-phase="landed"]) :is(.intro-bg, .intro-grid) {
+  --hole: 120vmax;
+  mask: radial-gradient(circle at 50% 46%, transparent var(--hole), #000 calc(var(--hole) + 22vmax));
+  transition: --hole 2.9s cubic-bezier(0.55, 0, 0.35, 1);
+}
+.intro:is([data-phase="handoff"], [data-phase="landed"]) .intro-skip { opacity: 0; }
+.intro:is([data-phase="handoff"], [data-phase="landed"]) .intro-title > div { opacity: 0; }
+.intro:is([data-phase="handoff"], [data-phase="landed"]) .intro-grid {
+  mask:
+    radial-gradient(circle at 50% 46%, transparent var(--hole), #000 calc(var(--hole) + 22vmax)),
+    radial-gradient(70% 65% at 50% 45%, rgb(0 0 0 / 0.35) 20%, #000 80%);
+  mask-composite: intersect;
+}
+/* The particle woman has landed on the arch: the arch avatar (same particle look) takes over in one frame. */
+.intro[data-phase="landed"] .intro-canvas { visibility: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-bg,
+  .intro-rays,
+  .intro-ribbon,
+  .intro-sphere,
+  .j-grid::before,
+  .j-lightpath,
+  .j-flow,
+  .j-spark,
+  .j-card::before,
+  .journey-beams path {
+    animation: none !important;
+  }
+  .intro-bg,
+  .intro-sphere { opacity: 1; scale: 1; }
+  .intro-letter { filter: none; transform: none; transition-delay: 0s; }
+}

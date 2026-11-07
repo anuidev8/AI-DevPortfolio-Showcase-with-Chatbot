@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "leads": "node scripts/leads/index.mts",
+    "leads:enterprise": "node scripts/leads/enterprise.mts"
   },
   "dependencies": {
     "@avaturn/sdk": "^1.1.2",
