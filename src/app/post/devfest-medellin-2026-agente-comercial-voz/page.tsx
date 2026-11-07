@@ -56,6 +56,7 @@ const FONT = '"Helvetica Neue", Helvetica, Arial, system-ui, sans-serif';
 const REPO_URL = 'https://github.com/anuidev8/devfest-medellin-2026-voice-agent-comercial';
 const SITE_URL = 'https://www.angelmateus.com';
 const COMMUNITY_URL = `${SITE_URL}/community`;
+const LINKEDIN_URL = 'https://www.linkedin.com/in/angel-mateus-arrieta-morelo-739623123/';
 /** Set NEXT_PUBLIC_DEVFEST_DEMO_URL to the deployed web app (e.g. https://xxx.vercel.app); falls back to the repo. */
 const DEMO_URL = process.env.NEXT_PUBLIC_DEVFEST_DEMO_URL || REPO_URL;
 
@@ -843,7 +844,7 @@ function WhoSlide() {
             <QrCard value={SITE_URL} label="angelmateus.com" size={104} className="!gap-2 !p-3" />
           </Reveal>
           <Reveal delay={0.48}>
-            <QrCard value={`${SITE_URL}/work`} label="El trabajo" sub="angelmateus.com/work" size={104} className="!gap-2 !p-3" />
+            <QrCard value={LINKEDIN_URL} label="LinkedIn" sub="linkedin.com/in/angel-mateus" size={104} className="!gap-2 !p-3" />
           </Reveal>
         </div>
       </div>
