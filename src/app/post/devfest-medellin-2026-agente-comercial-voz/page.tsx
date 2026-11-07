@@ -372,7 +372,15 @@ const PEOPLE = [
 /* 03 · Evolución de las interfaces                                    */
 /* ------------------------------------------------------------------ */
 
-type MediaSrc = { kind: 'image' | 'video'; src: string; poster?: string; fit?: 'cover' | 'contain'; bg?: string; alt: string };
+type MediaSrc = {
+  kind: 'image' | 'video';
+  src: string;
+  poster?: string;
+  fit?: 'cover' | 'contain';
+  bg?: string;
+  alt: string;
+  caption?: string;
+};
 
 /** Photo or muted looping clip inside a rounded frame, with a slow Ken Burns drift on photos. */
 function Media({ media, className = '' }: { media: MediaSrc; className?: string }) {
@@ -456,6 +464,12 @@ function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; 
         aria-label={`Ver en pantalla completa: ${media.alt}`}
       >
         <Media media={media} className={`pointer-events-none ${aspect}`} />
+        {media.caption && (
+          <span className="pointer-events-none absolute left-2 top-2 mono inline-flex items-center gap-1.5 rounded-full bg-black/75 px-2.5 py-1 text-[11px] tracking-[0.5px] text-[var(--amber)] backdrop-blur">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--amber)]" />
+            {media.caption}
+          </span>
+        )}
         <span className="pointer-events-none absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[11px] text-white backdrop-blur">
           <Expand className="h-3.5 w-3.5" aria-hidden />
           Pantalla completa
@@ -495,6 +509,220 @@ function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; 
               <img
                 src={media.src}
                 alt={media.alt}
+                className="max-h-[90svh] max-w-full rounded-2xl object-contain"
+                onClick={(event) => event.stopPropagation()}
+              />
+            )}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
+
+/** Case card media: single expandable frame, or a swipeable gallery with captions. */
+function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { media: MediaSrc[]; aspect?: string; label: string }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
+  const [active, setActive] = useState(0);
+  const [open, setOpen] = useState(false);
+  const lightboxVideoRef = useRef<HTMLVideoElement>(null);
+  const multiple = media.length > 1;
+  const current = media[active] ?? media[0];
+
+  const close = useCallback(() => {
+    delete document.body.dataset.mediaLightbox;
+    setOpen(false);
+  }, []);
+
+  const openLightbox = () => {
+    document.body.dataset.mediaLightbox = 'open';
+    setOpen(true);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onClose = () => close();
+    window.addEventListener('close-media-lightbox', onClose);
+    return () => window.removeEventListener('close-media-lightbox', onClose);
+  }, [open, close]);
+
+  useEffect(() => {
+    Object.entries(videoRefs.current).forEach(([i, video]) => {
+      if (!video) return;
+      if (Number(i) === active) video.play().catch(() => {});
+      else video.pause();
+    });
+  }, [active]);
+
+  useEffect(() => {
+    if (!open || current.kind !== 'video') return;
+    const video = lightboxVideoRef.current;
+    if (!video) return;
+    video.muted = false;
+    video.volume = 1;
+    const play = () => {
+      void video.play().catch(() => {});
+    };
+    if (video.readyState >= 2) play();
+    else video.addEventListener('loadeddata', play, { once: true });
+  }, [open, current]);
+
+  useEffect(() => () => {
+    delete document.body.dataset.mediaLightbox;
+  }, []);
+
+  const goTo = (index: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const next = (index + media.length) % media.length;
+    track.scrollTo({ left: next * track.clientWidth, behavior: 'smooth' });
+  };
+
+  const onScroll = () => {
+    const track = trackRef.current;
+    if (!track || !track.clientWidth) return;
+    setActive(Math.round(track.scrollLeft / track.clientWidth));
+  };
+
+  if (!multiple) {
+    return <ExpandableMedia media={media[0]} aspect={aspect} />;
+  }
+
+  return (
+    <>
+      <div
+        className={`relative overflow-hidden rounded-2xl ${aspect}`}
+        style={{ background: current.bg ?? 'var(--raise)' }}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label={`Galería · ${label}`}
+        onPointerDown={(event) => event.stopPropagation()}
+      >
+        <div
+          ref={trackRef}
+          onScroll={onScroll}
+          tabIndex={0}
+          className="absolute inset-0 flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden outline-none [scrollbar-width:none] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--glow)] [&::-webkit-scrollbar]:hidden"
+        >
+          {media.map((item, i) => {
+            const fit = item.fit === 'contain' ? 'object-contain' : 'object-cover';
+            return (
+              <div
+                key={item.src}
+                className="relative h-full w-full flex-none snap-center overflow-hidden"
+                style={{ background: item.bg ?? 'var(--raise)' }}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${i + 1} de ${media.length}`}
+              >
+                {item.kind === 'video' ? (
+                  <video
+                    ref={(el) => {
+                      videoRefs.current[i] = el;
+                    }}
+                    src={item.src}
+                    poster={item.poster}
+                    muted
+                    loop
+                    playsInline
+                    aria-label={item.alt}
+                    className={`h-full w-full ${fit}`}
+                  />
+                ) : (
+                  <img src={item.src} alt={item.alt} draggable={false} className={`h-full w-full ${fit}`} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {current.caption && (
+          <span className="pointer-events-none absolute left-2 top-2 mono z-[1] inline-flex items-center gap-1.5 rounded-full bg-black/75 px-2.5 py-1 text-[11px] tracking-[0.5px] text-[var(--amber)] backdrop-blur">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--amber)]" />
+            {current.caption}
+          </span>
+        )}
+
+        <button
+          type="button"
+          onClick={openLightbox}
+          className="absolute right-2 top-2 z-[1] inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[11px] text-white backdrop-blur hover:bg-black/85"
+          aria-label={`Ver en pantalla completa: ${current.alt}`}
+        >
+          <Expand className="h-3.5 w-3.5" aria-hidden />
+          Pantalla completa
+        </button>
+
+        <button
+          type="button"
+          onClick={() => goTo(active - 1)}
+          aria-label="Anterior"
+          className="absolute left-2 top-1/2 z-[1] flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur hover:bg-black/75"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => goTo(active + 1)}
+          aria-label="Siguiente"
+          className="absolute right-2 top-1/2 z-[1] flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur hover:bg-black/75"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+
+        <div className="absolute bottom-2 left-1/2 z-[1] flex -translate-x-1/2 gap-1 rounded-full bg-black/55 px-1.5 backdrop-blur">
+          {media.map((item, i) => (
+            <button
+              key={item.src}
+              type="button"
+              onClick={() => goTo(i)}
+              aria-label={`Mostrar ${i + 1}`}
+              aria-current={i === active}
+              className="flex h-6 w-6 items-center justify-center"
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all ${i === active ? 'w-4 bg-white' : 'w-1.5 bg-white/40'}`}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {open &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/92 p-4 md:p-10"
+            role="dialog"
+            aria-modal="true"
+            aria-label={current.alt}
+            onClick={close}
+          >
+            <button
+              type="button"
+              onClick={close}
+              autoFocus
+              className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+              aria-label="Cerrar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            {current.kind === 'video' ? (
+              <video
+                ref={lightboxVideoRef}
+                src={current.src}
+                poster={current.poster}
+                controls
+                autoPlay
+                loop
+                playsInline
+                className="max-h-[90svh] max-w-full rounded-2xl bg-black"
+                onClick={(event) => event.stopPropagation()}
+              />
+            ) : (
+              <img
+                src={current.src}
+                alt={current.alt}
                 className="max-h-[90svh] max-w-full rounded-2xl object-contain"
                 onClick={(event) => event.stopPropagation()}
               />
@@ -871,7 +1099,7 @@ const CASES: {
   body: string;
   stack: string[];
   tone: 'amber' | 'signal' | 'violet';
-  media: MediaSrc;
+  media: MediaSrc[];
 }[] = [
   {
     n: '01',
@@ -880,13 +1108,15 @@ const CASES: {
     body: 'Agente comercial de voz para uso interno: discovery por voz, propuesta generada como UI, reunión agendada y correo de seguimiento.',
     stack: ['Google ADK', 'Gemini', 'Google Cloud (GCP)', 'LiveKit'],
     tone: 'signal',
-    media: {
-      kind: 'image',
-      src: '/devfest-2026/seti-escuchando.png',
-      fit: 'cover',
-      bg: '#05070d',
-      alt: 'Agente de voz SETI escuchando: micrófono rojo y onda de audio',
-    },
+    media: [
+      {
+        kind: 'image',
+        src: '/devfest-2026/seti-escuchando.png',
+        fit: 'cover',
+        bg: '#05070d',
+        alt: 'Agente de voz SETI escuchando: micrófono rojo y onda de audio',
+      },
+    ],
   },
   {
     n: '02',
@@ -896,14 +1126,33 @@ const CASES: {
     body: 'Experiencia de IA para explorar el propio perfil digital, construida en IA y frontend con LiveKit, LangGraph y CopilotKit sobre AWS. En vivo con líderes y ejecutivos en Conexión Inteligente.',
     stack: ['LiveKit', 'LangGraph', 'CopilotKit', 'AWS'],
     tone: 'amber',
-    media: {
-      kind: 'video',
-      src: '/devfest-2026/huella-digital-kiosk.mp4',
-      poster: '/devfest-2026/huella-digital-kiosk-poster.jpg',
-      fit: 'contain',
-      bg: '#0b1020',
-      alt: 'Kiosco de Huella Digital en Conexión Inteligente: una persona con audífonos frente a la pantalla del perfil',
-    },
+    media: [
+      {
+        kind: 'video',
+        src: '/devfest-2026/huella-digital-kiosk.mp4',
+        poster: '/devfest-2026/huella-digital-kiosk-poster.jpg',
+        fit: 'contain',
+        bg: '#0b1020',
+        alt: 'Kiosco de Huella Digital en Conexión Inteligente: una persona con audífonos frente a la pantalla del perfil',
+        caption: 'EN VIVO',
+      },
+      {
+        kind: 'image',
+        src: '/events/conexion-inteligente/huella-digital.jpg',
+        fit: 'cover',
+        bg: '#0b1020',
+        alt: 'Angel en el stand Tu Huella Digital durante Conexión Inteligente',
+        caption: 'EL STAND',
+      },
+      {
+        kind: 'image',
+        src: '/work/seti-conexion-inteligente.jpg',
+        fit: 'contain',
+        bg: '#0b1020',
+        alt: 'Angel con un invitado en el stand de SETI durante Conexión Inteligente',
+        caption: 'CONEXIÓN INTELIGENTE',
+      },
+    ],
   },
   {
     n: '03',
@@ -912,13 +1161,15 @@ const CASES: {
     body: 'Un agente en Microsoft Teams que consulta los recursos de toda la compañía y responde con componentes, no con párrafos.',
     stack: ['MCP', 'MCP-UI', 'Teams', 'Copilot Enterprise'],
     tone: 'violet',
-    media: {
-      kind: 'image',
-      src: '/devfest-2026/mcp-ui-chat.jpg',
-      fit: 'cover',
-      bg: '#f4f1ea',
-      alt: 'MCP Apps renderizando una interfaz dentro del chat',
-    },
+    media: [
+      {
+        kind: 'image',
+        src: '/devfest-2026/mcp-ui-chat.jpg',
+        fit: 'cover',
+        bg: '#f4f1ea',
+        alt: 'MCP Apps renderizando una interfaz dentro del chat',
+      },
+    ],
   },
 ];
 
@@ -935,7 +1186,7 @@ function CasesSlide() {
         {CASES.map((c, i) => (
           <Reveal key={c.n} delay={0.2 + i * 0.08}>
             <div className="tile flex h-full flex-col overflow-hidden p-2">
-              <ExpandableMedia media={c.media} />
+              <ExpandableMediaGallery media={c.media} label={c.title} />
               <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-4">
                 <div className="flex items-center justify-between">
                   <IconTile icon={c.icon} tone={c.tone} />
@@ -956,7 +1207,7 @@ function CasesSlide() {
           </Reveal>
         ))}
       </div>
-      <Credits text="Pantalla de voz: agente comercial SETI. Video: kiosco Huella Digital en Conexión Inteligente (SETI × Corficolombiana). Captura MCP Apps: demo Excalidraw, modelcontextprotocol/ext-apps." />
+      <Credits text="Pantalla de voz: agente comercial SETI. Galería Huella Digital: kiosco, stand y networking en Conexión Inteligente (SETI × Corficolombiana). Captura MCP Apps: demo Excalidraw, modelcontextprotocol/ext-apps." />
     </div>
   );
 }
