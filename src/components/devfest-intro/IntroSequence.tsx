@@ -97,12 +97,14 @@ type IntroSequenceProps = {
 export function IntroSequence({ onDone }: IntroSequenceProps) {
   const [phase, setPhase] = useState<Phase>('bloom');
   const [active, setActive] = useState(true);
-  const [needsGesture, setNeedsGesture] = useState(false);
+  /** True only when the browser blocked sound — visuals still run automatically. */
+  const [awaitingAudio, setAwaitingAudio] = useState(false);
   const startRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const doneRef = useRef(false);
   const buildFired = useRef(false);
+  const startedRef = useRef(false);
 
   const fireBuild = useCallback(() => {
     if (buildFired.current) return;
@@ -126,23 +128,34 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
     onDone();
   }, [onDone, fireBuild]);
 
+  /** Sync narration to wherever the visual clock already is (after a late autoplay unlock). */
+  const syncAudioToClock = useCallback(async () => {
+    const audio = audioRef.current;
+    if (!audio || doneRef.current) return false;
+    const elapsed = Math.max(0, (performance.now() - startRef.current) / 1000);
+    try {
+      audio.currentTime = Math.min(elapsed, Math.max(0, (audio.duration || T.done) - 0.05));
+      await audio.play();
+      setAwaitingAudio(false);
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
   const startPlayback = useCallback(async () => {
+    if (startedRef.current) return;
+    startedRef.current = true;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const audio = audioRef.current;
-    if (!audio) return;
     startRef.current = performance.now();
     buildFired.current = false;
     document.documentElement.setAttribute('data-intro', '1');
     window.dispatchEvent(new Event(REPLAY_INTRO_EVENT));
     setPhase('bloom');
-    setNeedsGesture(false);
-    try {
-      audio.currentTime = 0;
-      await audio.play();
-    } catch {
-      setNeedsGesture(true);
-      return;
-    }
+    setAwaitingAudio(false);
+
+    // Visuals always start on their own — never wait for a tap.
     if (reduce) {
       setPhase('title');
       window.setTimeout(() => setPhase('event'), 900);
@@ -154,33 +167,76 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
       }, 1800);
       window.setTimeout(finish, 2400);
     }
+
+    if (!audio) return;
+    try {
+      audio.currentTime = 0;
+      await audio.play();
+    } catch {
+      // Autoplay policy blocked sound: keep the intro running silently and unlock on first gesture.
+      setAwaitingAudio(true);
+    }
   }, [finish, fireBuild]);
 
   useEffect(() => {
     const audio = new Audio(AUDIO_SRC);
     audio.preload = 'auto';
+    audio.setAttribute('playsinline', 'true');
     audioRef.current = audio;
     const onEnded = () => finish();
     audio.addEventListener('ended', onEnded);
-    const id = window.setTimeout(() => {
+
+    // Start as soon as the element can play — no user tap required for the sequence.
+    const kick = () => {
       void startPlayback();
-    }, 80);
+    };
+    if (audio.readyState >= 2) kick();
+    else {
+      audio.addEventListener('canplaythrough', kick, { once: true });
+      audio.load();
+    }
+    // Fallback if the network is slow: still start visuals after a short beat.
+    const fallback = window.setTimeout(kick, 120);
+
     return () => {
-      window.clearTimeout(id);
+      window.clearTimeout(fallback);
       audio.removeEventListener('ended', onEnded);
+      audio.removeEventListener('canplaythrough', kick);
       audio.pause();
       audioRef.current = null;
     };
   }, [finish, startPlayback]);
 
-  // Drive phases from the narration clock so visuals stay locked to the voice.
+  // If sound was blocked, any first interaction unlocks it and catches up to the visual clock.
   useEffect(() => {
-    if (!active || needsGesture) return;
+    if (!active || !awaitingAudio) return;
+    const unlock = () => {
+      void syncAudioToClock();
+    };
+    window.addEventListener('pointerdown', unlock, { once: true, capture: true });
+    window.addEventListener('keydown', unlock, { once: true, capture: true });
+    window.addEventListener('touchstart', unlock, { once: true, capture: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlock, true);
+      window.removeEventListener('keydown', unlock, true);
+      window.removeEventListener('touchstart', unlock, true);
+    };
+  }, [active, awaitingAudio, syncAudioToClock]);
+
+  // Drive phases from the narration clock (or wall clock if audio is still unlocking).
+  useEffect(() => {
+    if (!active || !startedRef.current) {
+      // Wait until startPlayback has stamped startRef — poll briefly.
+    }
     let raf = 0;
     let lastPhase: Phase = 'bloom';
     const tick = () => {
+      if (!startedRef.current) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       const audio = audioRef.current;
-      const t = audio && !audio.paused ? audio.currentTime : (performance.now() - startRef.current) / 1000;
+      const t = audio && !audio.paused && !audio.ended ? audio.currentTime : (performance.now() - startRef.current) / 1000;
       const next = phaseAt(t);
       if (next !== lastPhase) {
         lastPhase = next;
@@ -201,7 +257,7 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [active, needsGesture, finish, fireBuild]);
+  }, [active, finish, fireBuild]);
 
   useEffect(() => {
     if (!active) return;
@@ -215,8 +271,13 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [active, finish]);
 
-  const getAudioTime = useCallback(() => audioRef.current?.currentTime ?? 0, []);
-  useIntroParticles(canvasRef, active && !needsGesture, startRef, getAudioTime);
+  const getAudioTime = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio && !audio.paused && !audio.ended) return audio.currentTime;
+    if (!startedRef.current) return 0;
+    return (performance.now() - startRef.current) / 1000;
+  }, []);
+  useIntroParticles(canvasRef, active, startRef, getAudioTime);
 
   // Cover from the first client paint (no useEffect delay) so the hook slide never flashes first.
   if (!active) return null;
@@ -294,25 +355,14 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
         sub="Te ayudo a preparar una venta, o a resolver lo que tu empresa necesita."
       />
 
-      {needsGesture ? (
-        <button
-          type="button"
-          onClick={() => void startPlayback()}
-          className="absolute inset-0 z-[2] grid place-items-center bg-[#02040c]/55 backdrop-blur-[2px]"
-          autoFocus
-        >
-          <span className="rounded-full bg-white px-8 py-4 text-base font-medium text-[#05070d]">Reproducir intro</span>
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={finish}
-          className="intro-skip absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] rounded-full bg-white/12 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/20"
-          autoFocus
-        >
-          Saltar intro
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={finish}
+        className="intro-skip absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] rounded-full bg-white/12 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/20"
+        autoFocus
+      >
+        Saltar intro
+      </button>
     </div>,
     document.body,
   );

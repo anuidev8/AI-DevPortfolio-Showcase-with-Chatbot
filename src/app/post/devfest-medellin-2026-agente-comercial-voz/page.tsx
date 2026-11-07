@@ -54,8 +54,8 @@ import {
 const FONT = '"Helvetica Neue", Helvetica, Arial, system-ui, sans-serif';
 
 const REPO_URL = 'https://github.com/anuidev8/devfest-medellin-2026-voice-agent-comercial';
-const LINKEDIN_URL = 'https://www.linkedin.com/in/angel-mateus-arrieta-morelo-739623123/';
 const SITE_URL = 'https://www.angelmateus.com';
+const COMMUNITY_URL = `${SITE_URL}/community`;
 /** Set NEXT_PUBLIC_DEVFEST_DEMO_URL to the deployed web app (e.g. https://xxx.vercel.app); falls back to the repo. */
 const DEMO_URL = process.env.NEXT_PUBLIC_DEVFEST_DEMO_URL || REPO_URL;
 
@@ -295,7 +295,7 @@ function ConceptList({ items, tone = 'signal' }: { items: { term: string; body: 
 /* 01 · Hook                                                           */
 /* ------------------------------------------------------------------ */
 
-function HookSlide({ onReplayIntro }: { onReplayIntro?: () => void } = {}) {
+function HookSlide() {
   return (
     <div className="grid h-full items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
       <div>
@@ -329,11 +329,6 @@ function HookSlide({ onReplayIntro }: { onReplayIntro?: () => void } = {}) {
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="btn btn-quiet">
               <Github className="h-4 w-4" /> Código
             </a>
-            {onReplayIntro && (
-              <button type="button" onClick={onReplayIntro} className="btn btn-quiet" title="Atajo: I">
-                <AudioLines className="h-4 w-4" /> Replay intro
-              </button>
-            )}
           </div>
         </Reveal>
         <Reveal delay={0.35}>
@@ -557,6 +552,43 @@ function PeopleSlide() {
           <ExpandableMedia media={PEOPLE_MEDIA} aspect="aspect-[9/16]" />
         </Reveal>
       </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 02.5 · Repo QR — escanea el código del agente                       */
+/* ------------------------------------------------------------------ */
+
+function RepoQrSlide() {
+  return (
+    <div className="flex min-h-[calc(100svh-14rem)] flex-col items-center justify-center text-center">
+      <Reveal>
+        <p className="eyebrow">02.5 · Código abierto</p>
+      </Reveal>
+      <Reveal delay={0.08}>
+        <h2 className={`${H2} mt-4 max-w-3xl`}>
+          Escanea el repo.
+          <br />
+          <span className={ACCENT}>Todo el código del agente.</span>
+        </h2>
+      </Reveal>
+      <Reveal delay={0.14}>
+        <p className={`${LEAD} mx-auto mt-5 max-w-xl`}>
+          Google ADK · LiveKit · CopilotKit · AG-UI. Quickstart en 5 minutos.
+        </p>
+      </Reveal>
+      <Reveal delay={0.22} className="mt-10">
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="inline-flex flex-col items-center gap-5">
+          <div className="rounded-[28px] bg-white p-5 shadow-[0_0_48px_rgb(47_107_255/0.35)]">
+            <QRCodeSVG value={REPO_URL} size={280} fgColor="#05070d" bgColor="#ffffff" level="M" />
+          </div>
+          <span className="inline-flex items-center gap-2 text-[15px] text-[var(--signal-soft)]">
+            <Github className="h-4 w-4" />
+            github.com/anuidev8/devfest-medellin-2026-voice-agent-comercial
+          </span>
+        </a>
+      </Reveal>
     </div>
   );
 }
@@ -2827,14 +2859,16 @@ function AudienceSlide() {
         </h2>
       </Reveal>
       <Reveal delay={0.14}>
-        <p className={`${LEAD} mt-5 max-w-xl`}>Muéstrate. El trabajo ya está. Falta que te vean.</p>
+        <p className={`${LEAD} mt-5 max-w-xl`}>
+          Muéstrate. El trabajo ya está. Falta que te vean. Escanea para conocer el trabajo y las comunidades.
+        </p>
       </Reveal>
       <div className="mt-8 flex flex-wrap gap-4">
         <Reveal delay={0.28}>
-          <QrCard value={REPO_URL} label="GitHub" size={148} />
+          <QrCard value={SITE_URL} label="angelmateus.com" sub="Sitio y trabajo" size={148} />
         </Reveal>
         <Reveal delay={0.34}>
-          <QrCard value={LINKEDIN_URL} label="LinkedIn" size={148} />
+          <QrCard value={COMMUNITY_URL} label="Comunidades" sub="Visible Builders · AI Hub" size={148} />
         </Reveal>
       </div>
       <img
@@ -2861,29 +2895,28 @@ function AudienceSlide() {
 /* Presentación                                                        */
 /* ------------------------------------------------------------------ */
 
-type SlideComponent = (props: { onReplayIntro?: () => void }) => ReactNode;
-
-const SLIDES: { id: string; label: string; Component: SlideComponent }[] = [
+const SLIDES = [
   { id: 'inicio', label: 'Inicio', Component: HookSlide },
-  { id: 'voz-para-todos', label: 'Voz para todos', Component: PeopleSlide as SlideComponent },
-  { id: 'quien-soy', label: 'Quién soy', Component: WhoSlide as SlideComponent },
-  { id: 'futuro', label: 'El futuro', Component: FutureSlide as SlideComponent },
-  { id: 'hoy', label: 'Así se ven hoy', Component: TodaySlide as SlideComponent },
-  { id: 'problema', label: 'El problema', Component: ProblemSlide as SlideComponent },
-  { id: 'casos', label: 'Casos reales', Component: CasesSlide as SlideComponent },
-  { id: 'arquitectura', label: 'Arquitectura', Component: ArchitectureSlide as SlideComponent },
-  { id: 'adk', label: 'Google ADK', Component: AdkSlide as SlideComponent },
-  { id: 'que-es-livekit', label: '¿Qué es LiveKit?', Component: LiveKitIntroSlide as SlideComponent },
-  { id: 'livekit', label: 'LiveKit', Component: LiveKitSlide as SlideComponent },
-  { id: 'livekit-costos', label: 'Costos', Component: LiveKitCostSlide as SlideComponent },
-  { id: 'livekit-seguridad', label: 'Seguridad', Component: LiveKitSecuritySlide as SlideComponent },
-  { id: 'emocion', label: 'Voz y emoción', Component: EmotionSlide as SlideComponent },
-  { id: 'que-es-copilotkit', label: '¿Qué es CopilotKit?', Component: CopilotKitIntroSlide as SlideComponent },
-  { id: 'copilotkit', label: 'CopilotKit', Component: CopilotKitSlide as SlideComponent },
-  { id: 'tecnologias', label: 'Tecnologías', Component: StackSlide as SlideComponent },
-  { id: 'ai-design-framework', label: 'Mi skill de diseño', Component: SkillSlide as SlideComponent },
-  { id: 'paso-a-paso', label: 'Paso a paso', Component: StepsSlide as SlideComponent },
-  { id: 'audiencia', label: 'Audiencia', Component: AudienceSlide as SlideComponent },
+  { id: 'voz-para-todos', label: 'Voz para todos', Component: PeopleSlide },
+  { id: 'repo', label: 'Repo', Component: RepoQrSlide },
+  { id: 'quien-soy', label: 'Quién soy', Component: WhoSlide },
+  { id: 'futuro', label: 'El futuro', Component: FutureSlide },
+  { id: 'hoy', label: 'Así se ven hoy', Component: TodaySlide },
+  { id: 'problema', label: 'El problema', Component: ProblemSlide },
+  { id: 'casos', label: 'Casos reales', Component: CasesSlide },
+  { id: 'arquitectura', label: 'Arquitectura', Component: ArchitectureSlide },
+  { id: 'adk', label: 'Google ADK', Component: AdkSlide },
+  { id: 'que-es-livekit', label: '¿Qué es LiveKit?', Component: LiveKitIntroSlide },
+  { id: 'livekit', label: 'LiveKit', Component: LiveKitSlide },
+  { id: 'livekit-costos', label: 'Costos', Component: LiveKitCostSlide },
+  { id: 'livekit-seguridad', label: 'Seguridad', Component: LiveKitSecuritySlide },
+  { id: 'emocion', label: 'Voz y emoción', Component: EmotionSlide },
+  { id: 'que-es-copilotkit', label: '¿Qué es CopilotKit?', Component: CopilotKitIntroSlide },
+  { id: 'copilotkit', label: 'CopilotKit', Component: CopilotKitSlide },
+  { id: 'tecnologias', label: 'Tecnologías', Component: StackSlide },
+  { id: 'ai-design-framework', label: 'Mi skill de diseño', Component: SkillSlide },
+  { id: 'paso-a-paso', label: 'Paso a paso', Component: StepsSlide },
+  { id: 'audiencia', label: 'Audiencia', Component: AudienceSlide },
 ];
 
 export default function DevFestVoiceAgentDeck() {
@@ -2906,14 +2939,6 @@ export default function DevFestVoiceAgentDeck() {
     setIntroOpen(false);
     setDeckVisible(true);
     introPlayed.current = true;
-  }, []);
-
-  const replayIntro = useCallback(() => {
-    setPage([0, 0]);
-    introPlayed.current = false;
-    setDeckVisible(false);
-    document.documentElement.setAttribute('data-intro', '1');
-    setIntroOpen(true);
   }, []);
 
   // Deep-link: #arquitectura opens that slide (handy while presenting / sharing).
@@ -2972,9 +2997,6 @@ export default function DevFestVoiceAgentDeck() {
         setPage(([current]) => [0, current === 0 ? 0 : -1]);
       } else if (event.key === 'End') {
         setPage(([current]) => [SLIDES.length - 1, current === SLIDES.length - 1 ? 0 : 1]);
-      } else if (event.key === 'i' || event.key === 'I') {
-        event.preventDefault();
-        replayIntro();
       } else if (event.key === 'f' || event.key === 'F') {
         if (document.fullscreenElement) document.exitFullscreen?.();
         else document.documentElement.requestFullscreen?.().catch(() => {});
@@ -2982,7 +3004,7 @@ export default function DevFestVoiceAgentDeck() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [introOpen, replayIntro]);
+  }, [introOpen]);
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
     if (introOpen) return;
@@ -3058,7 +3080,7 @@ export default function DevFestVoiceAgentDeck() {
               aria-label={`${index + 1} de ${SLIDES.length}: ${SLIDES[index].label}`}
             >
               <div className="mx-auto min-h-full max-w-[1400px] px-5 pb-32 pt-8 md:px-10 md:pt-12">
-                <Component onReplayIntro={replayIntro} />
+                <Component />
               </div>
             </motion.section>
           </AnimatePresence>
