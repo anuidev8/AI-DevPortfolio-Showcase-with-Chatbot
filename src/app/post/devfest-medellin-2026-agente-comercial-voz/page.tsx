@@ -2047,6 +2047,32 @@ function CopilotKitIntroSlide() {
   return <ProductIntroSlide p={COPILOTKIT_INTRO} />;
 }
 
+const ANTHROPIC_PATTERNS_INTRO: ProductIntro = {
+  eyebrow: '09.1 · Patrones de agentes',
+  kicker: 'Anthropic Research · Dec 2024',
+  headline: (
+    <>
+      Building <span className="text-[#d97757]">effective agents.</span>
+    </>
+  ),
+  es: 'La guía de Anthropic: patrones simples y componibles (Augmented LLM, routing, orchestrator-workers…) en vez de frameworks complejos. Es el mapa mental detrás de nuestra arquitectura.',
+  points: ['Augmented LLM', 'Orchestrator-workers', 'Evaluator-optimizer'],
+  shot: {
+    src: '/devfest-2026/anthropic-building-effective-agents.jpg',
+    alt: 'Artículo de Anthropic: Building effective agents — portada y tabla de contenidos',
+    fit: 'cover',
+    position: 'top center',
+    bg: '#faf9f5',
+  },
+  source: 'anthropic.com/research/building-effective-agents',
+  url: ANTHROPIC_URL,
+  accent: '#d97757',
+};
+
+function AnthropicPatternsSlide() {
+  return <ProductIntroSlide p={ANTHROPIC_PATTERNS_INTRO} />;
+}
+
 function LiveKitSlide() {
   const [active, setActive] = useState(0);
   const part = LIVEKIT_PARTS[active];
@@ -2120,29 +2146,14 @@ function LiveKitSlide() {
 }
 
 /* ------------------------------------------------------------------ */
-/* 10.1 · ¿Cuánto cuesta una conversación? (precios LiveKit Cloud docs) */
+/* 10.1 · Costos LiveKit Cloud                                         */
 /* Source: livekit.com/pricing + docs.livekit.io/deploy/admin/billing */
 /* ------------------------------------------------------------------ */
 
-// One NoShy session timed against the app's real flow (see "Concierge Voice Costs").
-const SESSION_STEPS = [
-  { t: 'Saludo', s: 20 },
-  { t: 'Intake', s: 90 },
-  { t: 'Contexto', s: 20 },
-  { t: 'Resumen', s: 60 },
-  { t: 'Elige plan', s: 20 },
-  { t: 'Comunidad', s: 45 },
-  { t: 'Plan reunión', s: 75 },
-  { t: 'Plan producto', s: 60 },
-  { t: 'Aprobación', s: 40 },
-  { t: 'Cierre', s: 40 },
-];
-const SESSION_SECONDS = SESSION_STEPS.reduce((a, b) => a + b.s, 0); // 470s ≈ 7:50
-const SESSION_MINUTES = SESSION_SECONDS / 60; // ≈ 7.833
+// One NoShy session ≈ 7:50 (470s). Used for per-session metering estimates.
+const SESSION_MINUTES = 470 / 60;
 
 // LiveKit Cloud metering (after included minutes on Ship/Scale).
-// Agent session starts when the agent connects to the room; stops on room end / disconnect.
-// WebRTC = user joining the room. Min billable unit: 1s, 10s minimum per session.
 const METERING = [
   {
     label: 'Sesión de agente',
@@ -2164,7 +2175,6 @@ const METERING = [
   },
 ];
 
-// Total ≈ agent + WebRTC + inference (Gemini Live ~$0.0182/min) + data ≈ $0.029/min
 const COST_OPTIONS = [
   {
     name: 'Gemini Live',
@@ -2186,74 +2196,11 @@ const COST_OPTIONS = [
   },
 ];
 
-// Membership plans — LiveKit Cloud (short)
-const CLOUD_PLANS = [
-  { name: 'Build', price: '$0/mo', mins: '1k min agente · 5k WebRTC', note: '~127 sesiones NoShy' },
-  { name: 'Ship', price: '$50/mo', mins: '5k min → $0.01/min', note: 'Equipos · email support' },
-  { name: 'Scale', price: '$500/mo', mins: '50k min → $0.01/min', note: 'HIPAA · region pin' },
-  { name: 'Enterprise', price: 'Custom', mins: 'Volumen · SLA', note: 'SSO · Slack' },
-];
-
 function LiveKitCostSlide() {
   return (
     <div className="flex h-full flex-col justify-center">
       <Reveal>
-        <p className="eyebrow">10.1 · LiveKit · Costos</p>
-      </Reveal>
-      <Reveal delay={0.08}>
-        <h2 className="mt-3 text-[clamp(1.9rem,4vw,3.5rem)] leading-[1.04] text-[var(--text)]">
-          ¿Cuánto cuesta <span className={ACCENT}>una conversación?</span>
-        </h2>
-      </Reveal>
-
-      {/* Timing · ~7:50 — big session totals on top */}
-      <Reveal delay={0.14}>
-        <div className="mt-5">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="eyebrow">Una sesión de NoShy · ~7:50 min</p>
-            <p className="mono text-[11px] text-[var(--dim)]">mín. 10s · se cobra por segundo conectado</p>
-          </div>
-
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {COST_OPTIONS.map((o) => (
-              <div key={o.name} className="flex items-end gap-4">
-                <p className="text-[clamp(2.6rem,6vw,4.2rem)] leading-none tracking-tight" style={{ color: o.tone }}>
-                  {o.perSession}
-                </p>
-                <div className="pb-1">
-                  <p className="text-[15px] leading-tight text-[var(--text)]">{o.name}</p>
-                  <p className="mono text-[11px] text-[var(--dim)]">por sesión · ~7:50</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 flex h-12 w-full gap-1 overflow-hidden rounded-2xl">
-            {SESSION_STEPS.map((st, i) => (
-              <motion.div
-                key={st.t}
-                initial={{ opacity: 0, scaleX: 0 }}
-                animate={{ opacity: 1, scaleX: 1 }}
-                transition={{ delay: 0.25 + i * 0.06, duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-                className="flex min-w-0 origin-left items-center justify-center bg-[var(--raise)] px-1"
-                style={{ flex: st.s, background: i % 2 ? 'var(--raise)' : 'color-mix(in srgb, var(--signal) 22%, var(--raise))' }}
-                title={`${st.t} · ${st.s}s`}
-              >
-                <span className="truncate text-center text-[11px] leading-tight text-[var(--text)]">
-                  {st.t}
-                  <span className="mono block text-[10px] text-[var(--dim)]">
-                    {Math.floor(st.s / 60)}:{String(st.s % 60).padStart(2, '0')}
-                  </span>
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </Reveal>
-
-      {/* LiveKit metering: session · room · join */}
-      <Reveal delay={0.28}>
-        <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <div className="grid gap-2 sm:grid-cols-3">
           {METERING.map((m) => (
             <div key={m.label} className="rounded-2xl bg-[var(--raise)] px-4 py-3">
               <p className="mono text-[10px] uppercase tracking-wide text-[var(--dim)]">{m.label}</p>
@@ -2267,7 +2214,7 @@ function LiveKitCostSlide() {
 
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         {COST_OPTIONS.map((o, i) => (
-          <Reveal key={o.name} delay={0.4 + i * 0.08}>
+          <Reveal key={o.name} delay={0.12 + i * 0.08}>
             <div className="tile h-full p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -2296,34 +2243,8 @@ function LiveKitCostSlide() {
         ))}
       </div>
 
-      {/* Membership plans — short */}
-      <Reveal delay={0.58}>
-        <div className="mt-4">
-          <p className="eyebrow mb-2">Planes LiveKit Cloud</p>
-          <div className="grid gap-2 sm:grid-cols-4">
-            {CLOUD_PLANS.map((p) => (
-              <div key={p.name} className="rounded-2xl border border-[var(--line)] px-3 py-2.5">
-                <div className="flex items-baseline justify-between gap-2">
-                  <p className="text-[13px] text-[var(--text)]">{p.name}</p>
-                  <p className="mono text-[12px] text-[var(--glow)]">{p.price}</p>
-                </div>
-                <p className="mt-1 mono text-[10px] text-[var(--dim)]">{p.mins}</p>
-                <p className="mt-0.5 text-[11px] text-[var(--dim)]">{p.note}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Reveal>
-
-      <Reveal delay={0.68}>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="pill !text-[var(--text)]">
-            <span className="dot bg-[var(--good)]" /> Build gratis: 1.000 min agente ≈ 127 sesiones
-          </span>
-          <a href="https://livekit.com/pricing" target="_blank" rel="noopener noreferrer" className="pill">
-            Precios LiveKit Cloud <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
+      <Reveal delay={0.32}>
+        <p className="eyebrow mt-4">Planes LiveKit Cloud</p>
       </Reveal>
     </div>
   );
@@ -3018,6 +2939,28 @@ function SkillSlide() {
 }
 
 /* ------------------------------------------------------------------ */
+/* 14.2 · Mood board ametoion                                          */
+/* ------------------------------------------------------------------ */
+
+function MoodBoardAmetoionSlide() {
+  return (
+    <div className="flex h-full flex-col">
+      <SlideHead eyebrow="14.2 · Output del skill" title="mood board ametoion" />
+      <Reveal delay={0.1} className="mt-4 min-h-0 flex-1">
+        <div className="tile flex h-[max(22rem,calc(100svh-17rem))] items-center justify-center overflow-hidden bg-white p-2 sm:p-3">
+          <img
+            src="/devfest-2026/mood-board-ametoion.jpg"
+            alt="Mood board ametoion — collage editorial de spreads de moda"
+            className="h-full w-full object-contain"
+            draggable={false}
+          />
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* 16 · Paso a paso                                                    */
 /* ------------------------------------------------------------------ */
 
@@ -3157,6 +3100,7 @@ const SLIDES = [
   { id: 'casos', label: 'Casos reales', Component: CasesSlide },
   { id: 'arquitectura', label: 'Arquitectura', Component: ArchitectureSlide },
   { id: 'adk', label: 'Google ADK', Component: AdkSlide },
+  { id: 'patrones', label: 'Patrones', Component: AnthropicPatternsSlide },
   { id: 'que-es-livekit', label: '¿Qué es LiveKit?', Component: LiveKitIntroSlide },
   { id: 'livekit', label: 'LiveKit', Component: LiveKitSlide },
   { id: 'livekit-costos', label: 'Costos', Component: LiveKitCostSlide },
@@ -3166,6 +3110,7 @@ const SLIDES = [
   { id: 'copilotkit', label: 'CopilotKit', Component: CopilotKitSlide },
   { id: 'tecnologias', label: 'Tecnologías', Component: StackSlide },
   { id: 'ai-design-framework', label: 'Mi skill de diseño', Component: SkillSlide },
+  { id: 'mood-board-ametoion', label: 'mood board ametoion', Component: MoodBoardAmetoionSlide },
   { id: 'paso-a-paso', label: 'Paso a paso', Component: StepsSlide },
   { id: 'audiencia', label: 'Audiencia', Component: AudienceSlide },
 ];
