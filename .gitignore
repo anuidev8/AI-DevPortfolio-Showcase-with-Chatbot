@@ -33,3 +33,6 @@ backups/
 
 # Lead finder output (contains business contact data)
 scripts/leads/output/
+
+# Vercel local link
+.vercel

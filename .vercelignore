@@ -1,0 +1,13 @@
+agents
+.next
+node_modules
+backups
+.git
+*.log
+tsconfig.tsbuildinfo
+scripts/leads/output
+videos
+devfest-built.png
+devfest-build.png
+.env*
+docs/*.docx
