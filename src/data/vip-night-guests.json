@@ -4,7 +4,7 @@
   "date": "Thursday Nov 12",
   "venue": "La Roca",
   "source": "https://theaihub.vip/dl/door-lists-fee4bd72bec5/",
-  "updated": "2026-11-12T23:37:54.357Z",
+  "updated": "2026-11-12T23:41:57.673Z",
   "seatsNote": "Paid seats sold: 0 of 72 for sale (92 minus reserved front)",
   "guests": [
     {
@@ -1691,6 +1691,21 @@
       "access": "General line · standing",
       "also": [
         "Your contact"
+      ]
+    },
+    {
+      "id": "gen-126",
+      "name": "Angel Mateus",
+      "role": "Approved",
+      "line": "general",
+      "phoneLast4": null,
+      "phone": null,
+      "email": null,
+      "paidLabel": "Paid: no (free)",
+      "access": "General line · standing",
+      "also": [
+        "Your contact",
+        "Test"
       ]
     }
   ]
