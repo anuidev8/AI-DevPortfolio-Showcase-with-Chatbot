@@ -6,7 +6,7 @@
 **Source:** [Door list](https://theaihub.vip/dl/door-lists-fee4bd72bec5/)  
 **Door page:** `/checkin/vip-night`
 
-**Paid 0** (seats sold: 0 of 72 for sale) · **Members+Builders+Speakers 25** · **Free approved 123** · **Total approved 148**
+**Paid 0** (seats sold: 0 of 72 for sale) · **Members+Builders+Speakers 26** · **Free approved 122** · **Total approved 148**
 
 **ES:** Fila VIP = grupos 1 y 2: manilla VIP y silla (el frente es para miembros y builders). Fila general = grupo 3: de pie.  
 **EN:** VIP line = groups 1 and 2: VIP bracelet and a seat (front section for members and builders). General line = group 3: standing.
@@ -23,7 +23,7 @@
 
 ---
 
-## 2. MIEMBROS + BUILDERS + SPEAKERS · MEMBERS + BUILDERS + SPEAKERS 25
+## 2. MIEMBROS + BUILDERS + SPEAKERS · MEMBERS + BUILDERS + SPEAKERS 26
 
 **Fila VIP · manilla VIP + silla, sección del frente** · VIP line · VIP bracelet + seat, front section
 
@@ -37,27 +37,28 @@
 | 6 | Connor | Member | ···9920 |
 | 7 | Dallion King | Builder | |
 | 8 | Dan Gauerke | Builder | |
-| 9 | Daniel Dominguez | Speaker | ···2435 |
-| 10 | Danny Sanchez | Builder | |
-| 11 | Enoc Silva | Speaker | |
-| 12 | Eric Espinosa | Member | ···9068 |
-| 13 | Jonathan Tran | Member / Builder | |
-| 14 | Joshua Ruskin | Member | ···6677 |
-| 15 | Leonidas | Builder | |
-| 16 | Lorenz Eick do Ó | Member | ···9512 |
-| 17 | Mark Ross | Member | ···7076 |
-| 18 | Max Royale | Builder / Speaker | ···7067 |
-| 19 | Petar Iliev | Builder | |
-| 20 | Raj Vachani | Speaker | ···2030 |
-| 21 | Richard Reed | Builder | |
-| 22 | Roman Leonelli | Builder | |
-| 23 | Thomas van Heeren | Member | ···0460 |
-| 24 | Tréjon Edmonds | Builder | |
-| 25 | Vikram Deol | Builder | |
+| 9 | Daniel | Speaker | ···6251 |
+| 10 | Daniel Dominguez | Speaker | ···2435 |
+| 11 | Danny Sanchez | Builder | |
+| 12 | Enoc Silva | Speaker | |
+| 13 | Eric Espinosa | Member | ···9068 |
+| 14 | Jonathan Tran | Member / Builder | |
+| 15 | Joshua Ruskin | Member | ···6677 |
+| 16 | Leonidas | Builder | |
+| 17 | Lorenz Eick do Ó | Member | ···9512 |
+| 18 | Mark Ross | Member | ···7076 |
+| 19 | Max Royale | Builder / Speaker | ···7067 |
+| 20 | Petar Iliev | Builder | |
+| 21 | Raj Vachani | Speaker | ···2030 |
+| 22 | Richard Reed | Builder | |
+| 23 | Roman Leonelli | Builder | |
+| 24 | Thomas van Heeren | Member | ···0460 |
+| 25 | Tréjon Edmonds | Builder | |
+| 26 | Vikram Deol | Builder | |
 
 ---
 
-## 3. GRATIS APROBADOS · FREE (APPROVED) 123
+## 3. GRATIS APROBADOS · FREE (APPROVED) 122
 
 **Fila general · de pie** · General line · standing
 

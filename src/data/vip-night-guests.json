@@ -4,7 +4,7 @@
   "date": "Thursday Nov 12",
   "venue": "La Roca",
   "source": "https://theaihub.vip/dl/door-lists-fee4bd72bec5/",
-  "updated": "2026-11-12T17:34:00-05:00",
+  "updated": "2026-11-12T23:35:52.593Z",
   "seatsNote": "Paid seats sold: 0 of 72 for sale (92 minus reserved front)",
   "guests": [
     {
@@ -101,6 +101,19 @@
     },
     {
       "id": "vip-009",
+      "name": "Daniel",
+      "role": "Speaker",
+      "line": "vip",
+      "phoneLast4": "6251",
+      "phone": null,
+      "paidLabel": "Paid: no (on the house)",
+      "access": "VIP line · VIP bracelet + seat · front section",
+      "also": [
+        "Approved"
+      ]
+    },
+    {
+      "id": "vip-010",
       "name": "Daniel Dominguez",
       "role": "Speaker",
       "line": "vip",
@@ -114,7 +127,7 @@
       ]
     },
     {
-      "id": "vip-010",
+      "id": "vip-011",
       "name": "Danny Sanchez",
       "role": "Builder",
       "line": "vip",
@@ -125,7 +138,7 @@
       "also": []
     },
     {
-      "id": "vip-011",
+      "id": "vip-012",
       "name": "Enoc Silva",
       "role": "Speaker",
       "line": "vip",
@@ -136,7 +149,7 @@
       "also": []
     },
     {
-      "id": "vip-012",
+      "id": "vip-013",
       "name": "Eric Espinosa",
       "role": "Member",
       "line": "vip",
@@ -147,7 +160,7 @@
       "also": []
     },
     {
-      "id": "vip-013",
+      "id": "vip-014",
       "name": "Jonathan Tran",
       "role": "Member",
       "line": "vip",
@@ -160,7 +173,7 @@
       ]
     },
     {
-      "id": "vip-014",
+      "id": "vip-015",
       "name": "Joshua Ruskin",
       "role": "Member",
       "line": "vip",
@@ -171,7 +184,7 @@
       "also": []
     },
     {
-      "id": "vip-015",
+      "id": "vip-016",
       "name": "Leonidas",
       "role": "Builder",
       "line": "vip",
@@ -182,7 +195,7 @@
       "also": []
     },
     {
-      "id": "vip-016",
+      "id": "vip-017",
       "name": "Lorenz Eick do Ó",
       "role": "Member",
       "line": "vip",
@@ -193,7 +206,7 @@
       "also": []
     },
     {
-      "id": "vip-017",
+      "id": "vip-018",
       "name": "Mark Ross",
       "role": "Member",
       "line": "vip",
@@ -204,7 +217,7 @@
       "also": []
     },
     {
-      "id": "vip-018",
+      "id": "vip-019",
       "name": "Max Royale",
       "role": "Builder",
       "line": "vip",
@@ -218,7 +231,7 @@
       ]
     },
     {
-      "id": "vip-019",
+      "id": "vip-020",
       "name": "Petar Iliev",
       "role": "Builder",
       "line": "vip",
@@ -229,7 +242,7 @@
       "also": []
     },
     {
-      "id": "vip-020",
+      "id": "vip-021",
       "name": "Raj Vachani",
       "role": "Speaker",
       "line": "vip",
@@ -242,7 +255,7 @@
       ]
     },
     {
-      "id": "vip-021",
+      "id": "vip-022",
       "name": "Richard Reed",
       "role": "Builder",
       "line": "vip",
@@ -253,7 +266,7 @@
       "also": []
     },
     {
-      "id": "vip-022",
+      "id": "vip-023",
       "name": "Roman Leonelli",
       "role": "Builder",
       "line": "vip",
@@ -264,7 +277,7 @@
       "also": []
     },
     {
-      "id": "vip-023",
+      "id": "vip-024",
       "name": "Thomas van Heeren",
       "role": "Member",
       "line": "vip",
@@ -275,7 +288,7 @@
       "also": []
     },
     {
-      "id": "vip-024",
+      "id": "vip-025",
       "name": "Tréjon Edmonds",
       "role": "Builder",
       "line": "vip",
@@ -286,7 +299,7 @@
       "also": []
     },
     {
-      "id": "vip-025",
+      "id": "vip-026",
       "name": "Vikram Deol",
       "role": "Builder",
       "line": "vip",
@@ -606,17 +619,6 @@
     },
     {
       "id": "gen-029",
-      "name": "Daniel Gauerke",
-      "role": "Approved",
-      "line": "general",
-      "phoneLast4": "6251",
-      "phone": null,
-      "paidLabel": "Paid: no (free)",
-      "access": "General line · standing",
-      "also": []
-    },
-    {
-      "id": "gen-030",
       "name": "Daniil Kopilevych",
       "role": "Approved",
       "line": "general",
@@ -627,7 +629,7 @@
       "also": []
     },
     {
-      "id": "gen-031",
+      "id": "gen-030",
       "name": "DANILO MARTINS",
       "role": "Approved",
       "line": "general",
@@ -638,7 +640,7 @@
       "also": []
     },
     {
-      "id": "gen-032",
+      "id": "gen-031",
       "name": "David Camilo Baquero Gómez",
       "role": "Approved",
       "line": "general",
@@ -649,7 +651,7 @@
       "also": []
     },
     {
-      "id": "gen-033",
+      "id": "gen-032",
       "name": "David Campo",
       "role": "Approved",
       "line": "general",
@@ -660,7 +662,7 @@
       "also": []
     },
     {
-      "id": "gen-034",
+      "id": "gen-033",
       "name": "David Londoño Mejía",
       "role": "Approved",
       "line": "general",
@@ -671,7 +673,7 @@
       "also": []
     },
     {
-      "id": "gen-035",
+      "id": "gen-034",
       "name": "Diego Salazar",
       "role": "Approved",
       "line": "general",
@@ -682,7 +684,7 @@
       "also": []
     },
     {
-      "id": "gen-036",
+      "id": "gen-035",
       "name": "Divine Devon Divine Devon",
       "role": "Approved",
       "line": "general",
@@ -693,7 +695,7 @@
       "also": []
     },
     {
-      "id": "gen-037",
+      "id": "gen-036",
       "name": "Edward Harris",
       "role": "Approved",
       "line": "general",
@@ -704,7 +706,7 @@
       "also": []
     },
     {
-      "id": "gen-038",
+      "id": "gen-037",
       "name": "Endrina Andara",
       "role": "Approved",
       "line": "general",
@@ -715,7 +717,7 @@
       "also": []
     },
     {
-      "id": "gen-039",
+      "id": "gen-038",
       "name": "Erica Ruiz",
       "role": "Approved",
       "line": "general",
@@ -726,7 +728,7 @@
       "also": []
     },
     {
-      "id": "gen-040",
+      "id": "gen-039",
       "name": "Erwin Perez",
       "role": "Approved",
       "line": "general",
@@ -737,7 +739,7 @@
       "also": []
     },
     {
-      "id": "gen-041",
+      "id": "gen-040",
       "name": "Eyal Kats",
       "role": "Approved",
       "line": "general",
@@ -748,7 +750,7 @@
       "also": []
     },
     {
-      "id": "gen-042",
+      "id": "gen-041",
       "name": "FABER Ciro",
       "role": "Approved",
       "line": "general",
@@ -759,7 +761,7 @@
       "also": []
     },
     {
-      "id": "gen-043",
+      "id": "gen-042",
       "name": "Fabio Aguirre",
       "role": "Approved",
       "line": "general",
@@ -770,7 +772,7 @@
       "also": []
     },
     {
-      "id": "gen-044",
+      "id": "gen-043",
       "name": "Felipe Agudelo",
       "role": "Approved",
       "line": "general",
@@ -781,7 +783,7 @@
       "also": []
     },
     {
-      "id": "gen-045",
+      "id": "gen-044",
       "name": "Felipe Cely",
       "role": "Approved",
       "line": "general",
@@ -792,7 +794,7 @@
       "also": []
     },
     {
-      "id": "gen-046",
+      "id": "gen-045",
       "name": "Filipe Baeta",
       "role": "Approved",
       "line": "general",
@@ -803,7 +805,7 @@
       "also": []
     },
     {
-      "id": "gen-047",
+      "id": "gen-046",
       "name": "Florian Schlosser",
       "role": "Approved",
       "line": "general",
@@ -814,7 +816,7 @@
       "also": []
     },
     {
-      "id": "gen-048",
+      "id": "gen-047",
       "name": "Frederic Lartigues",
       "role": "Approved",
       "line": "general",
@@ -825,7 +827,7 @@
       "also": []
     },
     {
-      "id": "gen-049",
+      "id": "gen-048",
       "name": "German casas",
       "role": "Approved",
       "line": "general",
@@ -836,7 +838,7 @@
       "also": []
     },
     {
-      "id": "gen-050",
+      "id": "gen-049",
       "name": "Giovanni Parker",
       "role": "Approved",
       "line": "general",
@@ -847,7 +849,7 @@
       "also": []
     },
     {
-      "id": "gen-051",
+      "id": "gen-050",
       "name": "Guillermo Calvo",
       "role": "Approved",
       "line": "general",
@@ -858,7 +860,7 @@
       "also": []
     },
     {
-      "id": "gen-052",
+      "id": "gen-051",
       "name": "Guisell Bolaño Bolaño",
       "role": "Approved",
       "line": "general",
@@ -869,7 +871,7 @@
       "also": []
     },
     {
-      "id": "gen-053",
+      "id": "gen-052",
       "name": "Harold Guerrero",
       "role": "Approved",
       "line": "general",
@@ -880,7 +882,7 @@
       "also": []
     },
     {
-      "id": "gen-054",
+      "id": "gen-053",
       "name": "Ivan Amezcua",
       "role": "Approved",
       "line": "general",
@@ -891,7 +893,7 @@
       "also": []
     },
     {
-      "id": "gen-055",
+      "id": "gen-054",
       "name": "Iván Ariza",
       "role": "Approved",
       "line": "general",
@@ -902,7 +904,7 @@
       "also": []
     },
     {
-      "id": "gen-056",
+      "id": "gen-055",
       "name": "Iván Felipe Morales García",
       "role": "Approved",
       "line": "general",
@@ -913,7 +915,7 @@
       "also": []
     },
     {
-      "id": "gen-057",
+      "id": "gen-056",
       "name": "Jacobo Blandon",
       "role": "Approved",
       "line": "general",
@@ -924,7 +926,7 @@
       "also": []
     },
     {
-      "id": "gen-058",
+      "id": "gen-057",
       "name": "Jes Quinounes",
       "role": "Approved",
       "line": "general",
@@ -935,7 +937,7 @@
       "also": []
     },
     {
-      "id": "gen-059",
+      "id": "gen-058",
       "name": "Jhon Carlos Corzo",
       "role": "Approved",
       "line": "general",
@@ -946,7 +948,7 @@
       "also": []
     },
     {
-      "id": "gen-060",
+      "id": "gen-059",
       "name": "Jhon Jairo Celis Jhon celis",
       "role": "Approved",
       "line": "general",
@@ -957,7 +959,7 @@
       "also": []
     },
     {
-      "id": "gen-061",
+      "id": "gen-060",
       "name": "JHON SANCHEZ",
       "role": "Approved",
       "line": "general",
@@ -968,7 +970,7 @@
       "also": []
     },
     {
-      "id": "gen-062",
+      "id": "gen-061",
       "name": "Johana gutierrez",
       "role": "Approved",
       "line": "general",
@@ -979,7 +981,7 @@
       "also": []
     },
     {
-      "id": "gen-063",
+      "id": "gen-062",
       "name": "John Atehortua",
       "role": "Approved",
       "line": "general",
@@ -990,7 +992,7 @@
       "also": []
     },
     {
-      "id": "gen-064",
+      "id": "gen-063",
       "name": "John Monsalve",
       "role": "Approved",
       "line": "general",
@@ -1001,7 +1003,7 @@
       "also": []
     },
     {
-      "id": "gen-065",
+      "id": "gen-064",
       "name": "Johnny Montoya",
       "role": "Approved",
       "line": "general",
@@ -1012,7 +1014,7 @@
       "also": []
     },
     {
-      "id": "gen-066",
+      "id": "gen-065",
       "name": "Jorge Vera",
       "role": "Approved",
       "line": "general",
@@ -1023,7 +1025,7 @@
       "also": []
     },
     {
-      "id": "gen-067",
+      "id": "gen-066",
       "name": "Joshua Abrahamson",
       "role": "Approved",
       "line": "general",
@@ -1034,7 +1036,7 @@
       "also": []
     },
     {
-      "id": "gen-068",
+      "id": "gen-067",
       "name": "Juacko Perez",
       "role": "Approved",
       "line": "general",
@@ -1045,7 +1047,7 @@
       "also": []
     },
     {
-      "id": "gen-069",
+      "id": "gen-068",
       "name": "Juan Alejandro Gonzalez",
       "role": "Approved",
       "line": "general",
@@ -1056,7 +1058,7 @@
       "also": []
     },
     {
-      "id": "gen-070",
+      "id": "gen-069",
       "name": "Juan Bolívar Bolivar",
       "role": "Approved",
       "line": "general",
@@ -1067,7 +1069,7 @@
       "also": []
     },
     {
-      "id": "gen-071",
+      "id": "gen-070",
       "name": "Juan Camilo Perez Toro",
       "role": "Approved",
       "line": "general",
@@ -1078,7 +1080,7 @@
       "also": []
     },
     {
-      "id": "gen-072",
+      "id": "gen-071",
       "name": "Juan Camilo Restrepo",
       "role": "Approved",
       "line": "general",
@@ -1089,7 +1091,7 @@
       "also": []
     },
     {
-      "id": "gen-073",
+      "id": "gen-072",
       "name": "Juan Carlos Naranjo Left Angle Partnership",
       "role": "Approved",
       "line": "general",
@@ -1100,7 +1102,7 @@
       "also": []
     },
     {
-      "id": "gen-074",
+      "id": "gen-073",
       "name": "Juan E Saldarriaga Saldarriaga",
       "role": "Approved",
       "line": "general",
@@ -1111,7 +1113,7 @@
       "also": []
     },
     {
-      "id": "gen-075",
+      "id": "gen-074",
       "name": "Juan Pablo Munoz",
       "role": "Approved",
       "line": "general",
@@ -1122,7 +1124,7 @@
       "also": []
     },
     {
-      "id": "gen-076",
+      "id": "gen-075",
       "name": "Juan Pablo Perez",
       "role": "Approved",
       "line": "general",
@@ -1133,7 +1135,7 @@
       "also": []
     },
     {
-      "id": "gen-077",
+      "id": "gen-076",
       "name": "Juan Sebastian Navarro Osorio",
       "role": "Approved",
       "line": "general",
@@ -1144,7 +1146,7 @@
       "also": []
     },
     {
-      "id": "gen-078",
+      "id": "gen-077",
       "name": "Julian Cardona",
       "role": "Approved",
       "line": "general",
@@ -1155,7 +1157,7 @@
       "also": []
     },
     {
-      "id": "gen-079",
+      "id": "gen-078",
       "name": "Julio Salgado P",
       "role": "Approved",
       "line": "general",
@@ -1166,7 +1168,7 @@
       "also": []
     },
     {
-      "id": "gen-080",
+      "id": "gen-079",
       "name": "Karina Ortegon",
       "role": "Approved",
       "line": "general",
@@ -1177,7 +1179,7 @@
       "also": []
     },
     {
-      "id": "gen-081",
+      "id": "gen-080",
       "name": "Kevin Vinasco",
       "role": "Approved",
       "line": "general",
@@ -1188,7 +1190,7 @@
       "also": []
     },
     {
-      "id": "gen-082",
+      "id": "gen-081",
       "name": "Kole Ogundipe",
       "role": "Approved",
       "line": "general",
@@ -1199,7 +1201,7 @@
       "also": []
     },
     {
-      "id": "gen-083",
+      "id": "gen-082",
       "name": "Leo Kaplan",
       "role": "Approved",
       "line": "general",
@@ -1210,7 +1212,7 @@
       "also": []
     },
     {
-      "id": "gen-084",
+      "id": "gen-083",
       "name": "lucio Rodriguez Rodriguez",
       "role": "Approved",
       "line": "general",
@@ -1221,7 +1223,7 @@
       "also": []
     },
     {
-      "id": "gen-085",
+      "id": "gen-084",
       "name": "Luis Bernal",
       "role": "Approved",
       "line": "general",
@@ -1232,7 +1234,7 @@
       "also": []
     },
     {
-      "id": "gen-086",
+      "id": "gen-085",
       "name": "Luis TOLOSA",
       "role": "Approved",
       "line": "general",
@@ -1243,7 +1245,7 @@
       "also": []
     },
     {
-      "id": "gen-087",
+      "id": "gen-086",
       "name": "Manuel Riaño Manuel Riaño",
       "role": "Approved",
       "line": "general",
@@ -1254,7 +1256,7 @@
       "also": []
     },
     {
-      "id": "gen-088",
+      "id": "gen-087",
       "name": "Map Link Test",
       "role": "Approved",
       "line": "general",
@@ -1265,7 +1267,7 @@
       "also": []
     },
     {
-      "id": "gen-089",
+      "id": "gen-088",
       "name": "Maria Posada",
       "role": "Approved",
       "line": "general",
@@ -1276,7 +1278,7 @@
       "also": []
     },
     {
-      "id": "gen-090",
+      "id": "gen-089",
       "name": "Marisol Gutierrez",
       "role": "Approved",
       "line": "general",
@@ -1287,7 +1289,7 @@
       "also": []
     },
     {
-      "id": "gen-091",
+      "id": "gen-090",
       "name": "Martin Burt",
       "role": "Approved",
       "line": "general",
@@ -1298,7 +1300,7 @@
       "also": []
     },
     {
-      "id": "gen-092",
+      "id": "gen-091",
       "name": "Martin Salas",
       "role": "Approved",
       "line": "general",
@@ -1309,7 +1311,7 @@
       "also": []
     },
     {
-      "id": "gen-093",
+      "id": "gen-092",
       "name": "Matias Castrillón",
       "role": "Approved",
       "line": "general",
@@ -1320,7 +1322,7 @@
       "also": []
     },
     {
-      "id": "gen-094",
+      "id": "gen-093",
       "name": "Matias Lopera",
       "role": "Approved",
       "line": "general",
@@ -1331,7 +1333,7 @@
       "also": []
     },
     {
-      "id": "gen-095",
+      "id": "gen-094",
       "name": "Mauricio Posada",
       "role": "Approved",
       "line": "general",
@@ -1342,7 +1344,7 @@
       "also": []
     },
     {
-      "id": "gen-096",
+      "id": "gen-095",
       "name": "Mehdi Katib",
       "role": "Approved",
       "line": "general",
@@ -1353,7 +1355,7 @@
       "also": []
     },
     {
-      "id": "gen-097",
+      "id": "gen-096",
       "name": "Michael Diller",
       "role": "Approved",
       "line": "general",
@@ -1364,7 +1366,7 @@
       "also": []
     },
     {
-      "id": "gen-098",
+      "id": "gen-097",
       "name": "Miguel Homez",
       "role": "Approved",
       "line": "general",
@@ -1375,7 +1377,7 @@
       "also": []
     },
     {
-      "id": "gen-099",
+      "id": "gen-098",
       "name": "Mir Abidi",
       "role": "Approved",
       "line": "general",
@@ -1386,7 +1388,7 @@
       "also": []
     },
     {
-      "id": "gen-100",
+      "id": "gen-099",
       "name": "Nicolas Corredor",
       "role": "Approved",
       "line": "general",
@@ -1397,7 +1399,7 @@
       "also": []
     },
     {
-      "id": "gen-101",
+      "id": "gen-100",
       "name": "Nino Cavenecia",
       "role": "Approved",
       "line": "general",
@@ -1408,7 +1410,7 @@
       "also": []
     },
     {
-      "id": "gen-102",
+      "id": "gen-101",
       "name": "Norbey Yepes Yepes",
       "role": "Approved",
       "line": "general",
@@ -1419,7 +1421,7 @@
       "also": []
     },
     {
-      "id": "gen-103",
+      "id": "gen-102",
       "name": "Orlando Robles Robles",
       "role": "Approved",
       "line": "general",
@@ -1430,7 +1432,7 @@
       "also": []
     },
     {
-      "id": "gen-104",
+      "id": "gen-103",
       "name": "Oscar Bertron",
       "role": "Approved",
       "line": "general",
@@ -1441,7 +1443,7 @@
       "also": []
     },
     {
-      "id": "gen-105",
+      "id": "gen-104",
       "name": "Rebecca Matias",
       "role": "Approved",
       "line": "general",
@@ -1452,7 +1454,7 @@
       "also": []
     },
     {
-      "id": "gen-106",
+      "id": "gen-105",
       "name": "Ricardo Lopez",
       "role": "Approved",
       "line": "general",
@@ -1463,7 +1465,7 @@
       "also": []
     },
     {
-      "id": "gen-107",
+      "id": "gen-106",
       "name": "Richard Rodríguez",
       "role": "Approved",
       "line": "general",
@@ -1474,7 +1476,7 @@
       "also": []
     },
     {
-      "id": "gen-108",
+      "id": "gen-107",
       "name": "Ryan Roberto",
       "role": "Approved",
       "line": "general",
@@ -1485,7 +1487,7 @@
       "also": []
     },
     {
-      "id": "gen-109",
+      "id": "gen-108",
       "name": "Samuel Murillo",
       "role": "Approved",
       "line": "general",
@@ -1496,7 +1498,7 @@
       "also": []
     },
     {
-      "id": "gen-110",
+      "id": "gen-109",
       "name": "Santi Restrepo",
       "role": "Approved",
       "line": "general",
@@ -1507,7 +1509,7 @@
       "also": []
     },
     {
-      "id": "gen-111",
+      "id": "gen-110",
       "name": "Santiago Bermúdez Bermudez",
       "role": "Approved",
       "line": "general",
@@ -1518,7 +1520,7 @@
       "also": []
     },
     {
-      "id": "gen-112",
+      "id": "gen-111",
       "name": "Santiago Carrillo",
       "role": "Approved",
       "line": "general",
@@ -1529,7 +1531,7 @@
       "also": []
     },
     {
-      "id": "gen-113",
+      "id": "gen-112",
       "name": "Santiago Gómez",
       "role": "Approved",
       "line": "general",
@@ -1540,7 +1542,7 @@
       "also": []
     },
     {
-      "id": "gen-114",
+      "id": "gen-113",
       "name": "Santiago Osorio",
       "role": "Approved",
       "line": "general",
@@ -1551,7 +1553,7 @@
       "also": []
     },
     {
-      "id": "gen-115",
+      "id": "gen-114",
       "name": "Santiago restrepo Restrepo",
       "role": "Approved",
       "line": "general",
@@ -1562,7 +1564,7 @@
       "also": []
     },
     {
-      "id": "gen-116",
+      "id": "gen-115",
       "name": "Scott Francis",
       "role": "Approved",
       "line": "general",
@@ -1573,7 +1575,7 @@
       "also": []
     },
     {
-      "id": "gen-117",
+      "id": "gen-116",
       "name": "Sean Tamami",
       "role": "Approved",
       "line": "general",
@@ -1584,7 +1586,7 @@
       "also": []
     },
     {
-      "id": "gen-118",
+      "id": "gen-117",
       "name": "Sebastian Bejarano Arce Sebastian Bejarano Arce",
       "role": "Approved",
       "line": "general",
@@ -1595,7 +1597,7 @@
       "also": []
     },
     {
-      "id": "gen-119",
+      "id": "gen-118",
       "name": "Sergio Daniel Lozano Lozano",
       "role": "Approved",
       "line": "general",
@@ -1606,7 +1608,7 @@
       "also": []
     },
     {
-      "id": "gen-120",
+      "id": "gen-119",
       "name": "Simon Sjoberg",
       "role": "Approved",
       "line": "general",
@@ -1617,7 +1619,7 @@
       "also": []
     },
     {
-      "id": "gen-121",
+      "id": "gen-120",
       "name": "stiven Molina",
       "role": "Approved",
       "line": "general",
@@ -1628,7 +1630,7 @@
       "also": []
     },
     {
-      "id": "gen-122",
+      "id": "gen-121",
       "name": "Tariq Nizami",
       "role": "Approved",
       "line": "general",
@@ -1639,7 +1641,7 @@
       "also": []
     },
     {
-      "id": "gen-123",
+      "id": "gen-122",
       "name": "Vivi Saumetj",
       "role": "Approved",
       "line": "general",
