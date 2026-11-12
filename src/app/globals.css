@@ -1289,3 +1289,10 @@ body {
   color: #5a5a5a;
   line-height: 1.4;
 }
+
+.vn-email {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  color: #9a9a9a;
+  word-break: break-all;
+}

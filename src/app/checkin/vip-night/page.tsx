@@ -17,6 +17,7 @@ type Guest = {
   line: Line;
   phoneLast4: string | null;
   phone: string | null;
+  email?: string | null;
   paidLabel: string;
   access: string;
   also: string[];
@@ -179,6 +180,7 @@ export default function VipNightDoorPage() {
         g.name.toLowerCase().includes(q) ||
         (g.phoneLast4 && g.phoneLast4.includes(q)) ||
         (g.phone && g.phone.replace(/\s/g, "").includes(q.replace(/\s/g, ""))) ||
+        (g.email && g.email.toLowerCase().includes(q)) ||
         g.role.toLowerCase().includes(q)
       );
     });
@@ -197,7 +199,7 @@ export default function VipNightDoorPage() {
           guestId: guest.id,
           checked: next,
           name: guest.name,
-          email: guest.phone || guest.phoneLast4 || "",
+          email: guest.email || guest.phone || guest.phoneLast4 || "",
           status: guest.line,
         }),
       });
@@ -237,6 +239,7 @@ export default function VipNightDoorPage() {
             <span className="vn-phone">•••• {g.phoneLast4}</span>
           ) : null}
         </div>
+        {g.email ? <p className="vn-email">{g.email}</p> : null}
         <div className="vn-tags">
           <span className="vn-tag">{roleLabel}</span>
           <span className={`vn-tag${isMembership ? " is-paid" : ""}`}>
@@ -284,6 +287,7 @@ export default function VipNightDoorPage() {
                   {t.role[g.role] ?? g.role}
                   {g.phoneLast4 ? ` · ···${g.phoneLast4}` : ""}
                   {g.phone ? ` · ${g.phone}` : ""}
+                  {g.email ? ` · ${g.email}` : ""}
                 </em>
               </span>
             </li>

@@ -4,7 +4,7 @@
   "date": "Thursday Nov 12",
   "venue": "La Roca",
   "source": "https://theaihub.vip/dl/door-lists-fee4bd72bec5/",
-  "updated": "2026-11-12T23:35:52.593Z",
+  "updated": "2026-11-12T23:36:49.524Z",
   "seatsNote": "Paid seats sold: 0 of 72 for sale (92 minus reserved front)",
   "guests": [
     {
@@ -1650,6 +1650,20 @@
       "paidLabel": "Paid: no (free)",
       "access": "General line · standing",
       "also": []
+    },
+    {
+      "id": "gen-123",
+      "name": "Jessica Córdoba Castañeda",
+      "role": "Approved",
+      "line": "general",
+      "phoneLast4": null,
+      "phone": null,
+      "email": "lng.jcordoba21@gmail.com",
+      "paidLabel": "Paid: no (free)",
+      "access": "General line · standing",
+      "also": [
+        "Your contact"
+      ]
     }
   ]
 }
