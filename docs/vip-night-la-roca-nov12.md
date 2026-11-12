@@ -71,5 +71,5 @@ Full list lives in `src/data/vip-night-guests.json` and on `/checkin/vip-night`.
 | # | Name | Contact | Notes |
 |---|---|---|---|
 | 1 | Jessica Córdoba Castañeda | lng.jcordoba21@gmail.com | Local contact · on door General |
-| 2 | Fernando Hurtado | — | Local contact |
-| 3 | Jaider Rios | +57 301 6157067 · [WhatsApp](https://wa.me/573016157067) | Local contact |
+| 2 | Fernando Hurtado | — | Local contact · on door General |
+| 3 | Jaider Rios | +57 301 6157067 · [WhatsApp](https://wa.me/573016157067) | Local contact · on door General |

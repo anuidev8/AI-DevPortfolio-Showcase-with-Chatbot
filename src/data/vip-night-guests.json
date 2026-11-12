@@ -4,7 +4,7 @@
   "date": "Thursday Nov 12",
   "venue": "La Roca",
   "source": "https://theaihub.vip/dl/door-lists-fee4bd72bec5/",
-  "updated": "2026-11-12T23:36:49.524Z",
+  "updated": "2026-11-12T23:37:54.357Z",
   "seatsNote": "Paid seats sold: 0 of 72 for sale (92 minus reserved front)",
   "guests": [
     {
@@ -1659,6 +1659,34 @@
       "phoneLast4": null,
       "phone": null,
       "email": "lng.jcordoba21@gmail.com",
+      "paidLabel": "Paid: no (free)",
+      "access": "General line · standing",
+      "also": [
+        "Your contact"
+      ]
+    },
+    {
+      "id": "gen-124",
+      "name": "Fernando Hurtado",
+      "role": "Approved",
+      "line": "general",
+      "phoneLast4": null,
+      "phone": null,
+      "email": null,
+      "paidLabel": "Paid: no (free)",
+      "access": "General line · standing",
+      "also": [
+        "Your contact"
+      ]
+    },
+    {
+      "id": "gen-125",
+      "name": "Jaider Rios",
+      "role": "Approved",
+      "line": "general",
+      "phoneLast4": "7067",
+      "phone": "+57 301 6157067",
+      "email": null,
       "paidLabel": "Paid: no (free)",
       "access": "General line · standing",
       "also": [
