@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { pageMetadata, serviceJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import Image from "next/image";
-import { community } from "@/components/portfolio/content";
+import { community, speakingHighlights } from "@/components/portfolio/content";
 import { CommunityReel } from "@/components/portfolio/CommunityReel";
 import { MediaCarousel } from "@/components/portfolio/MediaCarousel";
 import { ServicePage } from "@/components/portfolio/ServicePage";
@@ -73,6 +73,79 @@ export default function EventsPage() {
                 <p className="mt-1.5 text-[15px] text-pf-body">{st.desc}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className={`${container} pt-24`}>
+          <div className="max-w-[760px]">
+            <div className={eyebrow}>{speakingHighlights.eyebrow}</div>
+            <h2 className={`${sectionTitle} mt-2.5 text-[clamp(32px,4.5vw,44px)]`}>
+              Recent events where I <span className="text-pf-accent">spoke and hosted</span>.
+            </h2>
+            <p className="mt-4 max-w-[640px] text-base text-pf-body">
+              Stage time across Medellín’s tech scene — GDG, AI After Hours and community nights — in English and Spanish.
+            </p>
+          </div>
+
+          <MediaCarousel
+            media={speakingHighlights.media}
+            label="Speaking highlights"
+            className="mt-8 aspect-video overflow-hidden rounded-[22px] border border-pf-border lg:aspect-[16/9]"
+          />
+
+          <div className="mt-6 flex flex-wrap gap-4">
+            {speakingHighlights.events.map((e) => {
+              const body = (
+                <>
+                  {"image" in e && e.image ? (
+                    <Image
+                      src={e.image.src}
+                      alt={e.image.alt}
+                      width={72}
+                      height={72}
+                      className="h-[72px] w-[72px] flex-none rounded-xl object-cover"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="flex h-[72px] w-[72px] flex-none items-center justify-center rounded-xl bg-pf-raised font-display text-2xl font-extrabold text-pf-strong"
+                    >
+                      AM
+                    </span>
+                  )}
+                  <span className="min-w-0 flex-auto">
+                    <span className="block font-plex-mono text-xs tracking-[0.5px] text-pf-muted">{e.tag}</span>
+                    <span className="mt-0.5 block text-lg font-semibold">{e.title}</span>
+                    <span className="mt-1 block text-[15px] text-pf-body">{e.desc}</span>
+                  </span>
+                  {"href" in e && e.href ? (
+                    <span aria-hidden="true" className="flex-none text-pf-accent transition-transform group-hover:translate-x-1">
+                      →
+                    </span>
+                  ) : null}
+                </>
+              );
+              const className =
+                "flex min-w-0 flex-[1_1_280px] items-start gap-4 rounded-[18px] border border-pf-border p-4 text-pf-text no-underline";
+
+              if ("href" in e && e.href) {
+                return (
+                  <a
+                    key={e.title}
+                    href={e.href}
+                    className={`group ${className} transition-colors hover:border-pf-strong hover:bg-pf-surface hover:text-pf-text`}
+                  >
+                    {body}
+                  </a>
+                );
+              }
+
+              return (
+                <div key={e.title} className={className}>
+                  {body}
+                </div>
+              );
+            })}
           </div>
         </section>
 

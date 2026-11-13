@@ -21,6 +21,7 @@ export const navItems = [
   { href: "/software", label: "Software" },
   { href: "/voice-ai", label: "Voice AI" },
   { href: "/mentorship", label: "Mentorship" },
+  { href: "/bienestar", label: "Bienestar" },
   { href: "/events", label: "Events" },
   { href: "/work", label: "Work" },
   { href: "/post", label: "Articles" },
@@ -177,6 +178,20 @@ export const cases: CaseStudy[] = [
     category: "Events",
     media: [
       {
+        type: "video",
+        src: "/events/speaking/linkedin-speaking.mp4",
+        poster: "/events/speaking/linkedin-speaking-poster.jpg",
+        alt: "Angel speaking on stage at a recent Medellín tech event",
+        caption: "ON STAGE",
+      },
+      {
+        type: "image",
+        src: "/events/speaking/gdg-medellin.jpg",
+        alt: "Speakers on stage at GDG Medellín",
+        fit: "cover",
+        caption: "GDG MEDELLÍN",
+      },
+      {
         type: "image",
         src: "/social/ai-after-hours/ai-after-hours-oct-22-poster.jpg",
         alt: "AI After Hours event poster for October 22",
@@ -188,7 +203,7 @@ export const cases: CaseStudy[] = [
         src: "/community/visible-builders-2.jpg",
         alt: "A speaker on the mic during a Visible Builders talk",
         fit: "cover",
-        caption: "ON STAGE",
+        caption: "HOSTING",
       },
     ],
     built:
@@ -521,7 +536,13 @@ export const community = {
     {
       type: "image",
       src: "/community/visible-builders-1.jpg",
-      alt: "A builder sharing what he's working on, mic in hand",
+      alt: "Builders posing together at AI After Hours with the event screen behind them",
+      fit: "cover",
+    },
+    {
+      type: "image",
+      src: "/community/visible-builders-5.jpg",
+      alt: "A conversation during a Visible Builders night in Medellín",
       fit: "cover",
     },
     {
@@ -562,6 +583,62 @@ export const community = {
       title: "Agentic Voice Wellness Hackathon",
       desc: "Teams build voice agents that help people breathe, move, focus and rest, from a prep workshop to demo day.",
       href: "/post/medellin-voice-wellness-hackathon",
+    },
+  ],
+};
+
+export const speakingHighlights = {
+  eyebrow: "ON STAGE",
+  title: "Recent events where I spoke and hosted.",
+  media: [
+    {
+      type: "video",
+      src: "/events/speaking/linkedin-speaking.mp4",
+      poster: "/events/speaking/linkedin-speaking-poster.jpg",
+      alt: "Angel speaking on stage at a recent Medellín tech event",
+      caption: "SPEAKING",
+    },
+    {
+      type: "image",
+      src: "/events/speaking/gdg-medellin.jpg",
+      alt: "Speakers lined up on stage at GDG Medellín",
+      fit: "cover",
+      caption: "GDG MEDELLÍN",
+    },
+    {
+      type: "image",
+      src: "/community/visible-builders-1.jpg",
+      alt: "Builders posing together at AI After Hours",
+      fit: "cover",
+      caption: "AI AFTER HOURS",
+    },
+    {
+      type: "image",
+      src: "/community/visible-builders-2.jpg",
+      alt: "Angel on the mic during a Visible Builders night",
+      fit: "cover",
+      caption: "HOST & MC",
+    },
+  ] satisfies CaseMedia[],
+  events: [
+    {
+      tag: "SPEAKER · GDG MEDELLÍN",
+      title: "Google Developer Group Medellín",
+      desc: "On stage with the GDG community — talks, demos and builders shipping in public.",
+      image: { src: "/events/speaking/gdg-medellin.jpg", alt: "GDG Medellín speakers on stage" },
+    },
+    {
+      tag: "HOST · VISIBLE BUILDERS",
+      title: "AI After Hours",
+      desc: "Monthly AI talk night: speakers, live demos, Noshy voice host and real introductions.",
+      image: { src: "/community/visible-builders-1.jpg", alt: "AI After Hours group photo" },
+      href: "/post/ai-after-hours",
+    },
+    {
+      tag: "SPEAKER · INVITE",
+      title: "Invite me to speak",
+      desc: "Workshops, keynotes and AI nights in English or Spanish — Medellín, LatAm and remote.",
+      href: "mailto:contact@angelmateus.com?subject=Speaking%20invitation",
     },
   ],
 };

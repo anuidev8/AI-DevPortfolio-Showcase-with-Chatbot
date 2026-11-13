@@ -6,6 +6,7 @@ const pages: { path: string; priority: number; changeFrequency: MetadataRoute.Si
   { path: "/voice-ai", priority: 0.9, changeFrequency: "monthly" },
   { path: "/software", priority: 0.9, changeFrequency: "monthly" },
   { path: "/mentorship", priority: 0.9, changeFrequency: "monthly" },
+  { path: "/bienestar", priority: 0.9, changeFrequency: "monthly" },
   { path: "/events", priority: 0.9, changeFrequency: "weekly" },
   { path: "/work", priority: 0.8, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.7, changeFrequency: "yearly" },

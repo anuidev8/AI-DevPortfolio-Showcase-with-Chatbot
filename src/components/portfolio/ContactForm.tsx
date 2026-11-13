@@ -4,7 +4,15 @@ import { useState } from "react";
 import { whatsapp } from "./content";
 import { primaryButton } from "./styles";
 
-const topics = ["Enterprise software", "AI voice agent", "AI Engineer mentorship", "Company AI workshop", "Event or sponsorship", "Something else"];
+const topics = [
+  "Enterprise software",
+  "AI voice agent",
+  "AI for wellness / coaching",
+  "AI Engineer mentorship",
+  "Company AI workshop",
+  "Event or sponsorship",
+  "Something else",
+];
 
 const field =
   "mt-1.5 block w-full rounded-xl border border-pf-strong bg-pf-bg px-3.5 py-3 text-base text-pf-text placeholder:text-pf-faint focus:border-pf-accent focus:outline-none";
