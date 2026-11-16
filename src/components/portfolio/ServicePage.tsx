@@ -7,13 +7,16 @@ import { CaseGrid } from "./WorkSection";
 const linkProps = (href: string) => (href.startsWith("http") ? external : {});
 
 // One template for /software, /voice-ai, /mentorship and /events.
-// `showcase` renders beside the offer (demo card, photos); `children` renders before the case studies.
+// `lead` renders right after the header; `showcase` beside the offer (demo card, photos);
+// `children` before the case studies.
 export const ServicePage = ({
   content: c,
+  lead,
   showcase,
   children,
 }: {
   content: ServicePageContent;
+  lead?: React.ReactNode;
   showcase?: React.ReactNode;
   children?: React.ReactNode;
 }) => (
@@ -43,7 +46,9 @@ export const ServicePage = ({
       </div>
     </PageHeader>
 
-    <section className={`${container} flex flex-wrap gap-8 border-t border-pf-line pt-16`}>
+    {lead}
+
+    <section id="offer" className={`${container} flex scroll-mt-6 flex-wrap gap-8 border-t border-pf-line pt-16`}>
       <div className="min-w-0 flex-[2_1_520px]">
         <div className={eyebrow}>{c.offerTitle.toUpperCase()}</div>
         <div className="mt-6 grid gap-6 sm:grid-cols-2">

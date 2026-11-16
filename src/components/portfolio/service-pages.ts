@@ -68,21 +68,29 @@ export const softwarePage: ServicePageContent = {
 };
 
 export const voiceAiPage: ServicePageContent = {
-  eyebrow: "AI VOICE AGENTS",
-  title: "An AI receptionist that never",
-  titleAccent: "misses a patient.",
+  eyebrow: "VOICE AI · AGENTS & APPS",
+  title: "Voice AI that talks to your customers,",
+  titleAccent: "on every call and in every app.",
   intro:
-    "It answers calls and WhatsApp 24/7 in English and Spanish, replies in seconds and books straight into your calendar. Live in 14 days.",
+    "I build voice agents and voice apps: an AI receptionist that answers calls and WhatsApp 24/7, support and sales agents that take and make calls, real-time voice coaching inside your app, all connected to your CRM. English and Spanish, built on LiveKit, AWS and Google Cloud.",
   primaryCta: {
     label: "Try the demo",
-    href: whatsapp("Hi Angel, I'd like to try the AI receptionist demo."),
+    href: whatsapp("Hi Angel, I'd like to try the voice AI demo."),
   },
   secondaryCta: {
     label: "Book a 15-min call",
-    href: whatsapp("Hi Angel, I'd like to book a 15-min call about an AI receptionist for my business."),
+    href: whatsapp("Hi Angel, I'd like to book a 15-min call about voice AI for my business."),
   },
-  audience: ["Aesthetic & dental clinics", "Medical tourism", "Real estate", "Hotels & restaurants", "Event organizers"],
-  offerTitle: "What your receptionist does",
+  audience: [
+    "Clinics & medical tourism",
+    "Real estate",
+    "Hotels & restaurants",
+    "Support teams",
+    "Sales teams",
+    "Coaching & wellness apps",
+    "Event organizers",
+  ],
+  offerTitle: "Start with an AI receptionist",
   offer: [
     { title: "Answers every call and message", desc: "Phone and WhatsApp, nights and weekends included, in under 10 seconds." },
     { title: "Speaks English & Spanish", desc: "Foreign patients and local ones get the same fast, friendly answers." },

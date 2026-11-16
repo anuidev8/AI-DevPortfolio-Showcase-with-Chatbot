@@ -42,9 +42,14 @@ const config: Config = {
           "0%, 100%": { transform: "scaleY(1)" },
           "50%": { transform: "scaleY(0.55)" },
         },
+        "pf-speak": {
+          "0%": { transform: "scaleY(0.3)" },
+          "100%": { transform: "scaleY(1)" },
+        },
       },
       animation: {
         "pf-wave": "pf-wave 1.6s ease-in-out infinite",
+        "pf-speak": "pf-speak 0.5s cubic-bezier(.34,1.56,.64,1) 1 both",
       },
     },
   },
