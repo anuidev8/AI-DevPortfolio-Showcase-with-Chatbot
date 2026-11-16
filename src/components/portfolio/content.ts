@@ -21,6 +21,7 @@ export const navItems = [
   { href: "/software", label: "Software" },
   { href: "/voice-ai", label: "Voice AI" },
   { href: "/mentorship", label: "Mentorship" },
+  { href: "/workshops", label: "Workshops" },
   { href: "/bienestar", label: "Bienestar" },
   { href: "/events", label: "Events" },
   { href: "/work", label: "Work" },

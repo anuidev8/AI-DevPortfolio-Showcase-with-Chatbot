@@ -36,3 +36,4 @@ scripts/leads/output/
 
 # Vercel local link
 .vercel
+.env*
