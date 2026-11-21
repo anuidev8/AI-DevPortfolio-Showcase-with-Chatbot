@@ -6,7 +6,8 @@ export type Workshop = {
   dateIso: string;
   duration: string;
   location: string;
-  price: string;
+  /** Short audience/level line shown instead of a price. */
+  level: string;
   status: "upcoming" | "open" | "past";
   tags: string[];
   summary: string;
@@ -22,48 +23,41 @@ export type Workshop = {
 /** Featured / listed workshops. First entry is the primary upcoming workshop. */
 export const workshops: Workshop[] = [
   {
-    slug: "build-with-cloud-ai",
-    title: "Build with Cloud AI",
-    subtitle: "Vercel, Lovable, MCPs + bonus ElevenLabs voice",
+    slug: "build-ai-voice-agent-claude-elevenlabs",
+    title: "Build Your AI Voice Agent with Claude + ElevenLabs",
+    subtitle: "No-code workshop: custom AI voice, voice agent and a lead-capture landing page",
     dateLabel: "Saturday · Nov 28, 2026",
     dateIso: "2026-11-28",
-    duration: "3–4 hours",
+    duration: "1:30–5:30 PM",
     location: "Private cowork · Medellín",
-    price: "Free for Thursday attendees · USD 25 public",
+    level: "Beginner friendly · no code",
     status: "open",
-    tags: ["Vercel", "Lovable", "MCPs", "Connectors", "Design", "Workflows", "ElevenLabs"],
+    tags: ["Claude", "ElevenLabs", "Custom voice", "Voice agents", "Lead capture", "Content plan"],
     summary:
-      "Hands-on workshop: ship a website or custom app with cloud AI tools — Vercel, Lovable, connectors and MCPs. Plus a bonus session on ElevenLabs: add voice to your prototype.",
+      "One afternoon, no code. Build a landing page that captures leads with Claude, create your own AI voice in ElevenLabs, and publish a voice assistant that answers your customers.",
     outcomes: [
-      "A live site or app URL on Vercel",
-      "UI built faster with Lovable (or similar)",
-      "At least one connector / MCP / workflow wired",
-      "A clear idea → prototype → deploy path",
-      "Bonus: first voice clip or agent stub with ElevenLabs",
+      "A 30-day content plan",
+      "A live landing page built with Claude",
+      "Lead capture: form, WhatsApp, FAQ, booking",
+      "Your custom AI voice in ElevenLabs",
+      "A voice assistant embedded on your page",
+      "A next-30-days action plan",
     ],
     agenda: [
-      { t: "0:00", l: "Welcome, outcome, accounts checklist" },
-      { t: "0:20", l: "Scope your site or custom app" },
-      { t: "0:50", l: "Build UI with Lovable / AI builder" },
-      { t: "1:40", l: "Break" },
-      { t: "1:55", l: "Connectors, MCPs & workflows" },
-      { t: "2:35", l: "Deploy on Vercel + design polish" },
-      { t: "3:05", l: "Bonus · ElevenLabs — add voice to your build" },
-      { t: "3:30", l: "Demo circle + next steps" },
-      { t: "3:55", l: "Close + resources pack" },
+      { t: "1:30", l: "Plan: audience, offer and a 30-day content plan" },
+      { t: "2:30", l: "Build: landing page with Claude, with form, WhatsApp and booking" },
+      { t: "3:15", l: "Break" },
+      { t: "3:30", l: "Voice: custom brand voice and a voice assistant on your page" },
+      { t: "4:50", l: "Ship: publish, demo and action plan" },
     ],
     bring: [
-      "Laptop + charger",
-      "GitHub account",
-      "Vercel account",
-      "Lovable (or chosen builder) account",
-      "Optional: ElevenLabs account (for the bonus voice session)",
-      "Optional: API keys for tools you want to connect",
+      "Laptop + charger, and headphones",
+      "Claude and ElevenLabs accounts",
+      "A 2-minute voice recording (script sent on WhatsApp)",
+      "Your offer, 5–10 customer FAQs and your WhatsApp",
     ],
-    href: "/workshops/build-with-cloud-ai",
+    href: "/workshops/build-ai-voice-agent-claude-elevenlabs",
     ctaLabel: "View workshop",
-    secondaryHref: "/workshop/visible-builders-build-weekend/register-saturday",
-    secondaryLabel: "Propose a session",
   },
 ];
 

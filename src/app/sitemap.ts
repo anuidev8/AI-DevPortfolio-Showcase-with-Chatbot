@@ -7,7 +7,7 @@ const pages: { path: string; priority: number; changeFrequency: MetadataRoute.Si
   { path: "/software", priority: 0.9, changeFrequency: "monthly" },
   { path: "/mentorship", priority: 0.9, changeFrequency: "monthly" },
   { path: "/workshops", priority: 0.9, changeFrequency: "weekly" },
-  { path: "/workshops/build-with-cloud-ai", priority: 0.85, changeFrequency: "weekly" },
+  { path: "/workshops/build-ai-voice-agent-claude-elevenlabs", priority: 0.85, changeFrequency: "weekly" },
   { path: "/bienestar", priority: 0.9, changeFrequency: "monthly" },
   { path: "/events", priority: 0.9, changeFrequency: "weekly" },
   { path: "/workshop/visible-builders-build-weekend", priority: 0.8, changeFrequency: "weekly" },

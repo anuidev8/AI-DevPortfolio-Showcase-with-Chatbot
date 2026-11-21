@@ -9,7 +9,7 @@ import { workshops } from "@/data/workshops";
 export const metadata: Metadata = pageMetadata({
   title: "AI Workshops in Medellín",
   description:
-    "Hands-on workshops from Visible Builders and Angel Mateus: ship with Vercel, Lovable, connectors, MCPs, design and workflows. First up: Build with Cloud AI · Nov 28.",
+    "Hands-on AI workshops in Medellín with Angel Mateus. First up: Build Your AI Voice Agent with Claude + ElevenLabs · Sat Nov 28, 1:30–5:30 PM.",
   path: "/workshops",
 });
 
@@ -28,7 +28,7 @@ export default function WorkshopsPage() {
         eyebrow="WORKSHOPS"
         title="Learn by"
         accent="shipping."
-        intro="Hands-on sessions for builders in Medellín. Leave with a live URL, not just slides — tools, connectors, MCPs, design and workflows."
+        intro="Hands-on sessions for builders in Medellín. Leave with a live URL, not just slides."
       />
 
       {featured && (
@@ -53,7 +53,7 @@ export default function WorkshopsPage() {
                   ["When", featured.dateLabel],
                   ["Duration", featured.duration],
                   ["Where", featured.location],
-                  ["Price", featured.price],
+                  ["Level", featured.level],
                 ].map(([k, v]) => (
                   <div key={k} className="rounded-2xl border border-pf-line bg-pf-bg/40 px-4 py-3">
                     <dt className="font-plex-mono text-[11px] tracking-[0.8px] text-pf-faint">{k}</dt>
@@ -112,7 +112,6 @@ export default function WorkshopsPage() {
                   </span>
                   <span className="mt-1 block text-[15px] text-pf-body">{w.subtitle}</span>
                 </span>
-                <span className="font-plex-mono text-[13px] text-pf-accent">{w.price.split("·")[0]?.trim()}</span>
                 <span aria-hidden="true" className="text-pf-accent transition-transform group-hover:translate-x-1">
                   →
                 </span>
