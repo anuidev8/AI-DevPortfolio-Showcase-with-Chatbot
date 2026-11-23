@@ -133,7 +133,7 @@ export const SERVICES_EXTRA = {
     eyebrow: '16 · This room',
     title: 'What are you',
     accent: 'looking for?',
-    lead: 'Voice agents for sales or support. Agentic UI for your product. A wellness experience. Or a clear path to ship AI without the noise.',
+    lead: 'One conversation can open a product, a partnership, or a new chapter.',
     prompts: [
       { label: 'Enterprise voice', body: 'Agent calls, concierge demos, sales copilots that prove AI live.' },
       { label: 'Product & courses', body: 'Voice apps for courses, onboarding, and day-to-day product flows.' },
