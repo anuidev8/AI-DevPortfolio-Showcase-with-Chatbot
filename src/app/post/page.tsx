@@ -16,8 +16,13 @@ const jsonLd = { "@context": "https://schema.org", ...breadcrumbJsonLd([{ name: 
 
 const posts = [
   {
+    href: "/post/voice-agentic-ui-wellness-services",
+    tag: "ALTURA · SERVICES · EN",
+    title: "ALTURA Medellín — Voice agents, agentic UI & wellness",
+  },
+  {
     href: "/post/devfest-medellin-2026-agente-comercial-voz",
-    tag: "DEVFEST 2026 · ES",
+    tag: "DEVFEST 2026 · ES/EN",
     title: "A sales agent that listens, understands and acts",
   },
   {

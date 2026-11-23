@@ -1,0 +1,18 @@
+ALTURA Medellín · Intro narration (Paisa / Medellín Spanish)
+Voice: ElevenLabs “mor” (sePFppHi7mf6YBG1K6gB)
+Tone: campaign / companion host — no “Soy Angel”
+Duration: ~23.7s → public/services-deck/altura-intro-narration.mp3
+
+--- SCRIPT ---
+
+Bienvenidos a ALTURA Medellín.
+
+Inteligencia artificial, startups y networking internacional, esta noche en la terraza.
+
+Founders, nómadas y builders conectando oportunidades reales.
+
+Y feliz cumpleaños, Carlos. Esta noche también es tuya.
+
+Si estás buscando voz, agentes o productos que sí salgan a producción… quédate.
+
+Qué chimba que estés acá. Vamos a construir juntos.

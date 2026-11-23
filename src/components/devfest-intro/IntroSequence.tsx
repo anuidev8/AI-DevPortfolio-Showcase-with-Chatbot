@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 import type * as THREE_NS from 'three';
 import './intro.css';
 
-const AUDIO_SRC = '/devfest-2026/intro-narration.mp3';
+const DEFAULT_AUDIO_SRC = '/devfest-2026/intro-narration.mp3';
 const AVATAR_URL = '/devfest-2026/avatar/seti-hologram.glb';
 
 /** Fired when particles should assemble the hologram woman (big, centre). */
@@ -90,11 +90,49 @@ const SPHERES = [
   { x: 42, y: 84, s: 2.4, d: 0 },
 ];
 
-type IntroSequenceProps = {
-  onDone: () => void;
+export type IntroUiCopy = {
+  aria: string;
+  welcome: string;
+  event: string;
+  kicker: string;
+  hello: string;
+  sub: string;
+  skip: string;
 };
 
-export function IntroSequence({ onDone }: IntroSequenceProps) {
+type IntroSequenceProps = {
+  onDone: () => void;
+  /** UI chrome language. Default DevFest narration is Spanish; pass audioSrc for EN events. */
+  lang?: 'es' | 'en';
+  /** Override welcome / event / kicker / sub (e.g. services deck). */
+  uiOverride?: Partial<IntroUiCopy>;
+  /** Custom intro MP3 (e.g. ALTURA English narration). Defaults to DevFest track. */
+  audioSrc?: string;
+};
+
+const INTRO_UI: Record<'es' | 'en', IntroUiCopy> = {
+  es: {
+    aria: 'Introducción',
+    welcome: 'Bienvenidos',
+    event: 'DevFest Medellín 2026 · GDG',
+    kicker: 'NoShy Concierge',
+    hello: 'Hola',
+    sub: 'Te ayudo a preparar una venta, o a resolver lo que tu empresa necesita.',
+    skip: 'Saltar intro',
+  },
+  en: {
+    aria: 'Introduction',
+    welcome: 'Welcome',
+    event: 'DevFest Medellín 2026 · GDG',
+    kicker: 'NoShy Concierge',
+    hello: 'Hello',
+    sub: 'I help you prep a sale — or solve what your company needs.',
+    skip: 'Skip intro',
+  },
+};
+
+export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFAULT_AUDIO_SRC }: IntroSequenceProps) {
+  const ui = { ...INTRO_UI[lang], ...uiOverride };
   const [phase, setPhase] = useState<Phase>('bloom');
   const [active, setActive] = useState(true);
   /** True only when the browser blocked sound — visuals still run automatically. */
@@ -179,7 +217,7 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
   }, [finish, fireBuild]);
 
   useEffect(() => {
-    const audio = new Audio(AUDIO_SRC);
+    const audio = new Audio(audioSrc);
     audio.preload = 'auto';
     audio.setAttribute('playsinline', 'true');
     audioRef.current = audio;
@@ -205,7 +243,7 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
       audio.pause();
       audioRef.current = null;
     };
-  }, [finish, startPlayback]);
+  }, [audioSrc, finish, startPlayback]);
 
   // If sound was blocked, any first interaction unlocks it and catches up to the visual clock.
   useEffect(() => {
@@ -293,7 +331,7 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
       style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, system-ui, sans-serif', ['--ease-out-soft' as string]: 'cubic-bezier(0.2, 0.8, 0.2, 1)' }}
       role="dialog"
       aria-modal="true"
-      aria-label="Introducción"
+      aria-label={ui.aria}
     >
       <div className="intro-bg absolute inset-0" aria-hidden="true">
         <div className="intro-rays absolute inset-[-50%]" />
@@ -344,15 +382,15 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
 
       <canvas ref={canvasRef} className="intro-canvas absolute inset-0 h-full w-full" aria-hidden="true" />
 
-      <JourneyLayer />
+      <JourneyLayer lang={lang} />
 
-      <BigTitle className="intro-title intro-title-1" text="Bienvenidos" />
-      <BigTitle className="intro-title intro-title-event" text="DevFest Medellín 2026 · GDG" fit />
+      <BigTitle className="intro-title intro-title-1" text={ui.welcome} />
+      <BigTitle className="intro-title intro-title-event" text={ui.event} fit />
       <BigTitle
         className="intro-title intro-title-2"
-        kicker="NoShy Concierge"
-        text="Hola"
-        sub="Te ayudo a preparar una venta, o a resolver lo que tu empresa necesita."
+        kicker={ui.kicker}
+        text={ui.hello}
+        sub={ui.sub}
       />
 
       <button
@@ -361,7 +399,7 @@ export function IntroSequence({ onDone }: IntroSequenceProps) {
         className="intro-skip absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] rounded-full bg-white/12 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/20"
         autoFocus
       >
-        Saltar intro
+        {ui.skip}
       </button>
     </div>,
     document.body,
@@ -474,34 +512,132 @@ type JCard =
   | { kind: 'skill'; title: string; uses: string }
   | { kind: 'quote'; text: string; who: string };
 
-const KIND_META: Record<JCard['kind'], { icon: IconName; tag: string }> = {
-  expert: { icon: 'user', tag: 'Experto' },
-  case: { icon: 'trophy', tag: 'Caso de éxito' },
-  template: { icon: 'doc', tag: 'Plantilla' },
-  skill: { icon: 'spark', tag: 'Skill' },
-  quote: { icon: 'quote', tag: 'Testimonio' },
+type JourneyCopy = {
+  kindMeta: Record<JCard['kind'], { icon: IconName; tag: string }>;
+  sources: { icon: IconName; label: string; value: string; meta: string }[];
+  pool: JCard[];
+  kpis: { label: string; value: string; delta: string }[];
+  captions: [string, string, string];
+  panel: string;
+  live: string;
+  by: (owner: string) => string;
+  closeProb: string;
+  proposalLabel: string;
+  proposalTitle: string;
+  checks: string[];
+  ready: string;
+  schedule: string;
+  salesProfile: string;
+  talent: string;
+  talentSub: string;
 };
 
-const SOURCES = [
-  { icon: 'box' as const, label: 'Tu producto', value: 'Software B2B', meta: 'Plan Pro · $490/mes' },
-  { icon: 'target' as const, label: 'Tu cliente ideal', value: 'Cadenas retail', meta: '50+ tiendas' },
-  { icon: 'flag' as const, label: 'Tu meta', value: 'Cerrar 3 cuentas', meta: 'Este trimestre' },
-];
-
-const POOL: JCard[] = [
-  { kind: 'expert', name: 'María Gómez', role: 'Ventas B2B · Retail', stat: '12 cuentas cerradas', hue: 205 },
-  { kind: 'case', title: 'Software para 40 tiendas', owner: 'Diego', metric: '+38% ventas' },
-  { kind: 'template', title: 'Propuesta retail · ROI', uses: 'Usada 214 veces' },
-  { kind: 'expert', name: 'Andrés Ruiz', role: 'Pricing & negociación', stat: 'Cierre 41%', hue: 160 },
-  { kind: 'quote', text: '“Cerramos en 2 semanas con su caso.”', who: 'Laura · Agency lead' },
-  { kind: 'case', title: 'Piloto en cadena de farmacias', owner: 'Camila', metric: 'ROI 3.2x' },
-  { kind: 'expert', name: 'Sofía Lara', role: 'Demos que convierten', stat: '+60 demos/mes', hue: 280 },
-  { kind: 'template', title: 'Guion de descubrimiento', uses: 'Usada 532 veces' },
-  { kind: 'case', title: 'Bot WhatsApp para retail', owner: 'Diego', metric: '3 clientes activos' },
-  { kind: 'expert', name: 'Tomás Vidal', role: 'Alianzas y canales', stat: '8 partners', hue: 30 },
-  { kind: 'quote', text: '“La plantilla nos ahorró una semana.”', who: 'Camila · Founder' },
-  { kind: 'template', title: 'Manejo de objeciones', uses: 'Usada 389 veces' },
-];
+const JOURNEY: Record<'es' | 'en', JourneyCopy> = {
+  es: {
+    kindMeta: {
+      expert: { icon: 'user', tag: 'Experto' },
+      case: { icon: 'trophy', tag: 'Caso de éxito' },
+      template: { icon: 'doc', tag: 'Plantilla' },
+      skill: { icon: 'spark', tag: 'Skill' },
+      quote: { icon: 'quote', tag: 'Testimonio' },
+    },
+    sources: [
+      { icon: 'box', label: 'Tu producto', value: 'Software B2B', meta: 'Plan Pro · $490/mes' },
+      { icon: 'target', label: 'Tu cliente ideal', value: 'Cadenas retail', meta: '50+ tiendas' },
+      { icon: 'flag', label: 'Tu meta', value: 'Cerrar 3 cuentas', meta: 'Este trimestre' },
+    ],
+    pool: [
+      { kind: 'expert', name: 'María Gómez', role: 'Ventas B2B · Retail', stat: '12 cuentas cerradas', hue: 205 },
+      { kind: 'case', title: 'Software para 40 tiendas', owner: 'Diego', metric: '+38% ventas' },
+      { kind: 'template', title: 'Propuesta retail · ROI', uses: 'Usada 214 veces' },
+      { kind: 'expert', name: 'Andrés Ruiz', role: 'Pricing & negociación', stat: 'Cierre 41%', hue: 160 },
+      { kind: 'quote', text: '“Cerramos en 2 semanas con su caso.”', who: 'Laura · Agency lead' },
+      { kind: 'case', title: 'Piloto en cadena de farmacias', owner: 'Camila', metric: 'ROI 3.2x' },
+      { kind: 'expert', name: 'Sofía Lara', role: 'Demos que convierten', stat: '+60 demos/mes', hue: 280 },
+      { kind: 'template', title: 'Guion de descubrimiento', uses: 'Usada 532 veces' },
+      { kind: 'case', title: 'Bot WhatsApp para retail', owner: 'Diego', metric: '3 clientes activos' },
+      { kind: 'expert', name: 'Tomás Vidal', role: 'Alianzas y canales', stat: '8 partners', hue: 30 },
+      { kind: 'quote', text: '“La plantilla nos ahorró una semana.”', who: 'Camila · Founder' },
+      { kind: 'template', title: 'Manejo de objeciones', uses: 'Usada 389 veces' },
+    ],
+    kpis: [
+      { label: 'Pipeline', value: '$184k', delta: '+22%' },
+      { label: 'Propuestas', value: '37', delta: '+9' },
+      { label: 'Tasa de cierre', value: '34%', delta: '+6pt' },
+      { label: 'Reuniones', value: '12', delta: 'esta semana' },
+    ],
+    captions: ['Entiendo lo que vendes', 'Busco talento y recursos en la comunidad', 'Preparo tu propuesta para el cliente'],
+    panel: 'Panel comercial',
+    live: 'En vivo',
+    by: (owner) => `Por ${owner}`,
+    closeProb: 'Probabilidad de cierre · 82%',
+    proposalLabel: 'Propuesta comercial',
+    proposalTitle: 'Cadena Retail Andina',
+    checks: [
+      'Caso de éxito: +38% ventas (Diego)',
+      'Precio sugerido: Plan Pro anual',
+      'Respuesta a 3 objeciones clave',
+      'Aliada para la demo: María',
+    ],
+    ready: 'Lista para enviar',
+    schedule: 'Agendar reunión →',
+    salesProfile: 'Perfil de venta',
+    talent: 'Talento y recursos',
+    talentSub: 'Expertos · casos · plantillas',
+  },
+  en: {
+    kindMeta: {
+      expert: { icon: 'user', tag: 'Expert' },
+      case: { icon: 'trophy', tag: 'Success case' },
+      template: { icon: 'doc', tag: 'Template' },
+      skill: { icon: 'spark', tag: 'Skill' },
+      quote: { icon: 'quote', tag: 'Testimonial' },
+    },
+    sources: [
+      { icon: 'box', label: 'Your product', value: 'B2B Software', meta: 'Pro Plan · $490/mo' },
+      { icon: 'target', label: 'Ideal customer', value: 'Retail chains', meta: '50+ stores' },
+      { icon: 'flag', label: 'Your goal', value: 'Close 3 accounts', meta: 'This quarter' },
+    ],
+    pool: [
+      { kind: 'expert', name: 'María Gómez', role: 'B2B Sales · Retail', stat: '12 accounts closed', hue: 205 },
+      { kind: 'case', title: 'Software for 40 stores', owner: 'Diego', metric: '+38% sales' },
+      { kind: 'template', title: 'Retail proposal · ROI', uses: 'Used 214 times' },
+      { kind: 'expert', name: 'Andrés Ruiz', role: 'Pricing & negotiation', stat: '41% close rate', hue: 160 },
+      { kind: 'quote', text: '“We closed in 2 weeks with their case.”', who: 'Laura · Agency lead' },
+      { kind: 'case', title: 'Pilot with a pharmacy chain', owner: 'Camila', metric: 'ROI 3.2x' },
+      { kind: 'expert', name: 'Sofía Lara', role: 'Demos that convert', stat: '+60 demos/mo', hue: 280 },
+      { kind: 'template', title: 'Discovery script', uses: 'Used 532 times' },
+      { kind: 'case', title: 'WhatsApp bot for retail', owner: 'Diego', metric: '3 active clients' },
+      { kind: 'expert', name: 'Tomás Vidal', role: 'Partnerships & channels', stat: '8 partners', hue: 30 },
+      { kind: 'quote', text: '“The template saved us a week.”', who: 'Camila · Founder' },
+      { kind: 'template', title: 'Objection handling', uses: 'Used 389 times' },
+    ],
+    kpis: [
+      { label: 'Pipeline', value: '$184k', delta: '+22%' },
+      { label: 'Proposals', value: '37', delta: '+9' },
+      { label: 'Close rate', value: '34%', delta: '+6pt' },
+      { label: 'Meetings', value: '12', delta: 'this week' },
+    ],
+    captions: ['I understand what you sell', 'I find talent and resources in the community', 'I prep your proposal for the client'],
+    panel: 'Sales panel',
+    live: 'Live',
+    by: (owner) => `By ${owner}`,
+    closeProb: 'Close probability · 82%',
+    proposalLabel: 'Sales proposal',
+    proposalTitle: 'Andean Retail Chain',
+    checks: [
+      'Success case: +38% sales (Diego)',
+      'Suggested price: Pro Plan annual',
+      'Answers to 3 key objections',
+      'Demo partner: María',
+    ],
+    ready: 'Ready to send',
+    schedule: 'Book a meeting →',
+    salesProfile: 'Sales profile',
+    talent: 'Talent & resources',
+    talentSub: 'Experts · cases · templates',
+  },
+};
 
 const LANES = [-480, -240, 0, 240, 480];
 const STREAM_DUR = 8.5;
@@ -522,8 +658,8 @@ const initials = (name: string) =>
     .slice(0, 2)
     .toUpperCase();
 
-function CardBody({ c }: { c: JCard }) {
-  const meta = KIND_META[c.kind];
+function CardBody({ c, copy }: { c: JCard; copy: JourneyCopy }) {
+  const meta = copy.kindMeta[c.kind];
   return (
     <>
       <span className="j-kind absolute right-3 top-3 grid size-6 place-items-center rounded-full">
@@ -544,7 +680,7 @@ function CardBody({ c }: { c: JCard }) {
         <div className="pr-7">
           <p className="text-[13px] font-semibold leading-snug">{c.kind === 'quote' ? c.text : c.title}</p>
           <p className="mt-0.5 truncate text-[11px] opacity-70">
-            {c.kind === 'case' ? `Por ${c.owner}` : c.kind === 'template' || c.kind === 'skill' ? c.uses : c.who}
+            {c.kind === 'case' ? copy.by(c.owner) : c.kind === 'template' || c.kind === 'skill' ? c.uses : c.who}
           </p>
         </div>
       )}
@@ -557,29 +693,21 @@ function CardBody({ c }: { c: JCard }) {
   );
 }
 
-const KPIS = [
-  { label: 'Pipeline', value: '$184k', delta: '+22%' },
-  { label: 'Propuestas', value: '37', delta: '+9' },
-  { label: 'Tasa de cierre', value: '34%', delta: '+6pt' },
-  { label: 'Reuniones', value: '12', delta: 'esta semana' },
-];
-
-const CAPTIONS = ['Entiendo lo que vendes', 'Busco talento y recursos en la comunidad', 'Preparo tu propuesta para el cliente'] as const;
-
-function JourneyLayer() {
-  const stream = useMemo(() => buildStream(POOL, 20, LANES), []);
+function JourneyLayer({ lang = 'es' }: { lang?: 'es' | 'en' }) {
+  const copy = JOURNEY[lang];
+  const stream = useMemo(() => buildStream(copy.pool, 20, LANES), [copy.pool]);
   return (
     <div className="journey pointer-events-none absolute inset-0 text-white" aria-hidden="true">
       <div className="j-dash absolute left-1/2 top-[40%] w-[min(1040px,92vw)] -translate-x-1/2 rounded-[26px] p-4">
         <div className="flex items-center justify-between px-1 text-[12px] font-medium text-white/80">
           <span className="flex items-center gap-2">
             <span className="size-2 rounded-full bg-emerald-400" />
-            Panel comercial
+            {copy.panel}
           </span>
-          <span className="text-white/50">En vivo</span>
+          <span className="text-white/50">{copy.live}</span>
         </div>
         <div className="mt-3 grid grid-cols-4 gap-3">
-          {KPIS.map((k) => (
+          {copy.kpis.map((k) => (
             <div key={k.label} className="j-kpi rounded-[16px] px-3 py-2.5">
               <p className="text-[10px] uppercase tracking-[0.1em] text-white/55">{k.label}</p>
               <p className="mt-0.5 text-[20px] font-semibold tabular-nums">{k.value}</p>
@@ -603,7 +731,7 @@ function JourneyLayer() {
               className="j-card j-flow absolute w-[210px] rounded-[18px] p-3.5 text-left"
               style={{ '--lane': `${s.lane}px`, animationDelay: `${s.delay}s`, animationDuration: `${STREAM_DUR}s` } as CSSProperties}
             >
-              <CardBody c={s.card} />
+              <CardBody c={s.card} copy={copy} />
             </div>
           ))}
         </div>
@@ -620,18 +748,18 @@ function JourneyLayer() {
       </div>
 
       <div className="j-card j-focus absolute left-1/2 top-1/2 w-[min(320px,80vw)] rounded-[24px] p-5 text-left">
-        <span className="j-badge absolute -top-3 right-4 rounded-full px-3 py-1 text-[11px] font-semibold">Probabilidad de cierre · 82%</span>
+        <span className="j-badge absolute -top-3 right-4 rounded-full px-3 py-1 text-[11px] font-semibold">{copy.closeProb}</span>
         <div className="flex items-center gap-3">
           <span className="grid size-10 place-items-center rounded-[12px] bg-[#2f6bff] text-white">
             <Icon name="doc" className="size-5" />
           </span>
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.1em] opacity-60">Propuesta comercial</p>
-            <p className="text-[17px] font-semibold leading-tight">Cadena Retail Andina</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.1em] opacity-60">{copy.proposalLabel}</p>
+            <p className="text-[17px] font-semibold leading-tight">{copy.proposalTitle}</p>
           </div>
         </div>
         <ul className="mt-4 grid gap-2 text-[13px]">
-          {['Caso de éxito: +38% ventas (Diego)', 'Precio sugerido: Plan Pro anual', 'Respuesta a 3 objeciones clave', 'Aliada para la demo: María'].map((t, i) => (
+          {copy.checks.map((t, i) => (
             <li key={t} className="j-check flex items-center gap-2" style={{ '--ci': i } as CSSProperties}>
               <span className="grid size-5 flex-none place-items-center rounded-full bg-emerald-500 text-white">
                 <Icon name="check" className="size-3" />
@@ -641,13 +769,13 @@ function JourneyLayer() {
           ))}
         </ul>
         <div className="mt-4 flex items-center justify-between rounded-[14px] bg-[#0b1a5c]/[0.06] px-3 py-2 text-[12px]">
-          <span className="opacity-70">Lista para enviar</span>
-          <span className="font-semibold text-[#2f6bff]">Agendar reunión →</span>
+          <span className="opacity-70">{copy.ready}</span>
+          <span className="font-semibold text-[#2f6bff]">{copy.schedule}</span>
         </div>
       </div>
 
       <div className="journey-caption absolute inset-x-0 top-[6%] grid justify-items-center gap-2 px-6 text-center">
-        {CAPTIONS.map((cap, i) => (
+        {copy.captions.map((cap, i) => (
           <p key={cap} className={`j-cap j-cap-${i + 1} text-[clamp(22px,3.2vw,40px)] font-medium tracking-[-0.03em]`}>
             <span className="mr-3 tabular-nums text-white/55">0{i + 1}</span>
             {cap}
@@ -678,7 +806,7 @@ function JourneyLayer() {
       </svg>
 
       <div className="journey-sources absolute inset-x-0 top-[15%] flex justify-around px-[8vw]">
-        {SOURCES.map((src, i) => (
+        {copy.sources.map((src, i) => (
           <div key={src.label} className="j-source j-glass flex items-center gap-3 rounded-[18px] px-4 py-3 text-left" style={{ '--d': `${i * 120}ms` } as CSSProperties}>
             <span className="grid size-9 place-items-center rounded-[12px] bg-gradient-to-br from-[#8fd0ff] to-[#2f6bff] text-white shadow-[0_0_18px_rgb(80_160_255/0.7)]">
               <Icon name={src.icon} className="size-[18px]" />
@@ -698,7 +826,7 @@ function JourneyLayer() {
             <Icon name="spark" className="size-5" />
           </span>
           <div className="flex-1">
-            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/60">Perfil de venta</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/60">{copy.salesProfile}</p>
             <div className="mt-1.5 grid gap-1.5">
               <span className="j-line h-1.5 rounded-full bg-white/85" style={{ '--w': '92%' } as CSSProperties} />
               <span className="j-line h-1.5 rounded-full bg-white/55" style={{ '--w': '70%' } as CSSProperties} />
@@ -711,8 +839,8 @@ function JourneyLayer() {
             <Icon name="user" className="size-5" />
           </span>
           <div className="flex-1">
-            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/60">Talento y recursos</p>
-            <p className="text-[11px] text-white/55">Expertos · casos · plantillas</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-white/60">{copy.talent}</p>
+            <p className="text-[11px] text-white/55">{copy.talentSub}</p>
           </div>
           <p className="j-count text-[28px] font-semibold leading-none tabular-nums" />
         </div>

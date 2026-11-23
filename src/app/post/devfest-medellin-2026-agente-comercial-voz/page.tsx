@@ -46,6 +46,7 @@ import {
   Globe,
   type LucideIcon,
 } from 'lucide-react';
+import { DevFestLangProvider, useDevFestCopy, useDevFestLang } from '@/components/devfest-deck/DevFestLangContext';
 
 /* ------------------------------------------------------------------ */
 /* Tokens (same values as commercial-voice-agent globals.css)          */
@@ -204,10 +205,11 @@ function SlideHead({ eyebrow, title, accent, lead }: { eyebrow: string; title: R
 type Resource = { label: string; url: string };
 
 function Resources({ items, delay = 0.5, className = 'mt-10' }: { items: Resource[]; delay?: number; className?: string }) {
+  const c = useDevFestCopy();
   return (
     <Reveal delay={delay} className={className}>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="eyebrow mr-2">Recursos</span>
+        <span className="eyebrow mr-2">{c.chrome.resources}</span>
         {items.map((r) => (
           <a key={r.url} href={r.url} target="_blank" rel="noopener noreferrer" className="pill">
             {r.label}
@@ -297,6 +299,7 @@ function ConceptList({ items, tone = 'signal' }: { items: { term: string; body: 
 /* ------------------------------------------------------------------ */
 
 function HookSlide() {
+  const c = useDevFestCopy().hook;
   return (
     <div className="grid h-full items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
       <div>
@@ -311,29 +314,26 @@ function HookSlide() {
         <Reveal delay={0.1}>
           <p className="mono mt-8 text-sm tracking-[0.2em] text-[var(--signal-soft)]">NOSHY · CONCIERGE</p>
           <h1 className="mt-3 text-[clamp(2.5rem,5.4vw,5rem)] leading-[1.02] text-[var(--text)]">
-            Agente comercial que
+            {c.title}
             <br />
-            <span className={ACCENT}>escucha, entiende y actúa.</span>
+            <span className={ACCENT}>{c.accent}</span>
           </h1>
         </Reveal>
         <Reveal delay={0.2}>
-          <p className={`${LEAD} mt-7 max-w-2xl`}>
-            Voz en tiempo real + UI generativa + herramientas reales. Construido con Google ADK, AG-UI, A2UI,
-            CopilotKit y LiveKit.
-          </p>
+          <p className={`${LEAD} mt-7 max-w-2xl`}>{c.lead}</p>
         </Reveal>
         <Reveal delay={0.3}>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href={DEMO_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-              Ver demo <ArrowRight className="h-4 w-4" />
+              {c.demo} <ArrowRight className="h-4 w-4" />
             </a>
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="btn btn-quiet">
-              <Github className="h-4 w-4" /> Código
+              <Github className="h-4 w-4" /> {c.code}
             </a>
           </div>
         </Reveal>
         <Reveal delay={0.35}>
-          <p className="mt-8 text-sm text-[var(--dim)]">Angel Arrieta · Frontend & UI agéntica</p>
+          <p className="mt-8 text-sm text-[var(--dim)]">{c.byline}</p>
         </Reveal>
       </div>
 
@@ -348,26 +348,7 @@ function HookSlide() {
 /* 02 · Voz para todos                                                 */
 /* ------------------------------------------------------------------ */
 
-const PEOPLE = [
-  {
-    icon: Calendar,
-    who: 'Un recordatorio',
-    quote: '“Recuérdame la cita a las tres.”',
-    body: 'Lo de todos los días: agendar, recordar, no olvidar. Se pide hablando, sin abrir el calendario.',
-  },
-  {
-    icon: Phone,
-    who: 'Una llamada',
-    quote: '“Llama a mamá.”',
-    body: 'Contactar a alguien no debería ser buscar contactos y tocar tres pantallas. Es una frase.',
-  },
-  {
-    icon: ShoppingBag,
-    who: 'Un pedido',
-    quote: '“Pide el domicilio de siempre.”',
-    body: 'Compras, citas, preguntas del día a día. La voz deja hacer lo básico sin aprender menús.',
-  },
-];
+const PEOPLE_ICONS = [Calendar, Phone, ShoppingBag] as const;
 
 /* ------------------------------------------------------------------ */
 /* 03 · Evolución de las interfaces                                    */
@@ -416,6 +397,7 @@ function Media({ media, className = '' }: { media: MediaSrc; className?: string 
 
 /** Thumbnail that opens the same picture or video in a full-screen lightbox. */
 function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; aspect?: string }) {
+  const chrome = useDevFestCopy().chrome;
   const [open, setOpen] = useState(false);
   const lightboxVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -462,7 +444,7 @@ function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; 
         type="button"
         onClick={openLightbox}
         className="group relative block w-full cursor-zoom-in text-left"
-        aria-label={`Ver en pantalla completa: ${media.alt}`}
+        aria-label={chrome.fullscreenAria(media.alt)}
       >
         <Media media={media} className={`pointer-events-none ${aspect}`} />
         {media.caption && (
@@ -473,7 +455,7 @@ function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; 
         )}
         <span className="pointer-events-none absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[11px] text-white backdrop-blur">
           <Expand className="h-3.5 w-3.5" aria-hidden />
-          Pantalla completa
+          {chrome.fullscreen}
         </span>
       </button>
       {open &&
@@ -490,7 +472,7 @@ function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; 
               onClick={close}
               autoFocus
               className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-              aria-label="Cerrar"
+              aria-label={chrome.close}
             >
               <X className="h-5 w-5" />
             </button>
@@ -523,6 +505,7 @@ function ExpandableMedia({ media, aspect = 'aspect-[4/3]' }: { media: MediaSrc; 
 
 /** Case card media: single expandable frame, or a swipeable gallery with captions. */
 function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { media: MediaSrc[]; aspect?: string; label: string }) {
+  const chrome = useDevFestCopy().chrome;
   const trackRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const [active, setActive] = useState(0);
@@ -597,7 +580,7 @@ function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { med
         style={{ background: current.bg ?? 'var(--raise)' }}
         role="region"
         aria-roledescription="carousel"
-        aria-label={`Galería · ${label}`}
+        aria-label={chrome.galleryAria(label)}
         onPointerDown={(event) => event.stopPropagation()}
       >
         <div
@@ -615,7 +598,7 @@ function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { med
                 style={{ background: item.bg ?? 'var(--raise)' }}
                 role="group"
                 aria-roledescription="slide"
-                aria-label={`${i + 1} de ${media.length}`}
+                aria-label={chrome.slideOf(i + 1, media.length)}
               >
                 {item.kind === 'video' ? (
                   <video
@@ -649,16 +632,16 @@ function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { med
           type="button"
           onClick={openLightbox}
           className="absolute right-2 top-2 z-[1] inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[11px] text-white backdrop-blur hover:bg-black/85"
-          aria-label={`Ver en pantalla completa: ${current.alt}`}
+          aria-label={chrome.fullscreenAria(current.alt)}
         >
           <Expand className="h-3.5 w-3.5" aria-hidden />
-          Pantalla completa
+          {chrome.fullscreen}
         </button>
 
         <button
           type="button"
           onClick={() => goTo(active - 1)}
-          aria-label="Anterior"
+          aria-label={chrome.prev}
           className="absolute left-2 top-1/2 z-[1] flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur hover:bg-black/75"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -666,7 +649,7 @@ function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { med
         <button
           type="button"
           onClick={() => goTo(active + 1)}
-          aria-label="Siguiente"
+          aria-label={chrome.next}
           className="absolute right-2 top-1/2 z-[1] flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-white backdrop-blur hover:bg-black/75"
         >
           <ChevronRight className="h-4 w-4" />
@@ -678,7 +661,7 @@ function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { med
               key={item.src}
               type="button"
               onClick={() => goTo(i)}
-              aria-label={`Mostrar ${i + 1}`}
+              aria-label={chrome.showN(i + 1)}
               aria-current={i === active}
               className="flex h-6 w-6 items-center justify-center"
             >
@@ -704,7 +687,7 @@ function ExpandableMediaGallery({ media, aspect = 'aspect-[4/3]', label }: { med
               onClick={close}
               autoFocus
               className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-              aria-label="Cerrar"
+              aria-label={chrome.close}
             >
               <X className="h-5 w-5" />
             </button>
@@ -743,30 +726,25 @@ function Credits({ text, delay = 0.8 }: { text: string; delay?: number }) {
   );
 }
 
-const PEOPLE_MEDIA: MediaSrc = {
-  kind: 'video',
-  src: '/devfest-2026/voice-daily.mp4',
-  poster: '/devfest-2026/voice-daily-poster.jpg',
-  bg: '#070a14',
-  alt: 'Persona usando la voz para hacer tareas cotidianas',
-};
-
 function PeopleSlide() {
+  const c = useDevFestCopy().people;
+  const peopleMedia: MediaSrc = {
+    kind: 'video',
+    src: '/devfest-2026/voice-daily.mp4',
+    poster: '/devfest-2026/voice-daily-poster.jpg',
+    bg: '#070a14',
+    alt: c.mediaAlt,
+  };
   return (
     <div className="flex h-full flex-col justify-center">
       <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(220px,32%)] lg:gap-10">
         <div>
-          <SlideHead
-            eyebrow="01 · Para quién"
-            title="La voz deja hacer"
-            accent="lo de todos los días."
-            lead="Recordatorios, llamadas, pedidos, preguntas. Lo básico de la vida diaria, con la interfaz que ya sabemos usar: hablar."
-          />
+          <SlideHead eyebrow={c.eyebrow} title={c.title} accent={c.accent} lead={c.lead} />
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            {PEOPLE.map((p, i) => (
+            {c.items.map((p, i) => (
               <Reveal key={p.who} delay={0.2 + i * 0.08}>
                 <div className="tile flex h-full flex-col gap-4 p-5">
-                  <IconTile icon={p.icon} tone={i === 0 ? 'glow' : i === 1 ? 'signal' : 'good'} />
+                  <IconTile icon={PEOPLE_ICONS[i]} tone={i === 0 ? 'glow' : i === 1 ? 'signal' : 'good'} />
                   <div>
                     <p className="eyebrow">{p.who}</p>
                     <p className="mt-2 text-xl leading-snug text-[var(--text)]">{p.quote}</p>
@@ -778,7 +756,7 @@ function PeopleSlide() {
           </div>
         </div>
         <Reveal delay={0.28} className="mx-auto w-full max-w-[260px] lg:mx-0 lg:max-w-[min(100%,320px)]">
-          <ExpandableMedia media={PEOPLE_MEDIA} aspect="aspect-[9/16]" />
+          <ExpandableMedia media={peopleMedia} aspect="aspect-[9/16]" />
         </Reveal>
       </div>
     </div>
@@ -790,22 +768,21 @@ function PeopleSlide() {
 /* ------------------------------------------------------------------ */
 
 function RepoQrSlide() {
+  const c = useDevFestCopy().repo;
   return (
     <div className="flex min-h-[calc(100svh-14rem)] flex-col items-center justify-center text-center">
       <Reveal>
-        <p className="eyebrow">02.5 · Código abierto</p>
+        <p className="eyebrow">{c.eyebrow}</p>
       </Reveal>
       <Reveal delay={0.08}>
         <h2 className={`${H2} mt-4 max-w-3xl`}>
-          Escanea el repo.
+          {c.title}
           <br />
-          <span className={ACCENT}>Todo el código del agente.</span>
+          <span className={ACCENT}>{c.accent}</span>
         </h2>
       </Reveal>
       <Reveal delay={0.14}>
-        <p className={`${LEAD} mx-auto mt-5 max-w-xl`}>
-          Google ADK · LiveKit · CopilotKit · AG-UI. Quickstart en 5 minutos.
-        </p>
+        <p className={`${LEAD} mx-auto mt-5 max-w-xl`}>{c.lead}</p>
       </Reveal>
       <Reveal delay={0.22} className="mt-10">
         <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="inline-flex flex-col items-center gap-5">
@@ -827,18 +804,14 @@ function RepoQrSlide() {
 /* ------------------------------------------------------------------ */
 
 function WhoSlide() {
+  const c = useDevFestCopy().who;
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
     <div className="flex min-h-[calc(100svh-14rem)] flex-col justify-center lg:ml-[calc(50%-50vw)] lg:w-screen lg:pl-10 lg:pr-[min(42vw,900px)]">
       <div className="w-full max-w-xl lg:ml-auto lg:max-w-[min(100%,34rem)] lg:pr-6">
-        <SlideHead
-          eyebrow="02.5 · Quién habla"
-          title="Soy Angel."
-          accent="Frontend."
-          lead="Desarrollador de software hace casi 7 años, especializado en frontend. Con mi propia agencia construyo productos con interfaz de voz, y he liderado el trabajo con negocios de wellness. Fundador de Visible Builders y organizador de The AI Hub, bilingüe, en Medellín."
-        />
+        <SlideHead eyebrow={c.eyebrow} title={c.title} accent={c.accent} lead={c.lead} />
         <div className="mt-8 flex flex-wrap gap-3">
           <Reveal delay={0.4}>
             <QrCard value={SITE_URL} label="angelmateus.com" size={104} className="!gap-2 !p-3" />
@@ -850,7 +823,7 @@ function WhoSlide() {
       </div>
       <img
         src="/devfest-2026/avatar-yoga.png"
-        alt="Angel en postura de yoga"
+        alt={c.yogaAlt}
         className="mx-auto mt-8 h-auto w-[min(100%,360px)] lg:hidden"
         draggable={false}
       />
@@ -916,31 +889,36 @@ const FUTURES: { icon: LucideIcon; title: string; body: string; source: string; 
 ];
 
 function FutureSlide() {
+  const c = useDevFestCopy().future;
   return (
     <div className="flex h-full flex-col justify-center">
-      <SlideHead eyebrow="03 · Hacia dónde vamos" title="El futuro de las interfaces" accent="¿Jarvis, lentes… o nada?" />
+      <SlideHead eyebrow={c.eyebrow} title={c.title} accent={c.accent} />
       <div className="mt-8 grid gap-3 md:grid-cols-3">
-        {FUTURES.map((f, i) => (
-          <Reveal key={f.title} delay={0.15 + i * 0.1}>
-            <div className="tile flex h-full flex-col overflow-hidden p-2">
-              <div className="relative">
-                <Media media={f.media} className="aspect-[2/1]" />
-                <span className="mono absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-[10px] text-[var(--text)] backdrop-blur">
-                  {f.source}
-                </span>
-              </div>
-              <div className="flex items-start gap-3 px-3 pb-3 pt-4">
-                <IconTile icon={f.icon} tone="glow" />
-                <div>
-                  <p className="text-2xl text-[var(--text)]">{f.title}</p>
-                  <p className="mt-1 text-[13px] leading-relaxed text-[var(--dim)]">{f.body}</p>
+        {FUTURES.map((f, i) => {
+          const item = c.items[i];
+          const media = { ...f.media, alt: item.alt };
+          return (
+            <Reveal key={item.title} delay={0.15 + i * 0.1}>
+              <div className="tile flex h-full flex-col overflow-hidden p-2">
+                <div className="relative">
+                  <Media media={media} className="aspect-[2/1]" />
+                  <span className="mono absolute bottom-2 left-2 rounded-full bg-black/70 px-2.5 py-1 text-[10px] text-[var(--text)] backdrop-blur">
+                    {f.source}
+                  </span>
+                </div>
+                <div className="flex items-start gap-3 px-3 pb-3 pt-4">
+                  <IconTile icon={f.icon} tone="glow" />
+                  <div>
+                    <p className="text-2xl text-[var(--text)]">{item.title}</p>
+                    <p className="mt-1 text-[13px] leading-relaxed text-[var(--dim)]">{item.body}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Reveal>
-        ))}
+            </Reveal>
+          );
+        })}
       </div>
-      <Credits text="Video: “Rokid Glasses in 2025” — BooredAtWork (CC BY 4.0), vía Wikimedia Commons. Capturas: LiveKit Agents UI (docs.livekit.io) y CopilotKit AG-UI + A2UI (copilotkit.ai)." />
+      <Credits text={c.credits} />
     </div>
   );
 }
@@ -992,22 +970,27 @@ const TODAY: { label: string; media: MediaSrc; area: string }[] = [
 ];
 
 function TodaySlide() {
+  const c = useDevFestCopy().today;
   return (
     <div className="flex h-full flex-col justify-center">
-      <SlideHead eyebrow="03.1 · Esto ya existe" title="Así se ven hoy" accent="las interfaces de voz y UI generativa." />
+      <SlideHead eyebrow={c.eyebrow} title={c.title} accent={c.accent} />
       <div className="mt-8 grid gap-3 lg:h-[29rem] lg:grid-cols-[0.62fr_1fr_1fr] lg:grid-rows-2">
-        {TODAY.map((t, i) => (
-          <Reveal key={t.label} delay={0.15 + i * 0.1} className={`${t.area} h-full min-h-0`}>
-            <div className="tile relative h-full overflow-hidden p-2">
-              <Media media={t.media} className="h-full min-h-[220px]" />
-              <span className="absolute bottom-4 left-4 rounded-full bg-black/70 px-3 py-1.5 text-[12px] text-[var(--text)] backdrop-blur">
-                {t.label}
-              </span>
-            </div>
-          </Reveal>
-        ))}
+        {TODAY.map((t, i) => {
+          const item = c.items[i];
+          const media = { ...t.media, alt: item.alt };
+          return (
+            <Reveal key={item.label} delay={0.15 + i * 0.1} className={`${t.area} h-full min-h-0`}>
+              <div className="tile relative h-full overflow-hidden p-2">
+                <Media media={media} className="h-full min-h-[220px]" />
+                <span className="absolute bottom-4 left-4 rounded-full bg-black/70 px-3 py-1.5 text-[12px] text-[var(--text)] backdrop-blur">
+                  {item.label}
+                </span>
+              </div>
+            </Reveal>
+          );
+        })}
       </div>
-      <Credits text="Capturas de gemini.google, elevenlabs.io y copilotkit.ai — © sus respectivos dueños, uso ilustrativo." delay={0.6} />
+      <Credits text={c.credits} delay={0.6} />
     </div>
   );
 }
@@ -1017,6 +1000,7 @@ function TodaySlide() {
 /* ------------------------------------------------------------------ */
 
 function ProblemSlide() {
+  const c = useDevFestCopy().problem;
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -1024,25 +1008,22 @@ function ProblemSlide() {
     <div className="flex min-h-[calc(100svh-14rem)] items-center justify-center lg:pr-[min(42vw,520px)]">
       <div className="w-full max-w-5xl">
         <Reveal>
-          <p className="eyebrow">05 · El problema</p>
+          <p className="eyebrow">{c.eyebrow}</p>
         </Reveal>
         <Reveal delay={0.08}>
           <h2 className="mt-3 text-[clamp(2.35rem,4.8vw,4.6rem)] leading-[0.96] tracking-[-0.03em] text-[var(--text)]">
-            Vender IA… <span className={ACCENT}>con IA.</span>
+            {c.titleBefore}<span className={ACCENT}>{c.titleAccent}</span>
           </h2>
         </Reveal>
 
         <div className="mt-4 grid content-start gap-3 lg:grid-cols-[1fr_auto_1fr] lg:items-stretch">
           <Reveal delay={0.15}>
             <div className="tile flex h-full flex-col justify-center gap-2 p-5 md:gap-3 md:p-6">
-              <span className="eyebrow">Caso A · Consultoría</span>
+              <span className="eyebrow">{c.caseA.eyebrow}</span>
               <p className="text-[clamp(1.2rem,1.9vw,1.8rem)] leading-snug text-[var(--text)]">
-                Una empresa que construye con IA necesitaba <span className={ACCENT}>demostrarlo</span> en vivo, no con
-                slides.
+                {c.caseA.titleBefore}<span className={ACCENT}>{c.caseA.titleAccent}</span>{c.caseA.titleAfter}
               </p>
-              <p className="text-[15px] leading-snug text-[var(--dim)] md:text-lg">
-                Cada comercial tenía su Excel. El agente centraliza la conversación y potencia al equipo.
-              </p>
+              <p className="text-[15px] leading-snug text-[var(--dim)] md:text-lg">{c.caseA.body}</p>
             </div>
           </Reveal>
           <Reveal delay={0.22} className="hidden place-items-center lg:grid">
@@ -1050,21 +1031,19 @@ function ProblemSlide() {
           </Reveal>
           <Reveal delay={0.24}>
             <div className="tile flex h-full flex-col justify-center gap-2 p-5 md:gap-3 md:p-6">
-              <span className="eyebrow">Caso B · Mi comunidad</span>
+              <span className="eyebrow">{c.caseB.eyebrow}</span>
               <p className="text-[clamp(1.2rem,1.9vw,1.8rem)] leading-snug text-[var(--text)]">
-                Personas que <span className={ACCENT}>empiezan a vender</span> y no saben mostrar su producto.
+                {c.caseB.titleBefore}<span className={ACCENT}>{c.caseB.titleAccent}</span>{c.caseB.titleAfter}
               </p>
-              <p className="text-[15px] leading-snug text-[var(--dim)] md:text-lg">
-                Les cuesta el pitch y el seguimiento. La comunidad tiene el talento para cada necesidad.
-              </p>
+              <p className="text-[15px] leading-snug text-[var(--dim)] md:text-lg">{c.caseB.body}</p>
             </div>
           </Reveal>
         </div>
 
         <Reveal delay={0.34} className="mt-3">
           <div className="blue-tile flex flex-col gap-1 px-5 py-4 md:flex-row md:items-center md:justify-between md:px-8 md:py-5">
-            <p className="text-[clamp(1.15rem,1.8vw,1.7rem)] leading-snug">Los combiné: un concierge comercial de voz.</p>
-            <p className="shrink-0 text-sm text-white/80 md:text-base">Discovery → propuesta → reunión → follow-up</p>
+            <p className="text-[clamp(1.15rem,1.8vw,1.7rem)] leading-snug">{c.combined}</p>
+            <p className="shrink-0 text-sm text-white/80 md:text-base">{c.funnel}</p>
           </div>
         </Reveal>
         <img
@@ -1175,40 +1154,44 @@ const CASES: {
 ];
 
 function CasesSlide() {
+  const copy = useDevFestCopy().cases;
   return (
     <div className="flex h-full flex-col justify-center">
-      <SlideHead
-        eyebrow="05.1 · Casos reales"
-        title="Tres productos en producción."
-        accent="Voz + AG-UI + UI generativa."
-        lead="El mismo patrón, en productos que ya están en uso."
-      />
+      <SlideHead eyebrow={copy.eyebrow} title={copy.title} accent={copy.accent} lead={copy.lead} />
       <div className="mt-8 grid gap-3 lg:grid-cols-3">
-        {CASES.map((c, i) => (
-          <Reveal key={c.n} delay={0.2 + i * 0.08}>
-            <div className="tile flex h-full flex-col overflow-hidden p-2">
-              <ExpandableMediaGallery media={c.media} label={c.title} />
-              <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-4">
-                <div className="flex items-center justify-between">
-                  <IconTile icon={c.icon} tone={c.tone} />
-                  <span className="mono text-sm text-[var(--dim)]">{c.n}</span>
-                </div>
-                {c.client && <p className="eyebrow">{c.client}</p>}
-                <p className="text-2xl leading-snug text-[var(--text)]">{c.title}</p>
-                <p className="text-sm leading-relaxed text-[var(--dim)]">{c.body}</p>
-                <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
-                  {c.stack.map((s) => (
-                    <span key={s} className="mono rounded-full bg-[var(--raise)] px-3 py-1 text-[11px] text-[var(--text)]">
-                      {s}
-                    </span>
-                  ))}
+        {CASES.map((c, i) => {
+          const item = copy.items[i];
+          const media = c.media.map((m, mi) => ({
+            ...m,
+            alt: item.media[mi]?.alt ?? m.alt,
+            caption: item.media[mi]?.caption ?? m.caption,
+          }));
+          return (
+            <Reveal key={c.n} delay={0.2 + i * 0.08}>
+              <div className="tile flex h-full flex-col overflow-hidden p-2">
+                <ExpandableMediaGallery media={media} label={item.title} />
+                <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-4">
+                  <div className="flex items-center justify-between">
+                    <IconTile icon={c.icon} tone={c.tone} />
+                    <span className="mono text-sm text-[var(--dim)]">{c.n}</span>
+                  </div>
+                  {item.client && <p className="eyebrow">{item.client}</p>}
+                  <p className="text-2xl leading-snug text-[var(--text)]">{item.title}</p>
+                  <p className="text-sm leading-relaxed text-[var(--dim)]">{item.body}</p>
+                  <div className="mt-auto flex flex-wrap gap-1.5 pt-2">
+                    {c.stack.map((s) => (
+                      <span key={s} className="mono rounded-full bg-[var(--raise)] px-3 py-1 text-[11px] text-[var(--text)]">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Reveal>
-        ))}
+            </Reveal>
+          );
+        })}
       </div>
-      <Credits text="Pantalla de voz: agente comercial SETI. Galería Huella Digital: kiosco, stand y networking en Conexión Inteligente (SETI × Corficolombiana). Captura MCP Apps: demo Excalidraw, modelcontextprotocol/ext-apps." />
+      <Credits text={copy.credits} />
     </div>
   );
 }
@@ -1395,6 +1378,7 @@ function CanvasNodeView({ n, height = CANVAS_H }: { n: CanvasNode; height?: numb
 
 /** Pan (drag / wheel) + zoom (⌘/Ctrl + wheel, buttons) over a fixed-size canvas. Stops the deck's swipe while dragging. */
 function PanZoomCanvas({ width, height, children }: { width: number; height: number; children: ReactNode }) {
+  const chrome = useDevFestCopy().chrome;
   const ref = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ x: 0, y: 0, s: 1 });
   const viewRef = useRef(view);
@@ -1488,13 +1472,13 @@ function PanZoomCanvas({ width, height, children }: { width: number; height: num
       </div>
 
       <div className="absolute right-3 top-3 z-20 flex items-center gap-1.5">
-        <button onClick={() => zoomBy(1 / 1.2)} className="cbtn !h-9 !w-9 !text-lg" aria-label="Alejar">−</button>
+        <button onClick={() => zoomBy(1 / 1.2)} className="cbtn !h-9 !w-9 !text-lg" aria-label={chrome.zoomOut}>−</button>
         <span className="mono w-12 text-center text-[11px] text-white/80">{Math.round(view.s * 100)}%</span>
-        <button onClick={() => zoomBy(1.2)} className="cbtn !h-9 !w-9 !text-lg" aria-label="Acercar">+</button>
-        <button onClick={fit} className="pill !h-9 !bg-[#181e30] !text-[#f2f4f8]">Encuadrar</button>
+        <button onClick={() => zoomBy(1.2)} className="cbtn !h-9 !w-9 !text-lg" aria-label={chrome.zoomIn}>+</button>
+        <button onClick={fit} className="pill !h-9 !bg-[#181e30] !text-[#f2f4f8]">{chrome.fit}</button>
       </div>
       <p className="pointer-events-none absolute bottom-3 left-3 z-20 rounded-full bg-black/55 px-3 py-1.5 text-[11.5px] text-white/85 backdrop-blur">
-        Arrastra para moverte · rueda para bajar · ⌘/Ctrl + rueda para zoom
+        {chrome.panHint}
       </p>
     </div>
   );
@@ -1550,14 +1534,40 @@ function NodeGraph({ id, nodes, edges: list, width, height, children }: { id: st
   );
 }
 
+function localizeNodes(
+  nodes: CanvasNode[],
+  edgeList: CanvasEdge[],
+  nodeText: Record<string, { eyebrow?: string; title?: string; sub?: string; badge?: string }>,
+  edgeLabels: Record<string, string>,
+) {
+  const nodesOut = nodes.map((n) => {
+    const t = nodeText[n.id];
+    if (!t) return n;
+    return {
+      ...n,
+      eyebrow: t.eyebrow ?? n.eyebrow,
+      title: t.title ?? n.title,
+      sub: t.sub ?? n.sub,
+      badge: t.badge ?? n.badge,
+    };
+  });
+  const edgesOut = edgeList.map((e) => {
+    if (!e.label) return e;
+    if (e.label === 'voz' && edgeLabels.voz) return { ...e, label: edgeLabels.voz };
+    return e;
+  });
+  return { nodesOut, edgesOut };
+}
+
 function ArchitectureCanvas() {
+  const a = useDevFestCopy().architecture;
+  const { nodesOut, edgesOut } = localizeNodes(CANVAS_NODES, CANVAS_EDGES, a.nodeText, a.edgeLabels);
   return (
-    <NodeGraph id="arch" nodes={CANVAS_NODES} edges={CANVAS_EDGES} width={CANVAS_W} height={CANVAS_H}>
-      {/* Layer labels on the left edge */}
+    <NodeGraph id="arch" nodes={nodesOut} edges={edgesOut} width={CANVAS_W} height={CANVAS_H}>
       {[
-        { y: 70, t: 'Voz' },
-        { y: 600, t: 'Interfaz' },
-        { y: 1080, t: 'Cerebro' },
+        { y: 70, t: a.layers.voz },
+        { y: 600, t: a.layers.interfaz },
+        { y: 1080, t: a.layers.cerebro },
       ].map((l) => (
         <span key={l.t} className="absolute left-2 text-[11px] font-medium uppercase tracking-[0.2em] text-white/40" style={{ top: l.y }}>
           {l.t}
@@ -1568,6 +1578,7 @@ function ArchitectureCanvas() {
 }
 
 function ArchitectureSlide() {
+  const a = useDevFestCopy().architecture;
   const [showImage, setShowImage] = useState(false);
   return (
     <div className="flex h-full flex-col">
@@ -1575,19 +1586,19 @@ function ArchitectureSlide() {
         <div>
           <Reveal>
             <a href={ANTHROPIC_URL} target="_blank" rel="noopener noreferrer" className="eyebrow inline-flex items-center gap-1.5 hover:text-[var(--text)]">
-              06 · Arquitectura · Patrón “Orchestrator-workers” + “Augmented LLM” — Anthropic, Building effective agents
+              {a.eyebrow}
               <ExternalLink className="h-3 w-3" />
             </a>
           </Reveal>
           <Reveal delay={0.08}>
             <h2 className="mt-3 text-[clamp(1.75rem,3.6vw,3.25rem)] leading-[1.04] text-[var(--text)]">
-              LiveKit orquesta, <span className={ACCENT}>ADK piensa, CopilotKit muestra.</span>
+              {a.title} <span className={ACCENT}>{a.accent}</span>
             </h2>
           </Reveal>
         </div>
         <Reveal delay={0.15}>
           <button onClick={() => setShowImage((v) => !v)} className="pill" aria-pressed={showImage}>
-            {showImage ? 'Ver canvas' : 'Ver captura'}
+            {showImage ? a.viewCanvas : a.viewShot}
           </button>
         </Reveal>
       </div>
@@ -1596,7 +1607,7 @@ function ArchitectureSlide() {
         <Reveal delay={0.05} className="mt-4">
           <img
             src="/devfest-2026/arquitectura.png"
-            alt="Diagrama: Google ADK, A2UI, AG-UI, CopilotKit Runtime, app Next.js y LiveKit Voice"
+            alt={a.diagramAlt}
             className="tile max-h-[calc(100svh-17rem)] w-full object-contain"
           />
         </Reveal>
@@ -1740,16 +1751,21 @@ npx adk web packages/agent/src/agent.ts
 ] as const;
 
 function AdkSlide() {
+  const copy = useDevFestCopy();
+  const chrome = copy.chrome;
+  const a = copy.adk;
   const [active, setActive] = useState(0);
   const part = ADK_PARTS[active];
+  const partCopy = a.parts.find((p) => p.id === part.id) ?? a.parts[active];
 
   return (
     <div className="flex h-full flex-col justify-center">
-      <SlideHead eyebrow="09 · Google ADK" title="El asesor" accent="que está en la llamada." />
+      <SlideHead eyebrow={a.eyebrow} title={a.title} accent={a.accent} />
       <div className="mt-6 grid items-start gap-4 lg:grid-cols-[0.86fr_1.14fr]">
-        <div className="space-y-2" role="tablist" aria-label="Piezas de Google ADK">
+        <div className="space-y-2" role="tablist" aria-label={a.tablist}>
           {ADK_PARTS.map((item, i) => {
             const selected = i === active;
+            const itemCopy = a.parts.find((p) => p.id === item.id) ?? a.parts[i];
             return (
               <button
                 key={item.id}
@@ -1763,10 +1779,10 @@ function AdkSlide() {
                   <span className="flex items-center justify-between gap-3">
                     <span className="mono text-[15px] text-[var(--text)]">{item.term}</span>
                     <span className={`mono text-[11px] ${selected ? 'text-[var(--signal-soft)]' : 'text-[var(--dim)]'}`}>
-                      {selected ? 'viendo' : 'ver código'}
+                      {selected ? chrome.viewing : chrome.viewCode}
                     </span>
                   </span>
-                  <span className="mt-1 block text-sm leading-relaxed text-[var(--dim)]">{item.body}</span>
+                  <span className="mt-1 block text-sm leading-relaxed text-[var(--dim)]">{itemCopy.body}</span>
                 </span>
               </button>
             );
@@ -1783,7 +1799,7 @@ function AdkSlide() {
           >
             <Code code={part.code} title={part.file} className="max-h-[min(42vh,380px)] overflow-auto" />
             <div className="title-tile p-5">
-              <p className="text-sm leading-relaxed text-[var(--text)]">{part.note}</p>
+              <p className="text-sm leading-relaxed text-[var(--text)]">{partCopy.note}</p>
               <a href={part.doc} target="_blank" rel="noopener noreferrer" className="pill mt-3">
                 {part.docLabel}
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -1792,15 +1808,7 @@ function AdkSlide() {
           </motion.div>
         </AnimatePresence>
       </div>
-      <Resources
-        className="mt-5"
-        items={[
-          { label: 'ADK · Integraciones', url: 'https://adk.dev/integrations/' },
-          { label: 'ADK + AG-UI', url: 'https://adk.dev/integrations/ag-ui/' },
-          { label: 'Runner', url: 'https://adk.dev/api-reference/typescript/classes/Runner.html' },
-          { label: 'Event loop', url: 'https://adk.dev/runtime/event-loop/' },
-        ]}
-      />
+      <Resources className="mt-5" items={a.resources} />
     </div>
   );
 }
@@ -1948,6 +1956,7 @@ type ProductIntro = {
 };
 
 function ProductIntroSlide({ p }: { p: ProductIntro }) {
+  const realCapture = useDevFestCopy().chrome.realCapture;
   return (
     <div className="flex h-full flex-col">
       <Reveal>
@@ -1993,7 +2002,7 @@ function ProductIntroSlide({ p }: { p: ProductIntro }) {
             />
           </BrowserFrame>
           <a href={p.url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 self-end text-[12px] text-[var(--dim)] hover:text-[var(--text)]">
-            Captura real · {p.source} <ExternalLink className="h-3 w-3" />
+            {realCapture(p.source)} <ExternalLink className="h-3 w-3" />
           </a>
         </motion.div>
       </Reveal>
@@ -2001,97 +2010,102 @@ function ProductIntroSlide({ p }: { p: ProductIntro }) {
   );
 }
 
-const LIVEKIT_INTRO: ProductIntro = {
-  eyebrow: '10 · ¿Qué es LiveKit?',
-  kicker: 'Voice AI · Video AI · Robotics',
-  headline: (
-    <>
-      Build <span className="text-[#45d4f5]">voice, video,</span> and <span className="text-[#45d4f5]">physical AI</span> agents
-    </>
-  ),
-  es: 'Framework open source + plataforma para construir, desplegar, escalar y observar agentes en producción.',
-  points: ['Millones de llamadas concurrentes', 'Detección de turnos e interrupciones', 'LiveKit Cloud'],
-  shot: {
-    src: '/devfest-2026/lk-hero.jpg',
-    alt: 'Inicio de LiveKit: Build voice, video, and physical AI agents',
-    dark: true,
-    fit: 'cover',
-    position: 'center 82%',
-  },
-  source: 'livekit.com',
-  url: 'https://livekit.com/',
-  accent: '#45d4f5',
-};
-
-const COPILOTKIT_INTRO: ProductIntro = {
-  eyebrow: '12 · ¿Qué es CopilotKit?',
-  kicker: 'The Enterprise Product Stack for Agents',
-  headline: (
-    <>
-      Connect <span className="bg-gradient-to-r from-[#8b8cff] to-[#4fd1c5] bg-clip-text text-transparent">any agent</span> to{' '}
-      <span className="bg-gradient-to-r from-[#8b8cff] to-[#4fd1c5] bg-clip-text text-transparent">any user</span>
-    </>
-  ),
-  es: 'Apps agénticas que aprenden de cada interacción. Self-hostable y hechas para escalar con tu organización.',
-  points: ['Web · iOS · Android', 'Slack · Teams · WhatsApp', 'Google ADK, LangGraph…'],
-  shot: { src: '/devfest-2026/ck-channels.jpg', alt: 'CopilotKit conecta agentes como Google ADK con Web, iOS, Android, Slack, Teams y WhatsApp', bg: 'linear-gradient(90deg,#8eb6f1,#7b88e7)' },
-  source: 'copilotkit.ai',
-  url: 'https://www.copilotkit.ai/',
-  accent: '#8b8cff',
-};
-
 function LiveKitIntroSlide() {
-  return <ProductIntroSlide p={LIVEKIT_INTRO} />;
+  const pi = useDevFestCopy().productIntros.livekit;
+  const p: ProductIntro = {
+    eyebrow: pi.eyebrow,
+    kicker: 'Voice AI · Video AI · Robotics',
+    headline: (
+      <>
+        Build <span className="text-[#45d4f5]">voice, video,</span> and <span className="text-[#45d4f5]">physical AI</span> agents
+      </>
+    ),
+    es: pi.lead,
+    points: pi.points,
+    shot: {
+      src: '/devfest-2026/lk-hero.jpg',
+      alt: pi.shotAlt,
+      dark: true,
+      fit: 'cover',
+      position: 'center 82%',
+    },
+    source: 'livekit.com',
+    url: 'https://livekit.com/',
+    accent: '#45d4f5',
+  };
+  return <ProductIntroSlide p={p} />;
 }
 
 function CopilotKitIntroSlide() {
-  return <ProductIntroSlide p={COPILOTKIT_INTRO} />;
+  const pi = useDevFestCopy().productIntros.copilotkit;
+  const p: ProductIntro = {
+    eyebrow: pi.eyebrow,
+    kicker: 'The Enterprise Product Stack for Agents',
+    headline: (
+      <>
+        Connect <span className="bg-gradient-to-r from-[#8b8cff] to-[#4fd1c5] bg-clip-text text-transparent">any agent</span> to{' '}
+        <span className="bg-gradient-to-r from-[#8b8cff] to-[#4fd1c5] bg-clip-text text-transparent">any user</span>
+      </>
+    ),
+    es: pi.lead,
+    points: pi.points,
+    shot: { src: '/devfest-2026/ck-channels.jpg', alt: pi.shotAlt, bg: 'linear-gradient(90deg,#8eb6f1,#7b88e7)' },
+    source: 'copilotkit.ai',
+    url: 'https://www.copilotkit.ai/',
+    accent: '#8b8cff',
+  };
+  return <ProductIntroSlide p={p} />;
 }
 
-const ANTHROPIC_PATTERNS_INTRO: ProductIntro = {
-  eyebrow: '09.1 · Patrones de agentes',
-  kicker: 'Anthropic Research · Dec 2024',
-  headline: (
-    <>
-      Building <span className="text-[#d97757]">effective agents.</span>
-    </>
-  ),
-  es: 'La guía de Anthropic: patrones simples y componibles (Augmented LLM, routing, orchestrator-workers…) en vez de frameworks complejos. Es el mapa mental detrás de nuestra arquitectura.',
-  points: ['Augmented LLM', 'Orchestrator-workers', 'Evaluator-optimizer'],
-  shot: {
-    src: '/devfest-2026/anthropic-building-effective-agents.jpg',
-    alt: 'Artículo de Anthropic: Building effective agents — portada y tabla de contenidos',
-    fit: 'cover',
-    position: 'top center',
-    bg: '#faf9f5',
-  },
-  source: 'anthropic.com/research/building-effective-agents',
-  url: ANTHROPIC_URL,
-  accent: '#d97757',
-};
-
 function AnthropicPatternsSlide() {
-  return <ProductIntroSlide p={ANTHROPIC_PATTERNS_INTRO} />;
+  const pi = useDevFestCopy().productIntros.anthropic;
+  const p: ProductIntro = {
+    eyebrow: pi.eyebrow,
+    kicker: 'Anthropic Research · Dec 2024',
+    headline: (
+      <>
+        Building <span className="text-[#d97757]">effective agents.</span>
+      </>
+    ),
+    es: pi.lead,
+    points: pi.points,
+    shot: {
+      src: '/devfest-2026/anthropic-building-effective-agents.jpg',
+      alt: pi.shotAlt,
+      fit: 'cover',
+      position: 'top center',
+      bg: '#faf9f5',
+    },
+    source: 'anthropic.com/research/building-effective-agents',
+    url: ANTHROPIC_URL,
+    accent: '#d97757',
+  };
+  return <ProductIntroSlide p={p} />;
 }
 
 function LiveKitSlide() {
+  const copy = useDevFestCopy();
+  const chrome = copy.chrome;
+  const lk = copy.livekit;
   const [active, setActive] = useState(0);
   const part = LIVEKIT_PARTS[active];
+  const partCopy = lk.parts.find((p) => p.id === part.id) ?? lk.parts[active];
 
   return (
     <div className="flex h-full flex-col justify-center">
       <Reveal>
-        <p className="eyebrow">10 · LiveKit</p>
+        <p className="eyebrow">{lk.eyebrow}</p>
       </Reveal>
       <Reveal delay={0.08}>
         <h2 className="mt-3 text-[clamp(1.9rem,4vw,3.5rem)] leading-[1.04] text-[var(--text)]">
-          La llamada telefónica. <span className={ACCENT}>ADK es el asesor en ella.</span>
+          {lk.title} <span className={ACCENT}>{lk.accent}</span>
         </h2>
       </Reveal>
       <div className="mt-6 grid items-start gap-4 lg:grid-cols-[0.86fr_1.14fr]">
-        <div className="space-y-1.5" role="tablist" aria-label="Piezas de LiveKit">
+        <div className="space-y-1.5" role="tablist" aria-label={lk.tablist}>
           {LIVEKIT_PARTS.map((item, i) => {
             const selected = i === active;
+            const itemCopy = lk.parts.find((p) => p.id === item.id) ?? lk.parts[i];
             return (
               <button
                 key={item.id}
@@ -2104,9 +2118,9 @@ function LiveKitSlide() {
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center justify-between gap-3">
                     <span className="mono text-[15px] text-[var(--text)]">{item.term}</span>
-                    {!selected && <span className="mono text-[11px] text-[var(--dim)]">ver código</span>}
+                    {!selected && <span className="mono text-[11px] text-[var(--dim)]">{chrome.viewCode}</span>}
                   </span>
-                  {selected && <span className="mt-1 block text-[13px] leading-relaxed text-[var(--dim)]">{item.body}</span>}
+                  {selected && <span className="mt-1 block text-[13px] leading-relaxed text-[var(--dim)]">{itemCopy.body}</span>}
                 </span>
               </button>
             );
@@ -2123,7 +2137,7 @@ function LiveKitSlide() {
           >
             <Code code={part.code} title={part.file} className="max-h-[min(42vh,380px)] overflow-auto" />
             <div className="flex flex-wrap items-center justify-between gap-3 px-1">
-              <p className="max-w-xl text-[13.5px] leading-relaxed text-[var(--dim)]">{part.note}</p>
+              <p className="max-w-xl text-[13.5px] leading-relaxed text-[var(--dim)]">{partCopy.note}</p>
               <a href={part.doc} target="_blank" rel="noopener noreferrer" className="pill !h-8 !text-[12px]">
                 {part.docLabel}
                 <ExternalLink className="h-3 w-3" />
@@ -2132,16 +2146,7 @@ function LiveKitSlide() {
           </motion.div>
         </AnimatePresence>
       </div>
-      <Resources
-        className="mt-5"
-        items={[
-          { label: 'LiveKit · Overview', url: 'https://docs.livekit.io/intro/overview/' },
-          { label: 'AgentSession', url: 'https://docs.livekit.io/agents/logic/sessions/' },
-          { label: 'Jobs', url: 'https://docs.livekit.io/agents/server/job/' },
-          { label: 'Prompting guide', url: 'https://docs.livekit.io/agents/start/prompting/' },
-          { label: 'ADK + LiveKit', url: 'https://adk.dev/integrations/livekit/' },
-        ]}
-      />
+      <Resources className="mt-5" items={lk.resources} />
     </div>
   );
 }
@@ -2198,16 +2203,19 @@ const COST_OPTIONS = [
 ];
 
 function LiveKitCostSlide() {
+  const c = useDevFestCopy().costs;
   return (
     <div className="flex h-full flex-col justify-center">
       <Reveal>
         <div className="grid gap-2 sm:grid-cols-3">
-          {METERING.map((m) => (
-            <div key={m.label} className="rounded-2xl bg-[var(--raise)] px-4 py-3">
-              <p className="mono text-[10px] uppercase tracking-wide text-[var(--dim)]">{m.label}</p>
+          {METERING.map((m, i) => (
+            <div key={c.metering[i].label} className="rounded-2xl bg-[var(--raise)] px-4 py-3">
+              <p className="mono text-[10px] uppercase tracking-wide text-[var(--dim)]">{c.metering[i].label}</p>
               <p className="mt-1 text-lg leading-none text-[var(--text)]">{m.rate}</p>
-              <p className="mt-1.5 mono text-[12px] text-[var(--glow)]">{m.session} / sesión</p>
-              <p className="mt-1 text-[11px] text-[var(--dim)]">{m.note}</p>
+              <p className="mt-1.5 mono text-[12px] text-[var(--glow)]">
+                {m.session} {c.perSessionSuffix}
+              </p>
+              <p className="mt-1 text-[11px] text-[var(--dim)]">{c.metering[i].note}</p>
             </div>
           ))}
         </div>
@@ -2231,21 +2239,21 @@ function LiveKitCostSlide() {
                   <p className="text-xl leading-none" style={{ color: o.tone }}>
                     {o.perSession}
                   </p>
-                  <p className="mt-1 text-[12px] text-[var(--dim)]">por sesión (todo incluido)</p>
+                  <p className="mt-1 text-[12px] text-[var(--dim)]">{c.allIn}</p>
                 </div>
                 <div>
                   <p className="text-xl leading-none text-[var(--text)]">{o.hundred}</p>
-                  <p className="mt-1 text-[12px] text-[var(--dim)]">× 100 sesiones</p>
+                  <p className="mt-1 text-[12px] text-[var(--dim)]">{c.times100}</p>
                 </div>
               </div>
-              <p className="mt-3 text-[12px] text-[var(--dim)]">{o.bills}</p>
+              <p className="mt-3 text-[12px] text-[var(--dim)]">{c.options[i].bills}</p>
             </div>
           </Reveal>
         ))}
       </div>
 
       <Reveal delay={0.32}>
-        <p className="eyebrow mt-4">Planes LiveKit Cloud</p>
+        <p className="eyebrow mt-4">{c.plansEyebrow}</p>
       </Reveal>
     </div>
   );
@@ -2265,35 +2273,39 @@ const SECURITY_POINTS: { icon: LucideIcon; title: string; body: string; plan: st
 ];
 
 function LiveKitSecuritySlide() {
+  const c = useDevFestCopy().security;
   return (
     <div className="flex h-full flex-col justify-center">
       <Reveal>
-        <p className="eyebrow">10.2 · LiveKit · Seguridad</p>
+        <p className="eyebrow">{c.eyebrow}</p>
       </Reveal>
       <Reveal delay={0.08}>
         <h2 className="mt-3 text-[clamp(1.9rem,4vw,3.5rem)] leading-[1.04] text-[var(--text)]">
-          Seguro por defecto. <span className={ACCENT}>Datos que sí sirven.</span>
+          {c.title} <span className={ACCENT}>{c.accent}</span>
         </h2>
       </Reveal>
       <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {SECURITY_POINTS.map((p, i) => (
-          <Reveal key={p.title} delay={0.15 + i * 0.06}>
-            <div className="tile flex h-full items-start gap-4 p-5">
-              <IconTile icon={p.icon} tone="good" />
-              <div className="min-w-0">
-                <p className="text-[16px] text-[var(--text)]">{p.title}</p>
-                <p className="mt-1 text-[13px] leading-relaxed text-[var(--dim)]">{p.body}</p>
-                <p className="mono mt-2 text-[10.5px] uppercase tracking-[0.08em] text-[var(--good)]">{p.plan}</p>
+        {SECURITY_POINTS.map((p, i) => {
+          const point = c.points[i];
+          return (
+            <Reveal key={point.title} delay={0.15 + i * 0.06}>
+              <div className="tile flex h-full items-start gap-4 p-5">
+                <IconTile icon={p.icon} tone="good" />
+                <div className="min-w-0">
+                  <p className="text-[16px] text-[var(--text)]">{point.title}</p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-[var(--dim)]">{point.body}</p>
+                  <p className="mono mt-2 text-[10.5px] uppercase tracking-[0.08em] text-[var(--good)]">{point.plan}</p>
+                </div>
               </div>
-            </div>
-          </Reveal>
-        ))}
+            </Reveal>
+          );
+        })}
       </div>
       <Reveal delay={0.55}>
         <div className="title-tile mt-4 flex flex-col gap-2 p-5 md:flex-row md:items-center md:justify-between">
           <p className="text-[15px] leading-relaxed text-[var(--text)]">
-            <span className={ACCENT}>Recolección de datos:</span> grabación, transcripción y trazas de cada sesión → el equipo comercial ve
-            qué preguntó el cliente y recibe feedback al instante.
+            <span className={ACCENT}>{c.dataLabel}</span>
+            {c.dataBody}
           </p>
           <a href="https://docs.livekit.io/agents/models/inference/" target="_blank" rel="noopener noreferrer" className="pill flex-none">
             Docs · Inference <ExternalLink className="h-3 w-3" />
@@ -2336,7 +2348,17 @@ const VOICE_FLOWS = [
   },
 ] as const;
 
-function VoiceFlow({ flow, delay }: { flow: (typeof VOICE_FLOWS)[number]; delay: number }) {
+function VoiceFlow({
+  flow,
+  delay,
+  summary,
+  stepNames,
+}: {
+  flow: (typeof VOICE_FLOWS)[number];
+  delay: number;
+  summary: string;
+  stepNames: string[];
+}) {
   return (
     <Reveal delay={delay}>
       <div>
@@ -2348,9 +2370,9 @@ function VoiceFlow({ flow, delay }: { flow: (typeof VOICE_FLOWS)[number]; delay:
         </div>
         <div className="flex items-center gap-2 md:gap-3">
           {flow.steps.map((step, i) => (
-            <div key={step.name} className="contents">
+            <div key={step.proto + i} className="contents">
               <div className="j-card min-w-0 flex-1 rounded-2xl px-3 py-4 text-center md:px-4">
-                <p className="text-2xl font-medium text-white md:text-3xl">{step.name}</p>
+                <p className="text-2xl font-medium text-white md:text-3xl">{stepNames[i] ?? step.name}</p>
                 <p className="mt-2 text-lg md:text-xl" style={{ color: flow.tone }}>
                   {step.proto}
                 </p>
@@ -2363,29 +2385,33 @@ function VoiceFlow({ flow, delay }: { flow: (typeof VOICE_FLOWS)[number]; delay:
             </div>
           ))}
         </div>
-        <p className="mt-4 text-xl leading-snug text-white">{flow.summary}</p>
+        <p className="mt-4 text-xl leading-snug text-white">{summary}</p>
       </div>
     </Reveal>
   );
 }
 
 function EmotionSlide() {
+  const c = useDevFestCopy().emotion;
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
     <div className="flex h-full flex-col">
-      <SlideHead eyebrow="11 · Voz y emoción" title="Dos formas de hablar." accent="Pipeline o realtime." />
+      <SlideHead eyebrow={c.eyebrow} title={c.title} accent={c.accent} />
       <Reveal delay={0.12}>
         <div className="mt-4 grid gap-3 text-xl leading-snug text-[var(--text)] md:grid-cols-3 md:text-2xl">
           <p>
-            <span className={ACCENT}>SER.</span> Estima la emoción expresada: enojo, tristeza, alegría o neutral. No el estado interno.
+            <span className={ACCENT}>{c.serLabel}</span>
+            {c.ser}
           </p>
           <p>
-            <span className={ACCENT}>Hoy.</span> wav2vec 2.0 aprende la onda, auto-supervisado. Un clasificador supervisado pone la etiqueta.
+            <span className={ACCENT}>{c.hoyLabel}</span>
+            {c.hoy}
           </p>
           <p>
-            <span className={ACCENT}>Tiempo.</span> Ventanas de unos segundos se juntan en la emoción de la conversación.
+            <span className={ACCENT}>{c.tiempoLabel}</span>
+            {c.tiempo}
           </p>
         </div>
       </Reveal>
@@ -2393,7 +2419,13 @@ function EmotionSlide() {
         <div className="j-stage-grid pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="relative flex flex-col gap-6">
           {VOICE_FLOWS.map((flow, i) => (
-            <VoiceFlow key={flow.id} flow={flow} delay={0.2 + i * 0.12} />
+            <VoiceFlow
+              key={flow.id}
+              flow={flow}
+              delay={0.2 + i * 0.12}
+              summary={c.flows[i].summary}
+              stepNames={c.flows[i].stepNames}
+            />
           ))}
         </div>
       </div>
@@ -2545,24 +2577,29 @@ function BrowserFrame({ url, children, dark = false, bg, fill = true }: { url: s
 }
 
 function CopilotKitSlide() {
+  const copy = useDevFestCopy();
+  const ck = copy.copilotkit;
+  const chrome = copy.chrome;
   const [active, setActive] = useState(0);
   const [panel, setPanel] = useState<'concept' | 'json' | 'channels'>('concept');
   const c = CK_CONCEPTS[active];
+  const conceptCopy = ck.concepts[active];
   return (
     <div className="flex h-full flex-col justify-center">
       <Reveal>
-        <p className="eyebrow">12 · CopilotKit + AG-UI</p>
+        <p className="eyebrow">{ck.eyebrow}</p>
       </Reveal>
       <Reveal delay={0.08}>
         <h2 className="mt-3 text-[clamp(1.9rem,4vw,3.5rem)] leading-[1.04] text-[var(--text)]">
-          El puente <span className={ACCENT}>entre el agente y la interfaz.</span>
+          {ck.title} <span className={ACCENT}>{ck.accent}</span>
         </h2>
       </Reveal>
       <div className="mt-5 grid gap-4 lg:grid-cols-[0.66fr_1.34fr]">
         <Reveal delay={0.15}>
-          <ol className="space-y-1.5" role="tablist" aria-label="Conceptos de CopilotKit">
+          <ol className="space-y-1.5" role="tablist" aria-label={ck.tablist}>
             {CK_CONCEPTS.map((it, i) => {
               const on = i === active && panel === 'concept';
+              const body = ck.concepts[i]?.body ?? it.body;
               return (
                 <li key={it.term}>
                   <button
@@ -2579,7 +2616,7 @@ function CopilotKitSlide() {
                     </span>
                     <span>
                       <span className="mono block text-[15px] text-[var(--text)]">{it.term}</span>
-                      {on && <span className="mt-1 block text-[13px] leading-relaxed text-[var(--dim)]">{it.body}</span>}
+                      {on && <span className="mt-1 block text-[13px] leading-relaxed text-[var(--dim)]">{body}</span>}
                     </span>
                   </button>
                 </li>
@@ -2595,7 +2632,7 @@ function CopilotKitSlide() {
                 <span className="mono text-sm" style={{ color: 'var(--violet)' }}>
                   {String(CK_CONCEPTS.length + 1).padStart(2, '0')}
                 </span>
-                <span className="mono text-[15px] text-[var(--text)]">{'{ }'} Eventos JSON</span>
+                <span className="mono text-[15px] text-[var(--text)]">{ck.jsonEvents}</span>
               </button>
             </li>
             <li>
@@ -2608,18 +2645,13 @@ function CopilotKitSlide() {
                 <span className="mono text-sm" style={{ color: 'var(--violet)' }}>
                   {String(CK_CONCEPTS.length + 2).padStart(2, '0')}
                 </span>
-                <span className="mono text-[15px] text-[var(--text)]">Canales</span>
+                <span className="mono text-[15px] text-[var(--text)]">{ck.channels}</span>
               </button>
             </li>
           </ol>
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
-            <span className="eyebrow mr-1">Recursos</span>
-            {[
-              { label: 'AG-UI', url: 'https://www.copilotkit.ai/ag-ui' },
-              { label: 'Dojo · demos en vivo', url: DOJO },
-              { label: 'Docs', url: 'https://docs.copilotkit.ai/' },
-              { label: 'Build with agents', url: 'https://docs.copilotkit.ai/build-with-agents' },
-            ].map((r) => (
+            <span className="eyebrow mr-1">{chrome.resources}</span>
+            {ck.resources.map((r) => (
               <a key={r.url} href={r.url} target="_blank" rel="noopener noreferrer" className="pill !h-8 !px-3 !text-[12px]">
                 {r.label} <ExternalLink className="h-3 w-3" />
               </a>
@@ -2635,7 +2667,7 @@ function CopilotKitSlide() {
                   <img src="/devfest-2026/ck-channels.jpg" alt="CopilotKit conecta Web, iOS, Android, Slack, Teams y WhatsApp con Google ADK y otros agentes" draggable={false} className="absolute inset-0 h-full w-full object-contain" />
                 </BrowserFrame>
                 <a href="https://www.copilotkit.ai/" target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 self-end text-[12px] text-[var(--dim)] hover:text-[var(--text)]">
-                  Captura real · copilotkit.ai <ExternalLink className="h-3 w-3" />
+                  {chrome.realCapture('copilotkit.ai')} <ExternalLink className="h-3 w-3" />
                 </a>
               </motion.div>
             ) : panel === 'json' ? (
@@ -2676,10 +2708,12 @@ function CopilotKitSlide() {
                       <img src={c.shots[0].src} alt={c.shots[0].alt} draggable={false} className="absolute inset-0 h-full w-full object-contain" />
                     ) : (
                       <div className="absolute inset-0 grid gap-px bg-[var(--line)] sm:grid-cols-2">
-                        {c.shots.map((s) => (
+                        {c.shots.map((s, si) => (
                           <figure key={s.src} className="relative flex items-center bg-white">
                             <img src={s.src} alt={s.alt} draggable={false} className="h-full w-full object-contain" />
-                            <figcaption className="absolute bottom-2 left-2 rounded-full bg-black/75 px-2.5 py-1 text-[11px] text-white">{s.label}</figcaption>
+                            <figcaption className="absolute bottom-2 left-2 rounded-full bg-black/75 px-2.5 py-1 text-[11px] text-white">
+                              {conceptCopy.shotLabels?.[si] ?? s.label}
+                            </figcaption>
                           </figure>
                         ))}
                       </div>
@@ -2688,9 +2722,9 @@ function CopilotKitSlide() {
                 )}
                 {c.code && <Code code={c.code} title={c.file} className="max-h-[38%] shrink-0 overflow-auto" />}
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  {c.note ? <p className="max-w-[46ch] text-[12px] leading-snug text-[var(--dim)]">{c.note}</p> : <span />}
+                  {conceptCopy.note ? <p className="max-w-[46ch] text-[12px] leading-snug text-[var(--dim)]">{conceptCopy.note}</p> : <span />}
                   <a href={c.file ? `${REPO_URL}/blob/main/${c.file}` : c.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[12px] text-[var(--dim)] hover:text-[var(--text)]">
-                    {c.file ? c.file : `Captura real · ${c.source}`} <ExternalLink className="h-3 w-3" />
+                    {c.file ? c.file : chrome.realCapture(c.source)} <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
               </motion.div>
@@ -2770,50 +2804,55 @@ const STACK: { group: string; tone: string; items: { name: string; logo: string;
 ];
 
 function StackSlide() {
+  const c = useDevFestCopy().stack;
   let n = 0;
   return (
     <div className="flex h-full flex-col justify-center">
       <Reveal>
-        <p className="eyebrow">14 · Tecnologías</p>
+        <p className="eyebrow">{c.eyebrow}</p>
       </Reveal>
       <Reveal delay={0.08}>
         <h2 className="mt-3 text-[clamp(1.9rem,4vw,3.5rem)] leading-[1.04] text-[var(--text)]">
-          Lo que uso hoy <span className={ACCENT}>para construir agentes de voz.</span>
+          {c.title} <span className={ACCENT}>{c.accent}</span>
         </h2>
       </Reveal>
       <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {STACK.map((g, gi) => (
-          <Reveal key={g.group} delay={0.12 + gi * 0.06}>
-            <div className="tile h-full p-5">
-              <p className="eyebrow flex items-center gap-2">
-                <span className="dot" style={{ background: g.tone }} />
-                {g.group}
-              </p>
-              <ul className="mt-5 space-y-4">
-                {g.items.map((it) => {
-                  const d = 0.25 + n++ * 0.035;
-                  return (
-                    <motion.li
-                      key={it.name}
-                      initial={{ opacity: 0, y: 10, scale: 0.94 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ delay: d, duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
-                      className="flex items-center gap-3.5"
-                    >
-                      <span className="grid h-16 w-16 flex-none place-items-center rounded-[20px] bg-white p-3 shadow-[0_8px_24px_-10px_rgba(0,0,0,0.7)]">
-                        <img src={`/logos/${it.logo}`} alt="" className="max-h-full max-w-full object-contain" draggable={false} />
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-[17px] leading-tight text-[var(--text)]">{it.name}</span>
-                        {it.note && <span className="block text-[12.5px] text-[var(--dim)]">{it.note}</span>}
-                      </span>
-                    </motion.li>
-                  );
-                })}
-              </ul>
-            </div>
-          </Reveal>
-        ))}
+        {STACK.map((g, gi) => {
+          const groupCopy = c.groups[gi];
+          return (
+            <Reveal key={groupCopy.group} delay={0.12 + gi * 0.06}>
+              <div className="tile h-full p-5">
+                <p className="eyebrow flex items-center gap-2">
+                  <span className="dot" style={{ background: g.tone }} />
+                  {groupCopy.group}
+                </p>
+                <ul className="mt-5 space-y-4">
+                  {g.items.map((it) => {
+                    const d = 0.25 + n++ * 0.035;
+                    const note = groupCopy.itemNotes?.[it.name] ?? it.note;
+                    return (
+                      <motion.li
+                        key={it.name}
+                        initial={{ opacity: 0, y: 10, scale: 0.94 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ delay: d, duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+                        className="flex items-center gap-3.5"
+                      >
+                        <span className="grid h-16 w-16 flex-none place-items-center rounded-[20px] bg-white p-3 shadow-[0_8px_24px_-10px_rgba(0,0,0,0.7)]">
+                          <img src={`/logos/${it.logo}`} alt="" className="max-h-full max-w-full object-contain" draggable={false} />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[17px] leading-tight text-[var(--text)]">{it.name}</span>
+                          {note && <span className="block text-[12.5px] text-[var(--dim)]">{note}</span>}
+                        </span>
+                      </motion.li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </Reveal>
+          );
+        })}
       </div>
     </div>
   );
@@ -2903,23 +2942,30 @@ const SKILL_EDGES: CanvasEdge[] = [
 ];
 
 function SkillSlide() {
+  const s = useDevFestCopy().skill;
+  const edges = SKILL_EDGES.map((e) => {
+    if (e.label === 'top 5 aprobado') return { ...e, label: s.edgeLabels.top5 };
+    if (e.label === 'propuesta aprobada') return { ...e, label: s.edgeLabels.proposal };
+    return e;
+  });
+  const { nodesOut, edgesOut } = localizeNodes(SKILL_NODES, edges, s.nodeText, {});
   return (
     <div className="flex h-full flex-col">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <Reveal>
-            <p className="eyebrow">14.1 · Mi skill · AI Design Framework</p>
+            <p className="eyebrow">{s.eyebrow}</p>
           </Reveal>
           <Reveal delay={0.08}>
             <h2 className="mt-3 text-[clamp(1.75rem,3.6vw,3.25rem)] leading-[1.04] text-[var(--text)]">
-              De pins de Pinterest <span className={ACCENT}>a código que funciona.</span>
+              {s.title} <span className={ACCENT}>{s.accent}</span>
             </h2>
           </Reveal>
         </div>
         <Reveal delay={0.15}>
           <div className="flex flex-wrap items-center gap-2">
             <span className="pill !text-[var(--text)]">
-              <span className="dot bg-[var(--good)]" /> Tú: pegar links + aprobar 2 veces
+              <span className="dot bg-[var(--good)]" /> {s.youPill}
             </span>
             <a href={SKILL_REPO} target="_blank" rel="noopener noreferrer" className="pill !text-[var(--text)]">
               <Github className="h-4 w-4" /> ai-design-framework
@@ -2931,7 +2977,7 @@ function SkillSlide() {
         <div className="j-stage relative h-[max(22rem,calc(100svh-19.5rem))] overflow-hidden rounded-[28px]">
           <div className="j-stage-grid pointer-events-none absolute inset-0" aria-hidden="true" />
           <PanZoomCanvas width={SKILL_W} height={SKILL_H}>
-            <NodeGraph id="skill" nodes={SKILL_NODES} edges={SKILL_EDGES} width={SKILL_W} height={SKILL_H} />
+            <NodeGraph id="skill" nodes={nodesOut} edges={edgesOut} width={SKILL_W} height={SKILL_H} />
           </PanZoomCanvas>
         </div>
       </Reveal>
@@ -2944,14 +2990,15 @@ function SkillSlide() {
 /* ------------------------------------------------------------------ */
 
 function MoodBoardAmetoionSlide() {
+  const c = useDevFestCopy().moodboard;
   return (
     <div className="flex h-full flex-col">
-      <SlideHead eyebrow="14.2 · Output del skill" title="mood board ametoion" />
+      <SlideHead eyebrow={c.eyebrow} title={c.title} />
       <Reveal delay={0.1} className="mt-4 min-h-0 flex-1">
         <div className="tile flex h-[max(22rem,calc(100svh-17rem))] items-center justify-center overflow-hidden bg-white p-2 sm:p-3">
           <img
             src="/devfest-2026/mood-board-ametoion.jpg"
-            alt="Mood board ametoion — collage editorial de spreads de moda"
+            alt={c.alt}
             className="h-full w-full object-contain"
             draggable={false}
           />
@@ -2976,31 +3023,35 @@ const STEPS = [
 ];
 
 function StepsSlide() {
+  const c = useDevFestCopy().steps;
   return (
     <div className="flex h-full flex-col justify-center">
-      <SlideHead eyebrow="15 · Constrúyelo tú" title="Siete pasos" accent="para tu propio agente de voz." />
+      <SlideHead eyebrow={c.eyebrow} title={c.title} accent={c.accent} />
       <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {STEPS.map((s, i) => (
-          <Reveal key={s.t} delay={0.12 + i * 0.05}>
-            <div className="tile flex h-full flex-col gap-3 p-5">
-              <div className="flex items-center justify-between">
-                <IconTile icon={s.icon} />
-                <span className="mono text-sm text-[var(--dim)]">{String(i + 1).padStart(2, '0')}</span>
+        {STEPS.map((s, i) => {
+          const item = c.items[i];
+          return (
+            <Reveal key={item.t} delay={0.12 + i * 0.05}>
+              <div className="tile flex h-full flex-col gap-3 p-5">
+                <div className="flex items-center justify-between">
+                  <IconTile icon={s.icon} />
+                  <span className="mono text-sm text-[var(--dim)]">{String(i + 1).padStart(2, '0')}</span>
+                </div>
+                <p className="text-lg text-[var(--text)]">{item.t}</p>
+                <p className="text-[13px] leading-relaxed text-[var(--dim)]">{item.b}</p>
+                <a href={s.link.url} target="_blank" rel="noopener noreferrer" className="mt-auto inline-flex items-center gap-1.5 text-[13px] text-[var(--signal-soft)] hover:underline">
+                  {item.linkLabel} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
               </div>
-              <p className="text-lg text-[var(--text)]">{s.t}</p>
-              <p className="text-[13px] leading-relaxed text-[var(--dim)]">{s.b}</p>
-              <a href={s.link.url} target="_blank" rel="noopener noreferrer" className="mt-auto inline-flex items-center gap-1.5 text-[13px] text-[var(--signal-soft)] hover:underline">
-                {s.link.label} <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-            </div>
-          </Reveal>
-        ))}
+            </Reveal>
+          );
+        })}
         <Reveal delay={0.5}>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="blue-tile flex h-full flex-col justify-between gap-4 p-5">
             <Github className="h-6 w-6" />
             <div>
-              <p className="text-lg">Todo el código</p>
-              <p className="mt-1 text-[13px] text-white/80">Quickstart en 5 minutos · docs/guides</p>
+              <p className="text-lg">{c.allCode}</p>
+              <p className="mt-1 text-[13px] text-white/80">{c.quickstart}</p>
             </div>
           </a>
         </Reveal>
@@ -3038,37 +3089,36 @@ function QrCard({
 }
 
 function AudienceSlide() {
+  const c = useDevFestCopy().audience;
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
     <div className="flex min-h-[calc(100svh-14rem)] flex-col justify-center lg:pr-[min(46vw,620px)]">
       <Reveal>
-        <p className="eyebrow">16 · Tu turno</p>
+        <p className="eyebrow">{c.eyebrow}</p>
       </Reveal>
       <Reveal delay={0.08}>
         <h2 className={`${H2} mt-4`}>
-          Gracias.
+          {c.title}
           <br />
-          <span className={ACCENT}>No tengas miedo de aparecer.</span>
+          <span className={ACCENT}>{c.accent}</span>
         </h2>
       </Reveal>
       <Reveal delay={0.14}>
-        <p className={`${LEAD} mt-5 max-w-xl`}>
-          Muéstrate. El trabajo ya está. Falta que te vean. Escanea para conocer el trabajo y las comunidades.
-        </p>
+        <p className={`${LEAD} mt-5 max-w-xl`}>{c.lead}</p>
       </Reveal>
       <div className="mt-8 flex flex-wrap gap-4">
         <Reveal delay={0.28}>
-          <QrCard value={SITE_URL} label="angelmateus.com" sub="Sitio y trabajo" size={148} />
+          <QrCard value={SITE_URL} label="angelmateus.com" sub={c.siteSub} size={148} />
         </Reveal>
         <Reveal delay={0.34}>
-          <QrCard value={COMMUNITY_URL} label="Comunidades" sub="Visible Builders · AI Hub" size={148} />
+          <QrCard value={COMMUNITY_URL} label={c.communities} sub={c.communitiesSub} size={148} />
         </Reveal>
       </div>
       <img
         src="/devfest-2026/angel-close.png"
-        alt="Angel Arrieta"
+        alt={c.photoAlt}
         className="mx-auto mt-8 h-auto w-[min(100%,420px)] lg:hidden"
         draggable={false}
       />
@@ -3090,33 +3140,40 @@ function AudienceSlide() {
 /* Presentación                                                        */
 /* ------------------------------------------------------------------ */
 
-const SLIDES = [
-  { id: 'inicio', label: 'Inicio', Component: HookSlide },
-  { id: 'voz-para-todos', label: 'Voz para todos', Component: PeopleSlide },
-  { id: 'repo', label: 'Repo', Component: RepoQrSlide },
-  { id: 'quien-soy', label: 'Quién soy', Component: WhoSlide },
-  { id: 'futuro', label: 'El futuro', Component: FutureSlide },
-  { id: 'hoy', label: 'Así se ven hoy', Component: TodaySlide },
-  { id: 'problema', label: 'El problema', Component: ProblemSlide },
-  { id: 'casos', label: 'Casos reales', Component: CasesSlide },
-  { id: 'arquitectura', label: 'Arquitectura', Component: ArchitectureSlide },
-  { id: 'adk', label: 'Google ADK', Component: AdkSlide },
-  { id: 'patrones', label: 'Patrones', Component: AnthropicPatternsSlide },
-  { id: 'que-es-livekit', label: '¿Qué es LiveKit?', Component: LiveKitIntroSlide },
-  { id: 'livekit', label: 'LiveKit', Component: LiveKitSlide },
-  { id: 'livekit-costos', label: 'Costos', Component: LiveKitCostSlide },
-  { id: 'livekit-seguridad', label: 'Seguridad', Component: LiveKitSecuritySlide },
-  { id: 'emocion', label: 'Voz y emoción', Component: EmotionSlide },
-  { id: 'que-es-copilotkit', label: '¿Qué es CopilotKit?', Component: CopilotKitIntroSlide },
-  { id: 'copilotkit', label: 'CopilotKit', Component: CopilotKitSlide },
-  { id: 'tecnologias', label: 'Tecnologías', Component: StackSlide },
-  { id: 'ai-design-framework', label: 'Mi skill de diseño', Component: SkillSlide },
-  { id: 'mood-board-ametoion', label: 'mood board ametoion', Component: MoodBoardAmetoionSlide },
-  { id: 'paso-a-paso', label: 'Paso a paso', Component: StepsSlide },
-  { id: 'audiencia', label: 'Audiencia', Component: AudienceSlide },
-];
+const SLIDE_DEFS = [
+  { id: 'inicio', Component: HookSlide },
+  { id: 'voz-para-todos', Component: PeopleSlide },
+  { id: 'repo', Component: RepoQrSlide },
+  { id: 'quien-soy', Component: WhoSlide },
+  { id: 'futuro', Component: FutureSlide },
+  { id: 'hoy', Component: TodaySlide },
+  { id: 'problema', Component: ProblemSlide },
+  { id: 'casos', Component: CasesSlide },
+  { id: 'arquitectura', Component: ArchitectureSlide },
+  { id: 'adk', Component: AdkSlide },
+  { id: 'patrones', Component: AnthropicPatternsSlide },
+  { id: 'que-es-livekit', Component: LiveKitIntroSlide },
+  { id: 'livekit', Component: LiveKitSlide },
+  { id: 'livekit-costos', Component: LiveKitCostSlide },
+  { id: 'livekit-seguridad', Component: LiveKitSecuritySlide },
+  { id: 'emocion', Component: EmotionSlide },
+  { id: 'que-es-copilotkit', Component: CopilotKitIntroSlide },
+  { id: 'copilotkit', Component: CopilotKitSlide },
+  { id: 'tecnologias', Component: StackSlide },
+  { id: 'ai-design-framework', Component: SkillSlide },
+  { id: 'mood-board-ametoion', Component: MoodBoardAmetoionSlide },
+  { id: 'paso-a-paso', Component: StepsSlide },
+  { id: 'audiencia', Component: AudienceSlide },
+] as const;
 
-export default function DevFestVoiceAgentDeck() {
+function DevFestVoiceAgentDeckInner() {
+  const { lang, setLang } = useDevFestLang();
+  const copy = useDevFestCopy();
+  const chrome = copy.chrome;
+  const slides = SLIDE_DEFS.map((s) => ({
+    ...s,
+    label: copy.slides[s.id] ?? s.id,
+  }));
   const [[index, direction], setPage] = useState<[number, number]>([0, 0]);
   /** Product intro + ElevenLabs narration — plays once on first open of Inicio (skipped on deep-links). */
   const [introOpen, setIntroOpen] = useState(true);
@@ -3126,7 +3183,7 @@ export default function DevFestVoiceAgentDeck() {
 
   const go = useCallback((next: number) => {
     setPage(([current]) => {
-      const clamped = Math.max(0, Math.min(SLIDES.length - 1, next));
+      const clamped = Math.max(0, Math.min(SLIDE_DEFS.length - 1, next));
       return clamped === current ? [current, 0] : [clamped, clamped > current ? 1 : -1];
     });
   }, []);
@@ -3140,7 +3197,7 @@ export default function DevFestVoiceAgentDeck() {
 
   // Deep-link: #arquitectura opens that slide (handy while presenting / sharing).
   useEffect(() => {
-    const fromHash = SLIDES.findIndex((s) => s.id === window.location.hash.slice(1));
+    const fromHash = SLIDE_DEFS.findIndex((s) => s.id === window.location.hash.slice(1));
     if (fromHash > 0) {
       setPage([fromHash, 0]);
       introPlayed.current = true;
@@ -3164,7 +3221,7 @@ export default function DevFestVoiceAgentDeck() {
   }, [introOpen]);
 
   useEffect(() => {
-    window.history.replaceState(null, '', index === 0 ? window.location.pathname : `#${SLIDES[index].id}`);
+    window.history.replaceState(null, '', index === 0 ? window.location.pathname : `#${SLIDE_DEFS[index].id}`);
   }, [index]);
 
   useEffect(() => {
@@ -3186,14 +3243,14 @@ export default function DevFestVoiceAgentDeck() {
       }
       if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
         event.preventDefault();
-        setPage(([current]) => (current < SLIDES.length - 1 ? [current + 1, 1] : [current, 0]));
+        setPage(([current]) => (current < SLIDE_DEFS.length - 1 ? [current + 1, 1] : [current, 0]));
       } else if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
         event.preventDefault();
         setPage(([current]) => (current > 0 ? [current - 1, -1] : [current, 0]));
       } else if (event.key === 'Home') {
         setPage(([current]) => [0, current === 0 ? 0 : -1]);
       } else if (event.key === 'End') {
-        setPage(([current]) => [SLIDES.length - 1, current === SLIDES.length - 1 ? 0 : 1]);
+        setPage(([current]) => [SLIDE_DEFS.length - 1, current === SLIDE_DEFS.length - 1 ? 0 : 1]);
       } else if (event.key === 'f' || event.key === 'F') {
         if (document.fullscreenElement) document.exitFullscreen?.();
         else document.documentElement.requestFullscreen?.().catch(() => {});
@@ -3209,15 +3266,15 @@ export default function DevFestVoiceAgentDeck() {
     else if (info.offset.x > 80 || info.velocity.x > 500) go(index - 1);
   };
 
-  const { Component } = SLIDES[index];
+  const { Component } = slides[index];
 
   return (
-    <main lang="es" className="cva relative flex h-[100svh] flex-col overflow-hidden selection:bg-[#2f6bff]/40">
+    <main lang={lang} className="cva relative flex h-[100svh] flex-col overflow-hidden selection:bg-[#2f6bff]/40">
       <style dangerouslySetInnerHTML={{ __html: KIT_CSS }} />
 
       {/* Solid cover from first paint — kills the hook-slide flash before the intro portal mounts. */}
       {introOpen && <div className="fixed inset-0 z-[79] bg-[#02040c]" aria-hidden="true" />}
-      {introOpen && <IntroSequence onDone={closeIntro} />}
+      {introOpen && <IntroSequence onDone={closeIntro} lang={lang} />}
 
       {/* Moving print border, same as the product */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -3233,21 +3290,42 @@ export default function DevFestVoiceAgentDeck() {
       >
         <header className="relative z-20">
           <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-5 py-4 md:px-10">
-            <Link href="/post" className="pill !text-[var(--text)]">
-              <ArrowLeft className="h-4 w-4" /> Posts
-            </Link>
-            <p className="hidden truncate text-sm text-[var(--dim)] md:block">
-              DevFest Medellín 2026 · Agente comercial de voz
-            </p>
+            <div className="flex min-w-0 items-center gap-2">
+              <Link href="/post" className="pill !text-[var(--text)]">
+                <ArrowLeft className="h-4 w-4" /> {chrome.posts}
+              </Link>
+              <div
+                role="group"
+                aria-label={chrome.langAria}
+                className="dock !gap-1 !p-1"
+              >
+                {(['es', 'en'] as const).map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => setLang(code)}
+                    aria-pressed={lang === code}
+                    className={`rounded-full px-3 py-1.5 text-[12px] font-semibold tracking-[0.5px] transition-colors ${
+                      lang === code
+                        ? 'bg-[var(--signal)] text-white'
+                        : 'text-[var(--dim)] hover:text-[var(--text)]'
+                    }`}
+                  >
+                    {code.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="hidden truncate text-sm text-[var(--dim)] md:block">{chrome.title}</p>
             <p className="mono pill tabular-nums">
-              {String(index + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
+              {String(index + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
             </p>
           </div>
           <div className="mx-auto h-[2px] max-w-[1400px] px-5 md:px-10">
             <div className="h-full rounded-full bg-[var(--line)]">
               <motion.div
                 className="h-full rounded-full bg-[var(--signal)]"
-                animate={{ width: `${((index + 1) / SLIDES.length) * 100}%` }}
+                animate={{ width: `${((index + 1) / slides.length) * 100}%` }}
                 transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
               />
             </div>
@@ -3257,7 +3335,7 @@ export default function DevFestVoiceAgentDeck() {
         <div className="relative z-10 flex-1 overflow-hidden">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.section
-              key={SLIDES[index].id}
+              key={slides[index].id}
               custom={direction}
               variants={{
                 enter: (dir: number) => ({ opacity: 0, x: dir * 60, filter: 'blur(6px)' }),
@@ -3273,8 +3351,8 @@ export default function DevFestVoiceAgentDeck() {
               dragElastic={0.15}
               onDragEnd={onDragEnd}
               className="absolute inset-0 overflow-y-auto"
-              aria-roledescription="diapositiva"
-              aria-label={`${index + 1} de ${SLIDES.length}: ${SLIDES[index].label}`}
+              aria-roledescription="slide"
+              aria-label={chrome.slideAria(index + 1, slides.length, slides[index].label)}
             >
               <div className="mx-auto min-h-full max-w-[1400px] px-5 pb-32 pt-8 md:px-10 md:pt-12">
                 <Component />
@@ -3283,16 +3361,16 @@ export default function DevFestVoiceAgentDeck() {
           </AnimatePresence>
         </div>
 
-        <nav className="dock absolute bottom-5 left-1/2 z-20 -translate-x-1/2" aria-label="Diapositivas">
-          <button onClick={() => go(index - 1)} disabled={index === 0} aria-label="Diapositiva anterior" className="cbtn">
+        <nav className="dock absolute bottom-5 left-1/2 z-20 -translate-x-1/2" aria-label={chrome.slidesNav}>
+          <button onClick={() => go(index - 1)} disabled={index === 0} aria-label={chrome.prevSlide} className="cbtn">
             <ChevronLeft className="h-5 w-5" />
           </button>
           <div className="hidden items-center gap-1.5 px-2 sm:flex">
-            {SLIDES.map((slide, i) => (
+            {slides.map((slide, i) => (
               <button
                 key={slide.id}
                 onClick={() => go(i)}
-                aria-label={`Ir a ${slide.label}`}
+                aria-label={chrome.goTo(slide.label)}
                 aria-current={i === index ? 'step' : undefined}
                 className="group relative py-2"
               >
@@ -3307,12 +3385,20 @@ export default function DevFestVoiceAgentDeck() {
               </button>
             ))}
           </div>
-          <p className="whitespace-nowrap px-3 text-sm text-[var(--dim)] sm:hidden">{SLIDES[index].label}</p>
-          <button onClick={() => go(index + 1)} disabled={index === SLIDES.length - 1} aria-label="Siguiente diapositiva" className="cbtn">
+          <p className="whitespace-nowrap px-3 text-sm text-[var(--dim)] sm:hidden">{slides[index].label}</p>
+          <button onClick={() => go(index + 1)} disabled={index === slides.length - 1} aria-label={chrome.nextSlide} className="cbtn">
             <ChevronRight className="h-5 w-5" />
           </button>
         </nav>
       </div>
     </main>
+  );
+}
+
+export default function DevFestVoiceAgentDeck() {
+  return (
+    <DevFestLangProvider>
+      <DevFestVoiceAgentDeckInner />
+    </DevFestLangProvider>
   );
 }

@@ -17,6 +17,7 @@ const pages: { path: string; priority: number; changeFrequency: MetadataRoute.Si
   { path: "/contact", priority: 0.7, changeFrequency: "yearly" },
   { path: "/post", priority: 0.7, changeFrequency: "weekly" },
   { path: "/post/ai-after-hours", priority: 0.7, changeFrequency: "weekly" },
+  { path: "/post/voice-agentic-ui-wellness-services", priority: 0.8, changeFrequency: "monthly" },
   { path: "/post/devfest-medellin-2026-agente-comercial-voz", priority: 0.7, changeFrequency: "yearly" },
   { path: "/post/voice-agents-generative-ui-enterprise", priority: 0.6, changeFrequency: "yearly" },
   { path: "/post/google-a2ui-in-action-copilotkit", priority: 0.6, changeFrequency: "yearly" },
