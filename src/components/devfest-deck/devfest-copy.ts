@@ -55,6 +55,7 @@ export type DevFestCopy = {
     hello: string;
     sub: string;
     skip: string;
+    tapSound: string;
   };
   hook: { title: string; accent: string; lead: string; demo: string; code: string; byline: string };
   people: {
@@ -312,7 +313,8 @@ const introEs = {
   kicker: "NoShy Concierge",
   hello: "Hola",
   sub: "Te ayudo a preparar una venta, o a resolver lo que tu empresa necesita.",
-  skip: "Saltar intro"
+  skip: "Saltar intro",
+  tapSound: "Toca para escuchar",
 };
 
 const introEn = {
@@ -322,7 +324,8 @@ const introEn = {
   kicker: "NoShy Concierge",
   hello: "Hello",
   sub: "I help you prep a sale — or solve what your company needs.",
-  skip: "Skip intro"
+  skip: "Skip intro",
+  tapSound: "Tap anywhere for sound",
 };
 
 const hookEs = {

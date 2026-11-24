@@ -98,6 +98,8 @@ export type IntroUiCopy = {
   hello: string;
   sub: string;
   skip: string;
+  /** Shown when the browser blocks autoplay until a user gesture. */
+  tapSound: string;
 };
 
 type IntroSequenceProps = {
@@ -119,6 +121,7 @@ const INTRO_UI: Record<'es' | 'en', IntroUiCopy> = {
     hello: 'Hola',
     sub: 'Te ayudo a preparar una venta, o a resolver lo que tu empresa necesita.',
     skip: 'Saltar intro',
+    tapSound: 'Toca para escuchar',
   },
   en: {
     aria: 'Introduction',
@@ -128,6 +131,7 @@ const INTRO_UI: Record<'es' | 'en', IntroUiCopy> = {
     hello: 'Hello',
     sub: 'I help you prep a sale — or solve what your company needs.',
     skip: 'Skip intro',
+    tapSound: 'Tap anywhere for sound',
   },
 };
 
@@ -135,7 +139,7 @@ export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFA
   const ui = { ...INTRO_UI[lang], ...uiOverride };
   const [phase, setPhase] = useState<Phase>('bloom');
   const [active, setActive] = useState(true);
-  /** True only when the browser blocked sound — visuals still run automatically. */
+  /** True when the browser blocked autoplay — wait for a gesture before starting the clock. */
   const [awaitingAudio, setAwaitingAudio] = useState(false);
   const startRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -143,6 +147,7 @@ export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFA
   const doneRef = useRef(false);
   const buildFired = useRef(false);
   const startedRef = useRef(false);
+  const primingRef = useRef(false);
 
   const fireBuild = useCallback(() => {
     if (buildFired.current) return;
@@ -166,35 +171,43 @@ export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFA
     onDone();
   }, [onDone, fireBuild]);
 
-  /** Sync narration to wherever the visual clock already is (after a late autoplay unlock). */
-  const syncAudioToClock = useCallback(async () => {
+  /** Begin the intro clock + narration from 0 (used after autoplay unlock). */
+  const beginWithSound = useCallback(async () => {
+    if (doneRef.current || startedRef.current) return false;
     const audio = audioRef.current;
-    if (!audio || doneRef.current) return false;
-    const elapsed = Math.max(0, (performance.now() - startRef.current) / 1000);
+    if (!audio) return false;
     try {
-      audio.currentTime = Math.min(elapsed, Math.max(0, (audio.duration || T.done) - 0.05));
+      audio.currentTime = 0;
       await audio.play();
+      buildFired.current = false;
+      document.documentElement.setAttribute('data-intro', '1');
+      window.dispatchEvent(new Event(REPLAY_INTRO_EVENT));
+      setPhase('bloom');
+      startRef.current = performance.now();
+      startedRef.current = true;
       setAwaitingAudio(false);
       return true;
     } catch {
+      setAwaitingAudio(true);
       return false;
     }
   }, []);
 
   const startPlayback = useCallback(async () => {
-    if (startedRef.current) return;
-    startedRef.current = true;
+    if (startedRef.current || primingRef.current || doneRef.current) return;
+    primingRef.current = true;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const audio = audioRef.current;
-    startRef.current = performance.now();
     buildFired.current = false;
     document.documentElement.setAttribute('data-intro', '1');
     window.dispatchEvent(new Event(REPLAY_INTRO_EVENT));
     setPhase('bloom');
-    setAwaitingAudio(false);
 
-    // Visuals always start on their own — never wait for a tap.
+    // Reduced motion: short silent path, no narration gate.
     if (reduce) {
+      startedRef.current = true;
+      startRef.current = performance.now();
+      setAwaitingAudio(false);
       setPhase('title');
       window.setTimeout(() => setPhase('event'), 900);
       window.setTimeout(() => {
@@ -204,27 +217,43 @@ export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFA
         setPhase('handoff');
       }, 1800);
       window.setTimeout(finish, 2400);
+      primingRef.current = false;
+      return;
     }
 
-    if (!audio) return;
+    if (!audio) {
+      // No narration asset — run visuals on wall clock.
+      startedRef.current = true;
+      startRef.current = performance.now();
+      setAwaitingAudio(false);
+      primingRef.current = false;
+      return;
+    }
+
     try {
       audio.currentTime = 0;
       await audio.play();
+      startedRef.current = true;
+      startRef.current = performance.now();
+      setAwaitingAudio(false);
     } catch {
-      // Autoplay policy blocked sound: keep the intro running silently and unlock on first gesture.
+      // Autoplay blocked: freeze until a user gesture starts audio + clock together.
+      startedRef.current = false;
       setAwaitingAudio(true);
     }
+    primingRef.current = false;
   }, [finish, fireBuild]);
 
   useEffect(() => {
     const audio = new Audio(audioSrc);
     audio.preload = 'auto';
     audio.setAttribute('playsinline', 'true');
+    // Helps some mobile browsers treat this as media that can resume after a gesture.
+    audio.setAttribute('webkit-playsinline', 'true');
     audioRef.current = audio;
     const onEnded = () => finish();
     audio.addEventListener('ended', onEnded);
 
-    // Start as soon as the element can play — no user tap required for the sequence.
     const kick = () => {
       void startPlayback();
     };
@@ -233,7 +262,7 @@ export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFA
       audio.addEventListener('canplaythrough', kick, { once: true });
       audio.load();
     }
-    // Fallback if the network is slow: still start visuals after a short beat.
+    // Fallback if the network is slow: still attempt start (may gate on autoplay).
     const fallback = window.setTimeout(kick, 120);
 
     return () => {
@@ -245,21 +274,25 @@ export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFA
     };
   }, [audioSrc, finish, startPlayback]);
 
-  // If sound was blocked, any first interaction unlocks it and catches up to the visual clock.
+  // When autoplay is blocked, first gesture starts narration from the beginning (does not catch up).
   useEffect(() => {
     if (!active || !awaitingAudio) return;
-    const unlock = () => {
-      void syncAudioToClock();
+    const unlock = (event: Event) => {
+      // Let the Skip button finish without forcing sound.
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('button.intro-skip')) return;
+      event.preventDefault();
+      void beginWithSound();
     };
-    window.addEventListener('pointerdown', unlock, { once: true, capture: true });
-    window.addEventListener('keydown', unlock, { once: true, capture: true });
-    window.addEventListener('touchstart', unlock, { once: true, capture: true });
+    window.addEventListener('pointerdown', unlock, { capture: true });
+    window.addEventListener('keydown', unlock, { capture: true });
+    window.addEventListener('touchstart', unlock, { capture: true });
     return () => {
       window.removeEventListener('pointerdown', unlock, true);
       window.removeEventListener('keydown', unlock, true);
       window.removeEventListener('touchstart', unlock, true);
     };
-  }, [active, awaitingAudio, syncAudioToClock]);
+  }, [active, awaitingAudio, beginWithSound]);
 
   // Drive phases from the narration clock (or wall clock if audio is still unlocking).
   useEffect(() => {
@@ -393,10 +426,23 @@ export function IntroSequence({ onDone, lang = 'es', uiOverride, audioSrc = DEFA
         sub={ui.sub}
       />
 
+      {awaitingAudio ? (
+        <button
+          type="button"
+          onClick={() => void beginWithSound()}
+          className="absolute inset-0 z-[2] flex cursor-pointer items-end justify-center bg-black/25 pb-[max(5.5rem,env(safe-area-inset-bottom))] text-center"
+          aria-label={ui.tapSound}
+        >
+          <span className="rounded-full border border-white/25 bg-white/12 px-5 py-3 text-sm font-medium text-white backdrop-blur-md hover:bg-white/20">
+            {ui.tapSound}
+          </span>
+        </button>
+      ) : null}
+
       <button
         type="button"
         onClick={finish}
-        className="intro-skip absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] rounded-full bg-white/12 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/20"
+        className="intro-skip absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-[max(1.25rem,env(safe-area-inset-right))] z-[3] rounded-full bg-white/12 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/20"
         autoFocus
       >
         {ui.skip}

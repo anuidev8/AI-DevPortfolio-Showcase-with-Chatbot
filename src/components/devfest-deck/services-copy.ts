@@ -15,6 +15,7 @@ const servicesEn: DevFestCopy = {
     hello: 'Hello',
     sub: 'I build voice agents, agentic UI, and wellness products that ship — glad you’re here tonight. And happy birthday, Carlos.',
     skip: 'Skip intro',
+    tapSound: 'Tap anywhere for sound',
   },
   hook: {
     title: 'What are you looking for',
