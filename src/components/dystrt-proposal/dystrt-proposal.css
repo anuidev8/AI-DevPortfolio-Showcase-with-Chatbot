@@ -1,0 +1,446 @@
+/* Generated from design/dystrt/preview.html (approved preview). Every selector is scoped to .dystrt. */
+.dystrt {--color-bg: #101010; 
+  --color-surface: #181818; 
+  --color-surface-2: #1e1d1c; 
+  --color-text: #e9e6e1; 
+  --color-muted: #aaa7a2; 
+  --color-accent: #d42125; 
+  --color-accent-soft: #ff686d; 
+  --color-accent-ink: #ffffff;
+  --color-line: #373533;
+  --color-paper: #e8e5df; 
+  --color-paper-ink: #151515;
+  --color-paper-line: #d3d0ca;
+  --color-paper-accent: #aa181c; 
+  --color-glow: #d4212566; 
+  --font-display: "Barlow Condensed", Impact, sans-serif;
+  --font-body: "DM Sans", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --text-mega: clamp(4.5rem, 14vw, 13rem);
+  --text-display: clamp(3.2rem, 8vw, 7.5rem);
+  --text-h2: clamp(2.6rem, 5.5vw, 5rem);
+  --text-h3: clamp(1.6rem, 2.4vw, 2.2rem);
+  --text-body: 1.0625rem;
+  --text-small: 0.875rem;
+  --text-micro: 0.68rem;
+  --spacing-section: clamp(5rem, 12vw, 10rem);
+  --spacing-gutter: clamp(1.25rem, 4vw, 3rem);
+  --radius-card: 2px;
+  --radius-pill: 999px;
+  --shadow-glow: 0 0 80px 0 rgb(212 33 37 / 0.35);
+  --duration-fast: 220ms;
+  --duration-base: 450ms;
+  --duration-slow: 900ms;
+  --duration-tune: 1400ms; 
+  --duration-breathe: 4200ms; 
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-calm: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-wipe: cubic-bezier(0.76, 0, 0.24, 1);}
+.dystrt, .dystrt *, .dystrt *::before, .dystrt *::after {box-sizing: border-box;}
+.dystrt.reduce *, .dystrt.reduce *::before, .dystrt.reduce *::after {animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important;}
+.dystrt {scroll-behavior: smooth;}
+.dystrt {margin: 0; background: var(--color-bg); color: var(--color-text);
+    font-family: var(--font-body); font-size: var(--text-body); line-height: 1.6;
+    -webkit-font-smoothing: antialiased;}
+.dystrt a {color: inherit; text-decoration: none;}
+.dystrt h1,.dystrt h2,.dystrt h3 {font-family: var(--font-display); font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; margin: 0;}
+.dystrt p {margin: 0;}
+.dystrt ::selection {background: var(--color-accent); color: var(--color-accent-ink);}
+.dystrt .wrap {width: min(100% - 2 * var(--spacing-gutter), 1280px); margin-inline: auto;}
+.dystrt .eyebrow {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .22em; text-transform: uppercase;
+    color: var(--color-accent-soft); display: flex; gap: 14px; align-items: center;}
+.dystrt .eyebrow .num {color: var(--color-muted);}
+.dystrt .muted {color: var(--color-muted);}
+.dystrt .red {color: var(--color-accent);}
+.dystrt .grain {position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+.dystrt .mark circle {fill: none; stroke: var(--color-accent); stroke-width: 5;}
+.dystrt .mark path {fill: var(--color-accent);}
+.dystrt #intro {position: fixed; inset: 0; z-index: 200; background: var(--color-bg); overflow: hidden;
+    display: grid; place-items: center; cursor: pointer;}
+.dystrt #intro.gone {display: none;}
+.dystrt #static {position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated;
+    opacity: .5; transition: opacity 1200ms var(--ease-calm);}
+.dystrt #intro.tuned #static {opacity: .07;}
+.dystrt .scan {position: absolute; left: 0; right: 0; height: 22vh; pointer-events: none;
+    background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-text) 5%, transparent), transparent);
+    animation: dy-scan 5s linear infinite;}
+@keyframes dy-scan { from { transform: translateY(-30vh); } to { transform: translateY(110vh); } }
+.dystrt .hud {position: absolute; inset: clamp(14px, 3vw, 32px); pointer-events: none;}
+.dystrt .hud i {position: absolute; width: 22px; height: 22px; border-color: color-mix(in srgb, var(--color-text) 55%, transparent); border-style: solid; border-width: 0;}
+.dystrt .hud i:nth-child(1) {top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px;}
+.dystrt .hud i:nth-child(2) {top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px;}
+.dystrt .hud i:nth-child(3) {bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px;}
+.dystrt .hud i:nth-child(4) {bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px;}
+.dystrt .hud span {position: absolute; font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .2em;
+    text-transform: uppercase; color: color-mix(in srgb, var(--color-text) 60%, transparent);}
+.dystrt .hud .tl {top: 6px; left: 36px;}
+.dystrt .hud .tr {top: 6px; right: 36px; text-align: right;}
+.dystrt .hud .bl {bottom: 6px; left: 36px;}
+.dystrt .hud .br {bottom: 6px; right: 36px; text-align: right;}
+.dystrt .hud .status::before {content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--color-muted); margin-right: 10px; vertical-align: 1px; animation: dy-blink 1.1s steps(2) infinite;}
+.dystrt #intro.tuned .hud .status::before {background: var(--color-accent); animation: none; box-shadow: 0 0 12px var(--color-accent);}
+@keyframes dy-blink { 50% { opacity: .15; } }
+.dystrt .hud .side {top: 50%; right: 4px; writing-mode: vertical-rl; transform: translateY(-50%);}
+.dystrt .hud .side.l {left: 4px; right: auto; transform: translateY(-50%) rotate(180deg);}
+.dystrt #signal-line {position: absolute; left: 0; width: 100%; top: 50%; height: 30vh; transform: translateY(-50%); overflow: visible;}
+.dystrt #signal-line path {fill: none; stroke: var(--color-accent); stroke-width: 2.2; vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 6px var(--color-accent));}
+.dystrt #signal-line {clip-path: inset(0 100% 0 0);}
+.dystrt #intro.tuning #signal-line {animation: dy-draw var(--duration-tune) var(--ease-soft) forwards;}
+.dystrt #intro.circle #signal-line {opacity: 0; transition: opacity 700ms var(--ease-calm);}
+@keyframes dy-draw { to { clip-path: inset(0 0 0 0); } }
+.dystrt .intro-core {position: relative; display: grid; justify-items: center; gap: clamp(22px, 4vh, 40px); text-align: center; padding: 0 20px;}
+.dystrt .intro-mark-wrap {position: relative; width: min(34vmin, 260px); aspect-ratio: 1;}
+.dystrt .intro-glow {position: absolute; inset: -60%; border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 55%, transparent) 0%, color-mix(in srgb, var(--color-accent) 12%, transparent) 38%, transparent 66%);
+    transition: opacity 1200ms var(--ease-calm);}
+.dystrt #intro.circle .intro-glow {opacity: 1; animation: dy-pulse var(--duration-breathe) var(--ease-calm) infinite;}
+@keyframes dy-pulse { 0%, 100% { transform: scale(.92); opacity: .55; } 50% { transform: scale(1.05); opacity: .95; } }
+.dystrt .intro-mark {position: relative; width: 100%; height: 100%; overflow: visible;}
+.dystrt .intro-mark circle {stroke-dasharray: 220; stroke-dashoffset: 220; transform: rotate(-90deg); transform-origin: 40px 40px;}
+.dystrt #intro.circle .intro-mark circle {transition: stroke-dashoffset 1100ms var(--ease-soft); stroke-dashoffset: 0;}
+.dystrt .intro-mark path {clip-path: inset(0 0 100% 0);}
+.dystrt #intro.slash .intro-mark path {animation: dy-cut var(--duration-base) var(--ease-wipe) forwards;}
+.dystrt #intro.slash .intro-mark path:nth-of-type(2) {animation-delay: 120ms;}
+@keyframes dy-cut { to { clip-path: inset(0 0 0 0); } }
+.dystrt .rings {position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1400ms var(--ease-calm);}
+.dystrt #intro.circle .rings {opacity: 1;}
+.dystrt .rings b {position: absolute; border: 1px solid color-mix(in srgb, var(--color-text) 35%, transparent); border-radius: 50%;
+    animation: dy-drift 14s var(--ease-calm) infinite alternate;}
+@keyframes dy-drift { to { transform: translate(var(--dx, 20px), var(--dy, -30px)); } }
+.dystrt .motto {display: grid; gap: .1em; font-family: var(--font-display); font-weight: 900; text-transform: uppercase; line-height: .95; font-size: clamp(1.7rem, 4.6vw, 3.6rem); letter-spacing: -.01em;}
+.dystrt .motto span {display: block; opacity: 0; filter: blur(12px); letter-spacing: .3em;}
+.dystrt #intro.motto-on .motto span {animation: dy-focus-in var(--duration-slow) var(--ease-soft) forwards;}
+.dystrt #intro.motto-on .motto span:nth-child(2) {animation-delay: 380ms;}
+.dystrt #intro.motto-on .motto span:nth-child(3) {animation-delay: 760ms;}
+.dystrt .motto span:last-child {color: var(--color-accent);}
+@keyframes dy-focus-in { to { opacity: 1; filter: blur(0); letter-spacing: -.01em; } }
+.dystrt .skip {position: absolute; right: clamp(20px, 4vw, 48px); bottom: clamp(70px, 11vh, 110px); z-index: 3;
+    font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .22em; text-transform: uppercase;
+    color: var(--color-text); background: transparent; border: 1px solid var(--color-line); border-radius: var(--radius-pill);
+    padding: 10px 16px; cursor: pointer; transition: border-color var(--duration-fast), color var(--duration-fast);}
+.dystrt .skip:hover,.dystrt .skip:focus-visible {border-color: var(--color-accent); color: var(--color-accent-soft); outline: none;}
+.dystrt .wipe {position: absolute; inset: 0; z-index: 4; background: var(--color-accent); color: var(--color-paper-ink);
+    transform: translateY(100%); display: grid; place-items: center; overflow: hidden;}
+.dystrt #intro.wipe-in .wipe {transition: transform 620ms var(--ease-wipe); transform: translateY(0);}
+.dystrt #intro.wipe-out {background: transparent;}
+.dystrt #intro.wipe-out > :not(.wipe) {opacity: 0;}
+.dystrt #intro.wipe-out .wipe {transition: transform 720ms var(--ease-wipe); transform: translateY(-100%);}
+.dystrt .wipe-word {font-family: var(--font-display); font-weight: 900; text-transform: uppercase; line-height: .82; letter-spacing: -.03em;
+    font-size: clamp(5rem, 19vh, 12rem); writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap;}
+.dystrt .wipe .meta {position: absolute; font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .2em; text-transform: uppercase;}
+.dystrt .wipe .m1 {top: 22px; left: 24px;}
+.dystrt .wipe .m2 {top: 22px; right: 24px; text-align: right;}
+.dystrt .wipe .m3 {bottom: 22px; left: 24px;}
+.dystrt .wipe .m4 {bottom: 22px; right: 24px; text-align: right;}
+.dystrt .topbar {position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-bg) 82%, transparent); backdrop-filter: blur(14px);}
+.dystrt .topbar .wrap {display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 64px;}
+.dystrt .wordmark {font-family: var(--font-display); font-weight: 900; font-size: 1.75rem; letter-spacing: -.02em; line-height: 1;}
+.dystrt .wordmark b {color: var(--color-accent);}
+.dystrt .topbar .for {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .18em; text-transform: uppercase; color: var(--color-muted);}
+.dystrt .btn {display: inline-flex; align-items: center; gap: 12px; background: var(--color-accent); color: var(--color-accent-ink);
+    font-weight: 700; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; padding: 15px 24px; border: 0; cursor: pointer;
+    border-radius: var(--radius-card);
+    transition: transform var(--duration-fast) var(--ease-soft), box-shadow var(--duration-base) var(--ease-calm), background var(--duration-fast);}
+.dystrt .btn:hover {transform: translateY(-2px); box-shadow: var(--shadow-glow);}
+.dystrt .btn:active {transform: scale(.97);}
+.dystrt .btn:focus-visible {outline: 2px solid var(--color-accent-soft); outline-offset: 3px;}
+.dystrt .btn .mini {width: 18px; height: 18px; transition: transform var(--duration-base) var(--ease-soft);}
+.dystrt .btn .mini circle {stroke: currentColor; stroke-width: 7; fill: none;}
+.dystrt .btn .mini path {fill: currentColor;}
+.dystrt .btn:hover .mini {transform: rotate(-8deg) scale(1.08);}
+.dystrt .btn.sm {padding: 11px 16px; font-size: .72rem;}
+.dystrt .link {font-weight: 700; text-decoration: underline; text-underline-offset: 5px; text-decoration-color: var(--color-accent); transition: color var(--duration-fast);}
+.dystrt .link:hover,.dystrt .link:focus-visible {color: var(--color-accent-soft);}
+.dystrt .rail {position: fixed; left: 22px; top: 50%; transform: translateY(-50%); z-index: 40; display: none; gap: 10px; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity var(--duration-base) var(--ease-calm);}
+.dystrt .rail.show {opacity: 1; pointer-events: auto;}
+.dystrt .rail a {display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; color: var(--color-muted);}
+.dystrt .rail a::before {content: ""; width: 14px; height: 1px; background: var(--color-line); transition: width var(--duration-base) var(--ease-soft), background var(--duration-fast);}
+.dystrt .rail a.on {color: var(--color-accent-soft);}
+.dystrt .rail a.on::before {width: 30px; background: var(--color-accent);}
+.dystrt .rail a span {opacity: 0; transform: translateX(-6px); transition: opacity var(--duration-fast), transform var(--duration-fast); text-transform: uppercase; white-space: nowrap;}
+.dystrt .rail:hover a span {opacity: 1; transform: none;}
+.dystrt .rail:hover {background: color-mix(in srgb, var(--color-bg) 92%, transparent); padding: 10px 14px 10px 0;}
+@media (min-width: 1240px) {
+.dystrt .rail {display: flex;}
+}
+.dystrt section {position: relative;}
+.dystrt .frame {padding-block: var(--spacing-section); border-bottom: 1px solid var(--color-line);}
+.dystrt .paper {background: var(--color-paper); color: var(--color-paper-ink); border-bottom: 0;}
+.dystrt .paper .eyebrow {color: var(--color-paper-accent);}
+.dystrt .paper .eyebrow .num,.dystrt .paper .muted {color: color-mix(in srgb, var(--color-paper-ink) 62%, transparent);}
+.dystrt .paper .red {color: var(--color-paper-accent);}
+.dystrt .redframe {background: var(--color-accent); color: var(--color-accent-ink); border-bottom: 0;}
+.dystrt .redframe .eyebrow,.dystrt .redframe .eyebrow .num {color: var(--color-accent-ink);}
+.dystrt .head {display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(24px, 6vw, 90px); align-items: end; margin-bottom: clamp(36px, 6vw, 72px);}
+.dystrt .head h2 {font-size: var(--text-h2); line-height: .92; margin-top: 18px;}
+.dystrt .head p {max-width: 46ch;}
+.dystrt [data-reveal] {opacity: 0; filter: blur(10px); transform: translateY(18px); transition: opacity var(--duration-slow) var(--ease-soft), filter var(--duration-slow) var(--ease-soft), transform var(--duration-slow) var(--ease-soft);}
+.dystrt [data-reveal].in {opacity: 1; filter: blur(0); transform: none;}
+.dystrt.reduce [data-reveal] {filter: none; transform: none;}
+.dystrt .hero {display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: calc(100svh - 64px); border-bottom: 1px solid var(--color-line);}
+.dystrt .hero-copy {padding: clamp(40px, 6vw, 96px) var(--spacing-gutter); display: flex; flex-direction: column; justify-content: center; gap: 26px;
+    background: radial-gradient(circle at 85% 10%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 55%);}
+.dystrt .hero h1 {font-size: var(--text-display); line-height: .86;}
+.dystrt .hero h1 em {font-style: normal; color: var(--color-accent);}
+.dystrt .hero .lead {font-size: clamp(1.1rem, 1.5vw, 1.3rem); max-width: 34ch; color: var(--color-text);}
+.dystrt .hero .meta {display: flex; flex-wrap: wrap; gap: 10px 28px; font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .16em; text-transform: uppercase; color: var(--color-muted);}
+.dystrt .hero .actions {display: flex; flex-wrap: wrap; align-items: center; gap: 18px 26px;}
+.dystrt .hero-art {position: relative; background: var(--color-accent); display: grid; place-items: center; overflow: hidden; padding: 40px 24px;}
+.dystrt .hero-art .big {position: absolute; right: -2%; top: 50%; transform: translateY(-50%) rotate(180deg); writing-mode: vertical-rl;
+    font-family: var(--font-display); font-weight: 900; font-size: clamp(6rem, 15vw, 14rem); line-height: .8; letter-spacing: -.03em;
+    color: color-mix(in srgb, var(--color-paper-ink) 18%, transparent); white-space: nowrap; pointer-events: none;}
+.dystrt .tees {position: relative; display: flex; gap: clamp(8px, 2vw, 24px); align-items: flex-end; width: min(100%, 560px);}
+.dystrt .tee {flex: 1; display: grid; gap: 10px;}
+.dystrt .tee svg {width: 100%; height: auto; filter: drop-shadow(0 30px 30px color-mix(in srgb, var(--color-paper-ink) 35%, transparent));}
+.dystrt .tee figcaption {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .18em; text-transform: uppercase; color: var(--color-accent-ink);}
+.dystrt .tee.float {animation: dy-float 7s var(--ease-calm) infinite alternate;}
+.dystrt .tee.float:nth-child(2) {animation-delay: -3.5s;}
+@keyframes dy-float { to { transform: translateY(-10px); } }
+.dystrt .hero-art .tag {position: absolute; left: 20px; top: 18px; font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .2em; text-transform: uppercase; color: var(--color-accent-ink);}
+.dystrt .ticker {overflow: hidden; white-space: nowrap; border-bottom: 1px solid var(--color-line); padding: 14px 0; font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: .1em; text-transform: uppercase;}
+.dystrt .ticker .track {display: inline-flex; animation: dy-tick 48s linear infinite;}
+.dystrt .ticker span {padding: 0 22px;}
+.dystrt .ticker span.s {color: var(--color-accent); padding: 0;}
+@keyframes dy-tick { to { transform: translateX(-50%); } }
+.dystrt .value-grid {display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 60px);}
+.dystrt .carry {border-top: 1px solid var(--color-line);}
+.dystrt .carry li {display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--color-line); font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.4rem); text-transform: uppercase; line-height: 1;}
+.dystrt .carry ul,.dystrt .keep ul {list-style: none; margin: 0; padding: 0;}
+.dystrt .carry li s {text-decoration-color: var(--color-accent); text-decoration-thickness: 3px; color: var(--color-muted);}
+.dystrt .carry li small,.dystrt .keep li small {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .16em; color: var(--color-muted); font-weight: 400;}
+.dystrt .keep {background: var(--color-surface); border: 1px solid var(--color-line); border-top: 2px solid var(--color-accent); padding: clamp(24px, 3vw, 40px); display: grid; gap: 22px; align-content: start;}
+.dystrt .keep li {display: flex; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--color-line);}
+.dystrt .keep li b {font-family: var(--font-display); font-size: 1.6rem; text-transform: uppercase;}
+.dystrt .keep .quote {font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line-height: 1.05; text-transform: uppercase;}
+.dystrt .options {display: grid; grid-template-columns: 1.15fr .85fr; gap: 16px;}
+.dystrt .opt {position: relative; text-align: left; font: inherit; color: inherit; cursor: pointer; background: var(--color-surface);
+    border: 1px solid var(--color-line); border-radius: var(--radius-card); padding: clamp(24px, 3vw, 40px); display: grid; gap: 18px; align-content: start;
+    transition: border-color var(--duration-base) var(--ease-calm), box-shadow var(--duration-base) var(--ease-calm), transform var(--duration-fast) var(--ease-soft), background var(--duration-base);}
+.dystrt .opt:hover {transform: translateY(-3px); border-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-line));}
+.dystrt .opt:focus-visible {outline: 2px solid var(--color-accent-soft); outline-offset: 3px;}
+.dystrt .opt[aria-pressed="true"] {border-color: var(--color-accent); box-shadow: var(--shadow-glow); background: linear-gradient(140deg, color-mix(in srgb, var(--color-accent) 14%, var(--color-surface)), var(--color-surface) 60%);}
+.dystrt .opt .badge {position: absolute; top: -1px; right: 24px; background: var(--color-accent); color: var(--color-accent-ink); font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .18em; text-transform: uppercase; padding: 7px 12px;}
+.dystrt .opt h3 {font-size: var(--text-h3);}
+.dystrt .opt .price {font-family: var(--font-display); font-weight: 900; font-size: clamp(4rem, 8vw, 6.5rem); line-height: .8;}
+.dystrt .opt .price small {font-size: .3em; letter-spacing: .1em; color: var(--color-muted); margin-left: 8px;}
+.dystrt .opt[aria-pressed="true"] .price {color: var(--color-accent);}
+.dystrt .opt .best {color: var(--color-muted); font-size: var(--text-small);}
+.dystrt .opt .check {position: absolute; left: 24px; top: -12px; width: 24px; height: 24px; border-radius: 50%; background: var(--color-bg); border: 1.5px solid var(--color-line); display: grid; place-items: center; transition: all var(--duration-base) var(--ease-soft);}
+.dystrt .opt[aria-pressed="true"] .check {background: var(--color-accent); border-color: var(--color-accent);}
+.dystrt .opt .check::after {content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent-ink); transform: scale(0); transition: transform var(--duration-base) var(--ease-soft);}
+.dystrt .opt[aria-pressed="true"] .check::after {transform: scale(1);}
+.dystrt .chips {display: flex; flex-wrap: wrap; gap: 6px;}
+.dystrt .chips span {border: 1px solid var(--color-line); padding: 5px 10px; font-size: .78rem; color: var(--color-muted);}
+.dystrt .detail {display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(24px, 6vw, 90px);}
+.dystrt .detail .price-lg {font-family: var(--font-display); font-weight: 900; font-size: var(--text-mega); line-height: .8; letter-spacing: -.03em;}
+.dystrt .cols {columns: 2; column-gap: 32px; list-style: none; margin: 0; padding: 0;}
+.dystrt .cols li {break-inside: avoid; padding: 12px 0 12px 30px; border-bottom: 1px solid currentColor; border-bottom-color: color-mix(in srgb, currentColor 16%, transparent); position: relative;}
+.dystrt .cols li::before {content: "//"; position: absolute; left: 0; font-family: var(--font-display); font-weight: 900; color: var(--color-accent);}
+.dystrt .paper .cols li::before {color: var(--color-paper-accent);}
+.dystrt .cols li.no {color: var(--color-muted);}
+.dystrt .cols li.no::before {content: "×"; color: var(--color-muted);}
+.dystrt .note {margin-top: 28px; border-left: 2px solid var(--color-accent); padding: 6px 0 6px 20px; display: grid; gap: 4px;}
+.dystrt .paper .note {border-color: var(--color-paper-accent);}
+.dystrt .note b {font-family: var(--font-display); font-size: 1.5rem; text-transform: uppercase;}
+.dystrt .tiles {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--color-line); border: 1px solid var(--color-line);}
+.dystrt .tile {background: var(--color-bg); padding: clamp(22px, 3vw, 36px); display: grid; gap: 12px; align-content: start; min-height: 230px; transition: background var(--duration-base) var(--ease-calm);}
+.dystrt .tile:hover {background: var(--color-surface);}
+.dystrt .tile .n {font-family: var(--font-mono); font-size: var(--text-micro); color: var(--color-accent-soft); letter-spacing: .2em;}
+.dystrt .tile h3 {font-size: 1.9rem; line-height: 1;}
+.dystrt .tile p {color: var(--color-muted); font-size: .95rem;}
+.dystrt .tile p b {color: var(--color-text); font-weight: 500;}
+.dystrt .flow {display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(24px, 6vw, 90px); align-items: start;}
+.dystrt .flow .tag-line {font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: var(--text-h2); line-height: .92;}
+.dystrt .steps {position: relative; list-style: none; margin: 0; padding: 0 0 0 46px; counter-reset: s;}
+.dystrt .steps::before {content: ""; position: absolute; left: 11px; top: 8px; bottom: 8px; width: 1px; background: var(--color-line);}
+.dystrt .steps .dot {position: absolute; left: 6px; top: 8px; width: 11px; height: 11px; border-radius: 50%; background: var(--color-accent); box-shadow: 0 0 18px var(--color-accent);}
+.dystrt .steps.run .dot {animation: dy-travel 6s var(--ease-calm) forwards;}
+@keyframes dy-travel { to { top: calc(100% - 18px); } }
+.dystrt .steps li {counter-increment: s; padding: 18px 0; border-bottom: 1px solid var(--color-line); display: grid; grid-template-columns: 54px 1fr; gap: 10px; color: var(--color-muted); transition: color var(--duration-slow) var(--ease-calm);}
+.dystrt .steps li::before {content: "0" counter(s); font-family: var(--font-mono); font-size: var(--text-small); padding-top: 6px;}
+.dystrt .steps li b {display: block; font-family: var(--font-display); font-size: 1.7rem; text-transform: uppercase; line-height: 1.05;}
+.dystrt .steps li.lit {color: var(--color-text);}
+.dystrt .steps li.lit::before {color: var(--color-accent-soft);}
+.dystrt .timeline {display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; position: relative;}
+.dystrt .tbar {grid-column: 1 / -1; height: 3px; background: var(--color-line); margin-bottom: 26px; position: relative; overflow: hidden;}
+.dystrt .tbar i {position: absolute; inset: 0; background: var(--color-accent); transform-origin: left; transform: scaleX(var(--p, 0)); transition: transform 300ms linear; box-shadow: 0 0 14px var(--color-accent);}
+.dystrt .phase {padding: 0 18px 0 0; display: grid; gap: 10px; align-content: start; opacity: .38; transition: opacity var(--duration-slow) var(--ease-calm);}
+.dystrt .phase.on {opacity: 1;}
+.dystrt .phase .days {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .18em; color: var(--color-accent-soft); text-transform: uppercase;}
+.dystrt .phase h3 {font-size: 2rem; line-height: 1;}
+.dystrt .phase p {color: var(--color-muted); font-size: .92rem;}
+.dystrt .tl-sticky {position: sticky; top: 120px;}
+.dystrt .tl-scroll {height: 180vh;}
+.dystrt .total-time {margin-top: 44px; display: flex; flex-wrap: wrap; gap: 16px 40px; align-items: baseline;}
+.dystrt .total-time b {font-family: var(--font-display); font-size: clamp(3rem, 6vw, 5rem); line-height: .9; text-transform: uppercase;}
+.dystrt .phase2 {position: relative; overflow: hidden; padding-block: var(--spacing-section); border-bottom: 1px solid var(--color-line);
+    background: radial-gradient(ellipse at 50% 120%, color-mix(in srgb, var(--color-accent) 22%, transparent), transparent 60%);}
+.dystrt .phase2 .ghost {position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; pointer-events: none;
+    font-family: var(--font-display); font-weight: 900; font-size: clamp(9rem, 30vw, 28rem); line-height: .8; letter-spacing: -.04em;
+    color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--color-text) 10%, transparent);}
+.dystrt .phase2 .wrap {position: relative; display: grid; justify-items: center; text-align: center; gap: 26px;}
+.dystrt .phase2 .pill {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .22em; text-transform: uppercase;
+    border: 1px solid var(--color-accent); color: var(--color-accent-soft); border-radius: var(--radius-pill); padding: 8px 16px;}
+.dystrt .phase2 h2 {font-size: var(--text-display); line-height: .86; text-wrap: balance;}
+.dystrt .phase2 h2 em {font-style: normal; color: var(--color-accent);}
+.dystrt .phase2 p {max-width: 54ch; color: var(--color-muted); font-size: 1.1rem;}
+.dystrt .phase2 p b {color: var(--color-text); font-weight: 500;}
+.dystrt .phase-split {display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 6px;}
+.dystrt .phase-split span {display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--color-line); padding: 10px 16px; font-size: var(--text-small);}
+.dystrt .phase-split span i {width: 9px; height: 9px; border-radius: 50%; background: var(--color-muted);}
+.dystrt .phase-split span.now i {background: var(--color-accent); box-shadow: 0 0 10px var(--color-accent);}
+.dystrt .tag-p2 {display: inline-block; margin-left: 10px; border: 1px solid currentColor; border-radius: var(--radius-pill); padding: 2px 10px; letter-spacing: .16em;}
+.dystrt .redframe h2 {font-size: var(--text-display); line-height: .86;}
+.dystrt .growth {display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--color-paper-ink); margin-top: clamp(40px, 6vw, 70px);}
+.dystrt .growth li {list-style: none; padding: 18px 14px 0 0; display: grid; gap: 8px; align-content: start;}
+.dystrt .growth li span {font-family: var(--font-display); font-weight: 900; font-size: 2.6rem; line-height: 1; color: var(--color-paper-ink);}
+.dystrt .growth li p {font-size: .9rem; line-height: 1.45;}
+.dystrt .growth {padding: 0;}
+.dystrt .weeks {display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;}
+.dystrt .week {background: var(--color-surface); border: 1px solid var(--color-line); padding: 26px 22px 30px; display: grid; gap: 14px; align-content: start; transition: border-color var(--duration-base), transform var(--duration-fast) var(--ease-soft);}
+.dystrt .week:hover {border-color: var(--color-accent); transform: translateY(-3px);}
+.dystrt .week .wk {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .2em; color: var(--color-accent-soft); text-transform: uppercase;}
+.dystrt .week h3 {font-size: 2.1rem; line-height: .95;}
+.dystrt .week ul {list-style: none; margin: 0; padding: 0; display: grid; gap: 8px;}
+.dystrt .week li {font-size: .9rem; color: var(--color-muted); padding-left: 16px; position: relative;}
+.dystrt .week li::before {content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid var(--color-accent);}
+.dystrt .toggle {display: inline-flex; border: 1.5px solid var(--color-paper-ink); border-radius: var(--radius-pill); padding: 4px; gap: 4px;}
+.dystrt .toggle button {font: inherit; font-weight: 700; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; border: 0; background: transparent; color: var(--color-paper-ink); padding: 10px 18px; border-radius: var(--radius-pill); cursor: pointer; transition: background var(--duration-base) var(--ease-soft), color var(--duration-base);}
+.dystrt .toggle button[aria-pressed="true"] {background: var(--color-paper-ink); color: var(--color-paper);}
+.dystrt .toggle button:focus-visible {outline: 2px solid var(--color-paper-accent); outline-offset: 2px;}
+.dystrt .costs {width: 100%; border-collapse: collapse; margin-top: 32px;}
+.dystrt .costs td {padding: 18px 0; border-bottom: 1px solid var(--color-paper-line); vertical-align: baseline; transition: opacity var(--duration-base), color var(--duration-base);}
+.dystrt .costs td:first-child {font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; text-transform: uppercase;}
+.dystrt .costs td:last-child {text-align: right; font-weight: 500;}
+.dystrt .costs tr.off td {opacity: .35;}
+.dystrt .costs tr.off td:last-child {text-decoration: line-through;}
+.dystrt .costs tr.big td:last-child {font-family: var(--font-display); font-weight: 900; font-size: 2.6rem; color: var(--color-paper-accent);}
+.dystrt .dayone {margin-top: 36px; display: grid; grid-template-columns: auto 1fr; gap: 10px 32px; align-items: baseline; border-top: 2px solid var(--color-paper-ink); padding-top: 22px;}
+.dystrt .dayone b {font-family: var(--font-display); font-weight: 900; font-size: clamp(3.4rem, 7vw, 6rem); line-height: .85;}
+.dystrt .vision {overflow: hidden;}
+.dystrt .city {position: absolute; inset: auto 0 0 0; height: 60%; pointer-events: none; opacity: .55; -webkit-mask-image: linear-gradient(to top, black 40%, transparent); mask-image: linear-gradient(to top, black 40%, transparent);}
+.dystrt .city .glow {position: absolute; left: 50%; bottom: 10%; width: 60vw; height: 60vw; max-width: 800px; max-height: 800px; transform: translateX(-50%); border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent 62%); animation: dy-pulse var(--duration-breathe) var(--ease-calm) infinite;}
+.dystrt .city svg {position: absolute; bottom: 0; left: 0; width: 100%; height: auto; max-height: 100%;}
+.dystrt .city .b1 {fill: var(--color-surface);}
+.dystrt .city .b2 {fill: var(--color-surface-2);}
+.dystrt .city .b3 {fill: var(--color-accent); opacity: .6;}
+.dystrt .city .beam {stroke: var(--color-accent); stroke-width: 1.5;}
+.dystrt .vision .wrap {position: relative; z-index: 1;}
+.dystrt .ideas {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;}
+.dystrt .idea {background: color-mix(in srgb, var(--color-bg) 78%, transparent); backdrop-filter: blur(6px); border: 1px solid var(--color-line); padding: 24px 22px; display: grid; gap: 10px; align-content: start; transition: border-color var(--duration-base), background var(--duration-base);}
+.dystrt .idea:hover {border-color: var(--color-accent); background: color-mix(in srgb, var(--color-surface) 92%, transparent);}
+.dystrt .idea h3 {font-size: 1.7rem; line-height: 1;}
+.dystrt .idea p {color: var(--color-muted); font-size: .92rem;}
+.dystrt .idea .club {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .16em; color: var(--color-accent-soft); text-transform: uppercase;}
+.dystrt .loop {margin-top: clamp(40px, 6vw, 72px); display: grid; grid-template-columns: repeat(4, auto); justify-content: start; align-items: center; gap: 14px 22px; font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 2.4vw, 2rem); text-transform: uppercase;}
+.dystrt .loop i {font-style: normal; color: var(--color-accent);}
+.dystrt .closing {padding-block: var(--spacing-section); text-align: center; display: grid; justify-items: center; gap: 30px; position: relative; overflow: hidden;}
+.dystrt .closing .mark-wrap {position: relative; width: 120px; aspect-ratio: 1;}
+.dystrt .closing .mark-wrap .intro-glow {opacity: 1; animation: dy-pulse var(--duration-breathe) var(--ease-calm) infinite;}
+.dystrt .closing .mark-wrap svg {position: relative; width: 100%; height: 100%;}
+.dystrt .closing blockquote {margin: 0; max-width: 20ch; font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: var(--text-h2); line-height: .92;}
+.dystrt .closing cite {font-style: normal; font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .2em; color: var(--color-muted); text-transform: uppercase;}
+.dystrt .closing .actions {display: flex; flex-wrap: wrap; gap: 18px 28px; justify-content: center; align-items: center;}
+.dystrt footer {border-top: 1px solid var(--color-line); padding: 28px 0 90px; color: var(--color-muted); font-size: .8rem;}
+.dystrt footer .wrap {display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center;}
+.dystrt #film {position: fixed; inset: 0; z-index: 210; background: var(--color-bg); display: grid; place-items: center; overflow: hidden;
+    transition: opacity 1400ms var(--ease-calm), filter 1400ms var(--ease-calm), transform 1400ms var(--ease-calm);}
+.dystrt #film.fade {opacity: 0; filter: blur(14px) brightness(.6); transform: scale(1.04); pointer-events: none;}
+.dystrt #film.gone {display: none;}
+.dystrt #film video {width: 100%; height: 100%; object-fit: cover; cursor: pointer;}
+@media (orientation: portrait) {
+.dystrt #film video {object-fit: contain;}
+}
+.dystrt .film-bar {position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: color-mix(in srgb, var(--color-text) 12%, transparent);}
+.dystrt .film-bar i {position: absolute; inset: 0; background: var(--color-accent); transform-origin: left; transform: scaleX(var(--p, 0)); box-shadow: 0 0 12px var(--color-accent);}
+.dystrt .film-ui {position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 0 clamp(16px, 4vw, 40px) clamp(22px, 5vh, 44px); background: linear-gradient(to top, color-mix(in srgb, var(--color-bg) 70%, transparent), transparent);}
+.dystrt .film-btn {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .2em; text-transform: uppercase; color: var(--color-text);
+    background: color-mix(in srgb, var(--color-bg) 55%, transparent); backdrop-filter: blur(8px); border: 1px solid color-mix(in srgb, var(--color-text) 25%, transparent);
+    border-radius: var(--radius-pill); padding: 11px 16px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px;
+    transition: border-color var(--duration-fast), color var(--duration-fast), background var(--duration-fast);}
+.dystrt .film-btn:hover,.dystrt .film-btn:focus-visible {border-color: var(--color-accent); color: var(--color-accent-soft); outline: none;}
+.dystrt .film-btn .dot {width: 7px; height: 7px; border-radius: 50%; background: var(--color-muted);}
+.dystrt .film-btn[aria-pressed="true"] .dot {background: var(--color-accent); box-shadow: 0 0 10px var(--color-accent);}
+.dystrt .film-start {position: absolute; inset: 0; z-index: 2; display: none; place-items: center; align-content: center; gap: 22px; border: 0; padding: 0; cursor: pointer;
+    background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--color-bg) 35%, transparent), color-mix(in srgb, var(--color-bg) 82%, transparent) 70%); color: var(--color-text);}
+.dystrt #film.waiting .film-start {display: grid;}
+.dystrt .film-start {isolation: isolate;}
+.dystrt .film-start .still {position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: .55; filter: saturate(.9);}
+.dystrt #film.waiting .film-ui,.dystrt #film.waiting .film-bar {display: none;}
+.dystrt .film-start .ring {width: clamp(108px, 12vw, 150px); aspect-ratio: 1; border-radius: 50%; border: 4px solid var(--color-accent); display: grid; place-items: center;
+    background: color-mix(in srgb, var(--color-bg) 35%, transparent); backdrop-filter: blur(6px);
+    transition: transform var(--duration-base) var(--ease-soft), background var(--duration-base) var(--ease-calm), box-shadow var(--duration-base) var(--ease-calm);
+    animation: dy-ring-in var(--duration-slow) var(--ease-soft) both;}
+.dystrt .film-start .ring svg {width: 34%; margin-left: 9%; fill: var(--color-text);}
+.dystrt .film-start .cap {font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1; letter-spacing: -.01em; animation: dy-ring-in var(--duration-slow) var(--ease-soft) 150ms both;}
+.dystrt .film-start .sub {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .22em; text-transform: uppercase; color: var(--color-muted); margin-top: -10px; animation: dy-ring-in var(--duration-slow) var(--ease-soft) 250ms both;}
+.dystrt .film-start:hover .ring,.dystrt .film-start:focus-visible .ring {transform: scale(1.07); background: var(--color-accent); box-shadow: var(--shadow-glow);}
+.dystrt .film-start:focus-visible {outline: none;}
+.dystrt .film-start:focus-visible .ring {outline: 2px solid var(--color-accent-soft); outline-offset: 6px;}
+@keyframes dy-ring-in { from { opacity: 0; transform: scale(.92); filter: blur(8px); } }
+.dystrt .film-skip-top {position: absolute; z-index: 3; right: clamp(16px, 4vw, 40px); bottom: clamp(22px, 5vh, 44px); display: none;}
+.dystrt #film.waiting .film-skip-top {display: inline-flex;}
+.dystrt .films-grid {display: grid; grid-template-columns: 1.78fr 1fr; gap: 14px; align-items: start;}
+.dystrt .film-card {position: relative; margin: 0; display: grid; gap: 12px; min-width: 0;}
+.dystrt .film-card.wide {grid-column: 1 / -1;}
+.dystrt .film-frame {position: relative; overflow: hidden; background: var(--color-surface); border: 1px solid var(--color-line); aspect-ratio: 16 / 9; max-width: 100%;}
+.dystrt .film-card.tall .film-frame {aspect-ratio: 9 / 16;}
+.dystrt .film-frame video {position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;}
+.dystrt .film-cover {position: absolute; inset: 0; border: 0; padding: 0; cursor: pointer; background: transparent; display: grid; place-items: center;
+    transition: opacity var(--duration-base) var(--ease-calm);}
+.dystrt .film-cover img {position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--duration-slow) var(--ease-soft), filter var(--duration-base);}
+.dystrt .film-cover::after {content: ""; position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in srgb, var(--color-bg) 65%, transparent), transparent 55%);}
+.dystrt .film-cover .play {position: relative; z-index: 1; width: clamp(64px, 8vw, 96px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+    border: 3px solid var(--color-accent); background: color-mix(in srgb, var(--color-bg) 40%, transparent); backdrop-filter: blur(6px);
+    transition: transform var(--duration-base) var(--ease-soft), box-shadow var(--duration-base) var(--ease-calm), background var(--duration-base);}
+.dystrt .film-cover .play svg {width: 34%; margin-left: 8%; fill: var(--color-text);}
+.dystrt .film-cover:hover img,.dystrt .film-cover:focus-visible img {transform: scale(1.03); filter: brightness(1.08);}
+.dystrt .film-cover:hover .play,.dystrt .film-cover:focus-visible .play {transform: scale(1.08); box-shadow: var(--shadow-glow); background: var(--color-accent);}
+.dystrt .film-cover:focus-visible {outline: 2px solid var(--color-accent-soft); outline-offset: -4px;}
+.dystrt .film-card.playing .film-cover {opacity: 0; pointer-events: none;}
+.dystrt .film-card figcaption {display: flex; justify-content: space-between; align-items: baseline; gap: 12px;}
+.dystrt .film-card figcaption b {font-family: var(--font-display); font-size: 1.6rem; text-transform: uppercase; line-height: 1;}
+.dystrt .film-card figcaption span {font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .16em; color: var(--color-muted); text-transform: uppercase; white-space: nowrap;}
+.dystrt .film-card figcaption p {color: var(--color-muted); font-size: .9rem; margin-top: 4px;}
+@media (max-width: 760px) {
+.dystrt .films-grid {grid-template-columns: 1fr;}
+.dystrt .film-card.tall {max-width: 360px;}
+}
+.dystrt.reduce #film {transition-duration: 300ms !important;}
+@media (max-width: 980px) {
+.dystrt .hero,.dystrt .head,.dystrt .value-grid,.dystrt .options,.dystrt .detail,.dystrt .flow {grid-template-columns: 1fr;}
+.dystrt .hero-art {min-height: 440px;}
+.dystrt .tiles,.dystrt .ideas {grid-template-columns: 1fr 1fr;}
+.dystrt .weeks {grid-template-columns: 1fr 1fr;}
+.dystrt .growth {grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 26px;}
+.dystrt .timeline {grid-template-columns: 1fr; gap: 24px;}
+.dystrt .tl-scroll {height: auto;}
+.dystrt .tl-sticky {position: static;}
+.dystrt .phase {opacity: 1;}
+}
+@media (max-width: 620px) {
+.dystrt .topbar .for {display: none;}
+.dystrt .tiles,.dystrt .ideas,.dystrt .weeks {grid-template-columns: 1fr;}
+.dystrt .growth {grid-template-columns: 1fr 1fr;}
+.dystrt .cols {columns: 1;}
+.dystrt .hero-art {min-height: 360px;}
+.dystrt .loop {grid-template-columns: 1fr 1fr;}
+.dystrt .costs td:first-child {font-size: 1.25rem;}
+.dystrt .dayone {grid-template-columns: 1fr;}
+.dystrt .hud .side {display: none;}
+}
+.dystrt.reduce .intro-glow,.dystrt.reduce .city .glow,.dystrt.reduce .tee.float,.dystrt.reduce .rings b,.dystrt.reduce .scan {animation: none !important;}
+.dystrt.reduce .ticker .track {animation: none;}
+.dystrt.reduce .steps li {color: var(--color-text);}
+.dystrt.reduce .motto span {filter: none; letter-spacing: -.01em;}
+.dystrt {
+  --font-display: var(--font-dy-display), "Barlow Condensed", Impact, sans-serif;
+  --font-body: var(--font-dy-body), "DM Sans", Arial, sans-serif;
+  --font-mono: var(--font-dy-mono), "JetBrains Mono", ui-monospace, monospace;
+  min-height: 100vh;
+}
